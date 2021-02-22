@@ -5,17 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public final class GFileUtil {
-    private GFileUtil(){}
-    public static boolean CopyFile(String source,String target){
-        return CopyFile(new File(source),new File(target));
-    }
-    public static boolean CopyFile(String source,File target){
-        return CopyFile(new File(source),target);
-    }
-    public static boolean CopyFile(File source,String target){
-        return CopyFile(source,new File(target));
-    }
+public final class GFileOperation{
+    private GFileOperation(){}
     public static boolean CopyFile(File source,File target){
         boolean result=false;
         try {
