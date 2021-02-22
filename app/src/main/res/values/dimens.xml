@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <dimen name="mal_action_action_item_image_height">32dp</dimen>
+    <dimen name="mal_action_item_image_width">24dp</dimen>
+    <dimen name="mal_baseline">110dp</dimen><!--16-->
+    <dimen name="mal_baseline_half">55dp</dimen>
+    <dimen name="mal_baseline_quarter">4dp</dimen>
+    <dimen name="mal_card_elevation">2dp</dimen>
+    <dimen name="mal_card_radius">2dp</dimen>
+    <dimen name="mal_title_item_image_size">40dp</dimen>
+    <dimen name="layout_height1">32dp</dimen>
+    <dimen name="play_height">100dp</dimen>
+    <dimen name="play_height_half">55dp</dimen>
+    <dimen name="btwidth">50dp</dimen>
+    <dimen name="settings_item_height">48dp</dimen>
+</resources>

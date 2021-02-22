@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal">
+    <TextView
+		android:id="@+id/listTextView"
+		android:layout_weight="1"
+		android:textSize="17sp"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		/>
+	<Button
+		android:id="@+id/listButtondel"
+		android:text="✕"
+		android:layout_width="45dp"
+		android:layout_height="match_parent"
+	/>
+	<Button
+		android:id="@+id/listButton"
+		
+		android:text="▷"
+		android:layout_width="45dp"
+		android:layout_height="match_parent"
+		/>
+</LinearLayout>

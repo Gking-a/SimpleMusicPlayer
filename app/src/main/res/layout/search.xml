@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<com.hz.android.keyboardlayout.KeyboardLayout
+		android:id="@+id/keyboradlayout1"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			<com.google.android.material.appbar.AppBarLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+				<androidx.appcompat.widget.Toolbar
+					android:id="@+id/toolbar"
+					android:layout_width="match_parent"
+					android:layout_height="?attr/actionBarSize"
+					app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+					app:navigationIcon="@drawable/nav_return"/>
+			</com.google.android.material.appbar.AppBarLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+				<EditText
+					android:inputType="textNoSuggestions"
+					android:cursorVisible="true"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:id="@+id/searchName"/>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/search_bt1"
+                    android:src="@drawable/search1"/>
+				<Switch
+					android:id="@+id/search_switch1"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:textOff="Local"
+					android:textOn="Net"/>
+
+			</LinearLayout>
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/searchList1"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1" />
+		</LinearLayout>
+
+	</com.hz.android.keyboardlayout.KeyboardLayout>
+
+</LinearLayout>

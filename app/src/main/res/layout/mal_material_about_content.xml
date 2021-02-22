@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/drawer">
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+	<com.google.android.material.appbar.AppBarLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"
+			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+	</com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mal_list_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/mal_baseline_half"
+    android:layout_marginLeft="@dimen/mal_baseline_half"
+    android:layout_marginRight="@dimen/mal_baseline_half"
+    android:layout_marginStart="@dimen/mal_baseline_half"
+    android:layout_marginTop="@dimen/mal_baseline_half"
+    android:paddingBottom="@dimen/mal_baseline"
+    android:paddingEnd="@dimen/mal_baseline_half"
+    android:paddingLeft="@dimen/mal_baseline_half"
+    android:paddingRight="@dimen/mal_baseline_half"
+    android:paddingStart="@dimen/mal_baseline_half"
+    android:paddingTop="@dimen/mal_baseline"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/mal_stroke_color"
+    app:cardElevation="0dp"
+    >
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="aaaa"/>
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="aaaa"/>
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="aaaa"/>
+</com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
+<!--
+	<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/mal_list_card_title"
+					android:text="title1"/>
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/mal_baseline_half"
+				android:layout_marginEnd="@dimen/mal_baseline"
+				android:layout_marginLeft="@dimen/mal_baseline"
+				android:layout_marginRight="@dimen/mal_baseline"
+				android:layout_marginStart="@dimen/mal_baseline"
+				android:layout_marginTop="@dimen/mal_baseline"
+				android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+				tools:text="Author"/>
+
+
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					xmlns:tools="http://schemas.android.com/tools"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingTop="@dimen/mal_baseline_half"
+					android:paddingBottom="@dimen/mal_baseline_half"
+					android:paddingStart="8dp"
+					android:orientation="horizontal"
+					android:paddingLeft="8dp">
+
+					<ImageView
+						android:id="@+id/mal_item_image"
+						android:layout_width="@dimen/mal_action_item_image_width"
+						android:layout_height="@dimen/mal_action_action_item_image_height"
+						android:layout_gravity="center"
+						android:layout_marginEnd="@dimen/mal_baseline_half"
+						android:layout_marginLeft="@dimen/mal_baseline"
+						android:layout_marginRight="@dimen/mal_baseline_half"
+						android:layout_marginStart="@dimen/mal_baseline"
+						android:adjustViewBounds="false"
+						android:tint="?colorPrimary"
+						android:contentDescription="@null"
+						android:cropToPadding="false"
+						android:scaleType="centerInside" />
+
+					<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:minHeight="@dimen/mal_action_action_item_image_height"
+						android:layout_gravity="center_vertical"
+						android:gravity="center_vertical"
+						android:layout_marginEnd="@dimen/mal_baseline"
+						android:layout_marginLeft="@dimen/mal_baseline"
+						android:layout_marginRight="@dimen/mal_baseline"
+						android:layout_marginStart="@dimen/mal_baseline"
+						android:layout_weight="1"
+						android:orientation="vertical">
+
+						<TextView
+							android:text="text1"
+							android:id="@+id/mal_item_text"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+							tools:text="Version" />
+
+						<TextView
+							android:text="text2"
+							android:id="@+id/mal_action_item_subtext"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+							android:textColor="?android:attr/textColorSecondary"
+							android:visibility="gone"
+							tools:text="Current Version Of App"
+							tools:visibility="visible" />
+					</LinearLayout>
+
+				</LinearLayout>
+
+			</LinearLayout>
+   
+			-->

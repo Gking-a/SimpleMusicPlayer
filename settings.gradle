@@ -1,0 +1,4 @@
+rootProject.name='SimpleMusicPlayer'
+include ':app'
+include ':gtools'
+include ':GTools'
