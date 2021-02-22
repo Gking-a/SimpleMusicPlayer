@@ -152,6 +152,7 @@ public class PlayingService extends Service {
 //        if(!id.contains("@")){
 //        view.setImageViewBitmap(R.id.nImage, GSong.getSquareIcon(id, 300));
 //        view.setTextViewText(R.id.nAuthor, GSong.getAuthor(id));}
+        view.setImageViewResource(R.id.nImage,R.drawable.gnzbky);
         changeViewLoop();
         changeViewPause();
         view.setOnClickPendingIntent(R.id.notification_exit,PendingIntent.getBroadcast(this,2,new Intent(ACTION_STOPSERVICE),PendingIntent.FLAG_CANCEL_CURRENT));
