@@ -5,7 +5,7 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<libs.com.hz.android.keyboardlayout.KeyboardLayout
+	<com.hz.android.keyboardlayout.KeyboardLayout
 		android:id="@+id/keyboradlayout1"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
@@ -55,6 +55,6 @@
 				android:layout_weight="1" />
 		</LinearLayout>
 
-	</com.hz.android.keyboardlayout.KeyboardLayout>
+	</libs.com.hz.android.keyboardlayout.KeyboardLayout>
 
 </LinearLayout>
