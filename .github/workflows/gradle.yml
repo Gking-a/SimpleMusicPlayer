@@ -34,7 +34,7 @@ jobs:
       id: create_release
       uses: actions/create-release@master
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }} # 之前GitHub添加的Token
+        GITHUB_TOKEN: 8f2b5e94ea63fa208b978e9dae5cb00c1eeb3023
       with:
         tag_name: ${{ github.ref }} # (tag)标签名称
         release_name: Release ${{ github.ref }}
