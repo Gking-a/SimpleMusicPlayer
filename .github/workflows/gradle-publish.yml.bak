@@ -21,4 +21,11 @@ jobs:
 
     - name: Build with Gradle
       run: gradle build
-      run: ls -l
+
+    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+    # the publishing section of your build.gradle
+    - name: Publish to GitHub Packages
+      run: gradle publish
+ ＃     env:
+  ＃      USERNAME: ${{ github.actor }}
+  ＃      TOKEN: ${{ secrets.GITHUB_TOKEN }}
