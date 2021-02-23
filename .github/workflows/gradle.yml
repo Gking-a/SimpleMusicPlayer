@@ -24,6 +24,5 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    steps:
-    - name: run path
-      run: ls -l app/build/
+    - name: run command
+      run: ls -l app/build
