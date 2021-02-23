@@ -25,4 +25,4 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: run command
-      run: ls -l app/build/outputs
+      run: ls -l app/build/outputs/apk
