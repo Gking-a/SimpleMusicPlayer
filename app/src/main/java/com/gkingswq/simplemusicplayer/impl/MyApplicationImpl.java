@@ -84,24 +84,24 @@ public class MyApplicationImpl extends BaseApplication
 				e.printStackTrace();
 			}
 		}
-		File a=new File(getFilesDir()+"α.GList");
-		if(!a.exists()) {
-			try {
-				a.createNewFile();
-				GFileUtil.CopyFile("/sdcard/α.GList", a);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		a=new File(getFilesDir()+"β.GList");
-			if(!a.exists()){
-				try {
-					a.createNewFile();
-					GFileUtil.CopyFile("/sdcard/β.GList",a);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
+//		File a=new File(getFilesDir()+"α.GList");
+//		if(!a.exists()) {
+//			try {
+//				a.createNewFile();
+//				GFileUtil.CopyFile("/sdcard/α.GList", a);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		a=new File(getFilesDir()+"β.GList");
+//			if(!a.exists()){
+//				try {
+//					a.createNewFile();
+//					GFileUtil.CopyFile("/sdcard/β.GList",a);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//		}
 		for (File file: Objects.requireNonNull(getFilesDir().listFiles())){
 			if(file.isFile())
 				GLibraryManager.add(new GLibrary(file,true));
