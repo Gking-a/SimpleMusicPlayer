@@ -11,7 +11,7 @@ public class Receive {
         config.add("port",port,GLibrary.TYPE_STRING);
         config.add("ip",Util.getIP(),GLibrary.TYPE_STRING);
         config.save();
-        File file = new File("/storage/emulated/0/AppProjects/apk");
+        File file = new File("/sdcard/AppProjects/apk");
         TCPServer s=new TCPServer(port);
         s.accept();
         while(!s.isAccept()){
