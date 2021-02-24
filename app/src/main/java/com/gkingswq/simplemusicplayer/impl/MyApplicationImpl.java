@@ -76,14 +76,14 @@ public class MyApplicationImpl extends BaseApplication
 				e.printStackTrace();
 			}
 		}
-		if(!_NAME.exists()){
-			try {
-				GFileUtil.CopyFile("/sdcard/NAME",_NAME);
-				_NAME.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+//		if(!_NAME.exists()){
+//			try {
+//				GFileUtil.CopyFile("/sdcard/NAME",_NAME);
+//				_NAME.createNewFile();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 //		File a=new File(getFilesDir(),"α.GList");
 //		if(!a.exists()) {
 //			try {
