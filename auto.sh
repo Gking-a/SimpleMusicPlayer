@@ -1,3 +1,3 @@
-git add .
-git commit -m "update"
-git push origin master
+source /etc/profile
+cd run
+java Receive

@@ -21,23 +21,12 @@ jobs:
       with:
         java-version: 1.8
     - name: command
-      run: rm -rf app/build/outputs/apk/debug
+      run: |
+           cd run
+           java Main
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew assembleDebug
     - name: run command
       run: ls -l app/build/outputs/apk/
-     
-    # 第三步：发布 Release
-    - name: Create Release # 创建Release，可以在仓库看到一个个版本
-      id: create_release
-      uses: actions/create-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }} # 之前GitHub添加的Token
-      with:
-        tag_name: ${{ github.ref }} # (tag)标签名称
-        release_name: Release ${{ github.ref }}
-        draft: false # 是否是草稿
-        prerelease: false # 是否是预发布
-
