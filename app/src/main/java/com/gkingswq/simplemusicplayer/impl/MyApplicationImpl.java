@@ -84,7 +84,7 @@ public class MyApplicationImpl extends BaseApplication
 				e.printStackTrace();
 			}
 		}
-//		File a=new File(getFilesDir()+"α.GList");
+//		File a=new File(getFilesDir(),"α.GList");
 //		if(!a.exists()) {
 //			try {
 //				a.createNewFile();
@@ -93,7 +93,7 @@ public class MyApplicationImpl extends BaseApplication
 //				e.printStackTrace();
 //			}
 //		}
-//		a=new File(getFilesDir()+"β.GList");
+//		a=new File(getFilesDir(),"β.GList");
 //			if(!a.exists()){
 //				try {
 //					a.createNewFile();
