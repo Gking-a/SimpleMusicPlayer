@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gkingswq.simplemusicplayer.Interface.OnGetNameCompile;
 import com.gkingswq.simplemusicplayer.base.base1.Activity1;
 import com.google.android.material.navigation.NavigationView;
-import com.hz.android.keyboardlayout.KeyboardLayout;
+import libs.com.hz.android.keyboardlayout.KeyboardLayout;
 //import com.rey.material.widget.Slider;
 
 import java.io.File;
