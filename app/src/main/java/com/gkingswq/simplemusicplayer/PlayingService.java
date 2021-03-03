@@ -372,7 +372,7 @@ public class PlayingService extends Service {
                     interrupted();
                     while (!isInterrupted()) {
                         if(isLockedNotificationShow&&!km.inKeyguardRestrictedInputMode()){
-                            mNotificationManager.cancel(3);
+                            //mNotificationManager.cancel(3);
                         }
                         int timenow = mp.getCurrentPosition() / 1000;
                         if (timenow % 60 < 10) {
@@ -426,7 +426,7 @@ public class PlayingService extends Service {
                         if (changed) {
                             n.bigContentView = view;
                             n.contentView = view;
-                            startForeground(1, n);
+                            mNotificationManager.notify(1,n);
                             if(isLockedNotificationShow&&km.inKeyguardRestrictedInputMode()){
                                 mNotificationManager.notify(3,lockedNotifyBuilder.build());
                             }

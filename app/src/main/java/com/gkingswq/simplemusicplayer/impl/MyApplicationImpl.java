@@ -61,8 +61,9 @@ public class MyApplicationImpl extends BaseApplication
 				lib.add(LOCKEDNOTIFICATIONSHOW,false,GLibrary.TYPE_STRING);
 				lib.add(WINDOW_COLOR,"0xffff0000",GLibrary.TYPE_STRING);
 				lib.add(DEFAULT_WINDOW_SHOW,false,GLibrary.TYPE_STRING);
+                lib.add("debugroot",true,GLibrary.TYPE_STRING);
 				lib.close(true);
-				GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
+				//GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
 			} catch (IOException e) {
             }
 		}
