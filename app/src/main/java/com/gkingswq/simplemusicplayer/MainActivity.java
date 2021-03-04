@@ -503,7 +503,7 @@ public class MainActivity extends Activity1 {
     private void loadSettings() {
 	    String[] permissions=new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE};
-	    requestPermission(this,permissions,0);
+	    //requestPermission(this,permissions,0);
 	    requestAlertWindowPermission();
         GLibrary lib= GLibraryManager.getLib( _SETTINGS);
         String name=lib.get(DEFAULT_LIST);
