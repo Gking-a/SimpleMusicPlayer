@@ -68,7 +68,8 @@ public class GSong {
         return mbitmap;
     }
     //2021.3.4,看到当时中考的痕迹，感慨颇多啊。也说不出什么来。只能说时间太快了。甚至说，快要迎来一周年生日了
-    //好像上中考回来中午写的代码，而不是晚上。
+    //好像是中考回来中午写的代码，而不是晚上。
+    //其实感觉当时写的代码已经不错了，但是当时的耦合性太强了，如果用现在的思想去写的话，应该会更好。
     public static Bitmap getSquareIcon(Bitmap source,int scale){
         Bitmap mbitmap=source;
         int width=mbitmap.getWidth() ,height=mbitmap.getHeight();

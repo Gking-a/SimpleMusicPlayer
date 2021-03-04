@@ -7,9 +7,8 @@
 	android:layout_height="match_parent">
     <ImageView
 		android:id="@+id/nImage"
-		android:layout_width="300px"
-		android:layout_height="300px"
-        android:src="@drawable/gnzbky"/>
+		android:layout_width="30px"
+		android:layout_height="30px"/>
 	<LinearLayout
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
