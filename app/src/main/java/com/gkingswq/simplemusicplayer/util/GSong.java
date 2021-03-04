@@ -66,7 +66,18 @@ public class GSong {
         Bitmap.createBitmap(mbitmap,(width-height)/2,0,height,height):
         Bitmap.createBitmap(mbitmap,0,(height-width)/2,width,width);
         return mbitmap;
-        
+    }
+    public static Bitmap getSquareIcon(Bitmap source,int scale){
+        Bitmap mbitmap=source;
+        int width=mbitmap.getWidth() ,height=mbitmap.getHeight();
+        if(width==height){
+            return mbitmap;
+        }
+        mbitmap=width>height?
+            Bitmap.createBitmap(mbitmap,(width-height)/2,0,height,height):
+            Bitmap.createBitmap(mbitmap,0,(height-width)/2,width,width);
+        return mbitmap;
+
     }
     public static Bitmap getIcon(String id,int scale){
         Bitmap mbitmap=getIcon(id);

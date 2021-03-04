@@ -9,7 +9,7 @@
 		android:id="@+id/nImage"
 		android:layout_width="300px"
 		android:layout_height="300px"
-        android:background="@drawable/gnzbky"/>
+        android:src="@drawable/gnzbky"/>
 	<LinearLayout
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
