@@ -11,9 +11,15 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
-
+    signingConfigs {
+        debug {
+            storeFile file("/home/runner/work/SimpleMusicPlayer/SimpleMusicPlayer/debug.keystore")
+            storePassword "gking"
+            keyAlias "aidekey"
+            keyPassword "gking"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

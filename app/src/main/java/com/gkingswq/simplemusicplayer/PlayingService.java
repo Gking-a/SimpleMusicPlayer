@@ -154,7 +154,7 @@ public class PlayingService extends Service {
 //        view.setImageViewBitmap(R.id.nImage, GSong.getSquareIcon(id, 300));
 //        view.setTextViewText(R.id.nAuthor, GSong.getAuthor(id));}
         //view.setImageViewResource(R.id.nImage,R.drawable.gnzbky);
-        view.setImageViewBitmap(R.id.nImage,GSong.getSquareIcon(BitmapFactory.decodeResource(getResources(),R.drawable.img1),300));
+        //view.setImageViewBitmap(R.id.nImage,GSong.getSquareIcon(BitmapFactory.decodeResource(getResources(),R.drawable.img1),300));
         changeViewLoop();
         changeViewPause();
         view.setOnClickPendingIntent(R.id.notification_exit,PendingIntent.getBroadcast(this,2,new Intent(ACTION_STOPSERVICE),PendingIntent.FLAG_CANCEL_CURRENT));
