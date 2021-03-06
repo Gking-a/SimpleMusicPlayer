@@ -1,28 +1,25 @@
 package com.gkingswq.simplemusicplayer.util;
 
+import GTools.GLibrary;
+import GTools.GLibraryManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Looper;
-
 import com.gkingswq.simplemusicplayer.Interface.OnGetNameCompile;
 import com.gkingswq.simplemusicplayer.util.JSON;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.json.JSONObject;
 
-import GTools.GLibrary;
-import GTools.GLibraryManager;
-
-import static com.gkingswq.simplemusicplayer.Value.Files._NAME;
 import static com.gkingswq.simplemusicplayer.Value.StringPool.*;
+import static com.gkingswq.simplemusicplayer.Value.Files._NAME;
+import android.graphics.BitmapFactory;
 
 public class GSong {
     private GSong(){}
@@ -113,31 +110,54 @@ public class GSong {
                 public void run() {
                     try {
                         Looper.prepare();
-                        URL url=new URL(Detail + id);
-                        BufferedReader reader=new BufferedReader(new InputStreamReader(url.openStream()));
-                        String line=reader.readLine();
-                       
-                        String la=line;
-                        Pattern pa=Pattern.compile(",\"name\":\"(.*?)\",\"");
-                        Matcher ma=pa.matcher(la);
-                        String author = "";
-                        while (ma.find()){
-                            author+="/"+ma.group(1);
-                            la=la.substring(la.indexOf(ma.group(0))+ma.group(0).length());
-                            ma=pa.matcher(la);
+                        URL url=new URL("https://y.music.163.com/m/song?id="+id);
+                        HttpURLConnection c=(HttpURLConnection)url.openConnection();
+                        c.setDoInput(true);
+                        c.setDoOutput(true);
+                        c.setUseCaches(false);
+                        c.setRequestMethod("GET");
+                        BufferedReader r=new BufferedReader(new InputStreamReader(c.getInputStream()));
+                        String l;
+                        while((l=r.readLine())!=null){
+                            if(l.contains("window.REDUX_STATE")){
+                                l=l.substring(l.indexOf("=")+1);
+                                JSONObject o=new JSONObject(l);
+                                String ar=null;
+                                for (int i = 0; i < o.getJSONObject("Song").getJSONArray("ar").length(); i++) {
+                                    JSONObject o2=o.getJSONObject("Song").getJSONArray("ar").getJSONObject(i);
+                                    ar+="/"+o2.getString("name");
+                                }
+                                authormap.put(id,ar);
+                                String s1=o.getJSONObject("Song").getJSONObject("al").getString("picUrl");
+                                Bitmap b=BitmapFactory.decodeStream(new URL(s1).openStream());
+                                iconmap.put(id,b);
+                            }
                         }
-                        author=author.substring(1);
-                        authormap.put(id,author);
-                        
-                        String si="\"picUrl\":";
-                        String li=line.substring(line.indexOf(si));
-                        Pattern pi= Pattern.compile("http(.*?)jpg");
-                        Matcher mi=pi.matcher(li);
-                        mi.find();
-                        li = mi.group(0);
-                        url = new URL(li);
-                        Bitmap bitmap=BitmapFactory.decodeStream(url.openStream());
-                        iconmap.put(id,bitmap);
+//                        URL url=new URL(Detail + id);
+//                        BufferedReader reader=new BufferedReader(new InputStreamReader(url.openStream()));
+//                        String line=reader.readLine();
+//                       
+//                        String la=line;
+//                        Pattern pa=Pattern.compile(",\"name\":\"(.*?)\",\"");
+//                        Matcher ma=pa.matcher(la);
+//                        String author = "";
+//                        while (ma.find()){
+//                            author+="/"+ma.group(1);
+//                            la=la.substring(la.indexOf(ma.group(0))+ma.group(0).length());
+//                            ma=pa.matcher(la);
+//                        }
+//                        author=author.substring(1);
+//                        authormap.put(id,author);
+//                        
+//                        String si="\"picUrl\":";
+//                        String li=line.substring(line.indexOf(si));
+//                        Pattern pi= Pattern.compile("http(.*?)jpg");
+//                        Matcher mi=pi.matcher(li);
+//                        mi.find();
+//                        li = mi.group(0);
+//                        url = new URL(li);
+//                        Bitmap bitmap=BitmapFactory.decodeStream(url.openStream());
+//                        iconmap.put(id,bitmap);
                     } catch (Exception e) {
                     }
                 }

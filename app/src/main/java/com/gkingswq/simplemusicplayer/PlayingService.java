@@ -151,8 +151,8 @@ public class PlayingService extends Service {
             }
         });
 //        if(!id.contains("@")){
-//        view.setImageViewBitmap(R.id.nImage, GSong.getSquareIcon(id, 300));
-//        view.setTextViewText(R.id.nAuthor, GSong.getAuthor(id));}
+        view.setImageViewBitmap(R.id.nImage, GSong.getSquareIcon(id, 300));
+        view.setTextViewText(R.id.nAuthor, GSong.getAuthor(id));
         //view.setImageViewResource(R.id.nImage,R.drawable.gnzbky);
         //view.setImageViewBitmap(R.id.nImage,GSong.getSquareIcon(BitmapFactory.decodeResource(getResources(),R.drawable.img1),300));
         changeViewLoop();

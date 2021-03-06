@@ -70,6 +70,7 @@ import static com.gkingswq.simplemusicplayer.impl.MyApplicationImpl.mA;
 import static com.gkingswq.simplemusicplayer.impl.MyApplicationImpl.mB;
 import static com.gkingswq.simplemusicplayer.impl.MyApplicationImpl.mC;
 import static com.gkingswq.simplemusicplayer.impl.MyApplicationImpl.seekBar;
+import android.view.inputmethod.InputMethodManager;
 public class MainActivity extends Activity1 {
 	Map<Integer,File> lists=new HashMap<>();
 	File selectedFile;
@@ -204,6 +205,8 @@ public class MainActivity extends Activity1 {
 	class MyListener implements NavigationView.OnNavigationItemSelectedListener {
 		@Override
 		public boolean onNavigationItemSelected(MenuItem item) {
+            InputMethodManager imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(findViewById(R.id.main_searchName).getWindowToken(),0);
 			if (item.getItemId() == R.id.entrysettings) {
 				Intent intent = new Intent(MainActivity.this, Settings.class);
 				startActivity(intent);
