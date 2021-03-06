@@ -1,0 +1,6 @@
+
+cd /home/gking/SimpleMusicPlayer
+git add .
+git commit -m "update"
+git push -u origin master
+./auto.sh
