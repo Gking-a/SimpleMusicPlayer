@@ -117,12 +117,12 @@ public class GSong {
                         c.setUseCaches(false);
                         c.setRequestMethod("GET");
                         BufferedReader r=new BufferedReader(new InputStreamReader(c.getInputStream()));
-                        String l;
+                        String l="";
                         while((l=r.readLine())!=null){
                             if(l.contains("window.REDUX_STATE")){
                                 l=l.substring(l.indexOf("=")+1);
                                 JSONObject o=new JSONObject(l);
-                                String ar=null;
+                                String ar="";
                                 for (int i = 0; i < o.getJSONObject("Song").getJSONArray("ar").length(); i++) {
                                     JSONObject o2=o.getJSONObject("Song").getJSONArray("ar").getJSONObject(i);
                                     ar+="/"+o2.getString("name");
