@@ -78,10 +78,15 @@ public class MainActivity extends Activity1 {
 	DrawerLayout drawer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
+        
+        if(getIntent()!=null){
+            if(getIntent().getBooleanExtra("form_notification",false))
+                finish();
+        }
+        
 		setContentView(R.layout.activity_main);
-
+        
 		loadSettings();
 		findViews();
 

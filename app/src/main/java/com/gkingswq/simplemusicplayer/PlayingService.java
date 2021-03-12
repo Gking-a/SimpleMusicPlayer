@@ -193,7 +193,9 @@ public class PlayingService extends Service {
         }
     }
     private void layout_clickEvent(RemoteViews view) {
-        PendingIntent intent=PendingIntent.getActivity(this,2,new Intent(this,MainActivity.class),0);
+        Intent target=new Intent(this,MainActivity.class);
+        target.putExtra("form_notification",true);
+        PendingIntent intent=PendingIntent.getActivity(this,2,target,0);
         view.setOnClickPendingIntent(R.id.clickable_layout1,intent);
         view.setOnClickPendingIntent(R.id.clickable_layout2,intent);
         view.setOnClickPendingIntent(R.id.clickable_layout3,intent);
