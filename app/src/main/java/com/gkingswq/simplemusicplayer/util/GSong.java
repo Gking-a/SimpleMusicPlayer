@@ -20,8 +20,8 @@ import org.json.JSONObject;
 import static com.gkingswq.simplemusicplayer.Value.StringPool.*;
 import static com.gkingswq.simplemusicplayer.Value.Files._NAME;
 import android.graphics.BitmapFactory;
-
 public class GSong {
+    
     private GSong(){}
     public static Map<String,String> staticmap=new Hashtable<>();
     static{
