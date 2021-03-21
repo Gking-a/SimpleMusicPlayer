@@ -410,6 +410,8 @@ public class MainActivity extends Activity1 {
 	}
 	}*/
 	public void changeModeTitle(){
+        if(menuItem==null)
+            return;
         if(mFLAG==FLAG_RANDOM){
             menuItem.setTitle("随机");
         }else if(mFLAG==FLAG_SOLO){
