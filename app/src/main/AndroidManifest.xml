@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".About"/>
-        <activity android:name=".Settings">
+        <activity android:name=".MySettings">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
                 <category android:name="android.intent.category.OPENABLE"/>
