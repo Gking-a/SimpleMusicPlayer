@@ -9,8 +9,26 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="wrap_content"
-		android:text="SimpleMusicPlayer\nGking\n\nLoading"
-		android:layout_gravity="center"/>
+		android:text="SimpleMusicPlayer"
+		android:layout_gravity="center"
+		android:layout_marginTop="180dp"/>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="wrap_content"
+		android:text="Gking 2665241312@qq.com"
+		android:layout_gravity="center"
+		android:textSize="16sp"/>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:layout_width="wrap_content"
+		android:text="loading..."
+		android:layout_gravity="center"
+		android:layout_marginBottom="10dp"
+		android:layout_marginTop="150dp"/>
 
 </LinearLayout>
 
