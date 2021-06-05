@@ -1,6 +1,4 @@
-package GTools;
-
-import android.util.Log;
+package gtools;
 
 import java.io.*;
 import java.util.*;
@@ -111,7 +109,6 @@ public class GLibrary {
 		}
 
         }catch (Exception e){
-            Log.i("Lib connecting E",e.toString());
             isConnected=false;
         }
         return isConnected;
@@ -180,7 +177,6 @@ public class GLibrary {
     }
     public synchronized void save() throws IOException {
         if(!isConnected()){
-            Log.i("lib",getLibrary().getPath());
             throw new IOException("lib E");}
 //            return;
         f2=new FileWriter(library,false);
@@ -270,7 +266,6 @@ public class GLibrary {
         return LibsList;
     }
     public void close(){
-	    Log.i("lib close",getLibrary().getPath());
         try {
 			StringMap=null;
 			LibsMap=null;

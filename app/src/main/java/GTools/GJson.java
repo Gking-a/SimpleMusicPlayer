@@ -1,6 +1,4 @@
-package GTools;
-
-import android.util.Log;
+package gtools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,9 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GJson {
-//    public static void p(Object o) {
-//        System.out.println(o.toString());
-//    }
     private String line;
     private ValueClass nc;
     private ValueClass n0;
@@ -23,7 +18,6 @@ public class GJson {
         BufferedReader b=new BufferedReader(new InputStreamReader(inputStream));
         try {
             line=b.readLine();
-            Log.i("",line);
             b.close();
             inputStream.close();
             m=p.matcher(line);
@@ -179,16 +173,16 @@ public class GJson {
             m1(this,list,key);
             return list;
         }
-    }
-    public void m1(ValueClass vcs,ArrayList<String> list,String key){
-        if(vcs.kv.containsKey(key)){
-            list.add(vcs.kv.get(key));
-        }
-        for(ValueClass vc:vcs.kc.values()){
-            m1(vc,list,key);
-        }
-        for(ValueClass vc:vcs.ac){
-            m1(vc,list,key);
+        private void m1(ValueClass vcs,ArrayList<String> list,String key){
+            if(vcs.kv.containsKey(key)){
+                list.add(vcs.kv.get(key));
+            }
+            for(ValueClass vc:vcs.kc.values()){
+                m1(vc,list,key);
+            }
+            for(ValueClass vc:vcs.ac){
+                m1(vc,list,key);
+            }
         }
     }
     private int getMin(int... args){
