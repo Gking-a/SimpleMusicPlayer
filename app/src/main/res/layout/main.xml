@@ -5,28 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawer">
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-    </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-        <EditText
-            android:layout_margin="16dp"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        </com.google.android.material.appbar.AppBarLayout>
+        <EditText
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
             android:background="@drawable/circle_edit_background"
             android:id="@+id/searchEditText"/>
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="96dp"
             android:id="@+id/songLists"
