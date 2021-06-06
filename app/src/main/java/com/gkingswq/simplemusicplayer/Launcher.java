@@ -6,6 +6,9 @@ package com.gkingswq.simplemusicplayer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 
 public class Launcher extends Activity {
     
@@ -18,5 +21,7 @@ public class Launcher extends Activity {
         startActivity(intent);
         finish();
     }
-    private void loadResources(){}
+    private void loadResources(){
+        MyResources.nav_header_bg=new BitmapDrawable(BitmapFactory.decodeResource(getResources(),R.drawable.nav_header_bg));
+    }
 }

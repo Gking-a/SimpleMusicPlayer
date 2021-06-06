@@ -25,7 +25,7 @@
         android:resizeableActivity="false">
         <service android:name=".PlayingService"/>
         <service android:name=".ServiceA"/>
-        <activity android:name=".Receive">
+        <activity android:name=".Receiver">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
