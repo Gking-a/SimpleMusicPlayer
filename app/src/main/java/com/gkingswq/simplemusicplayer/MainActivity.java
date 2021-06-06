@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.EditText;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -44,5 +45,7 @@ public class MainActivity extends AppCompatActivity {
                     else{imm.hideSoftInputFromWindow(view.getWindowToken(),0);}
                 }
             });
+        DrawerLayout drawer=f(R.id.drawer);
+        drawer.requestFocus();
     }
 }
