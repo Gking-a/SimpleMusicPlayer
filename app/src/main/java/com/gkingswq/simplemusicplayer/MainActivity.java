@@ -12,40 +12,37 @@ import android.widget.EditText;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
     
     public static final String TAG = "MainActivity";
-    
+    EditText search;
+    RecyclerView recentSongs;
+    InputMethodManager imm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        loadViews();
+        load();
     }
     @Override
     protected void onStart() {
         super.onStart();
-        EditText search=f(R.id.searchEditText);
         search.clearFocus();
+        imm.hideSoftInputFromWindow(search.getWindowToken(),0);
     }
     
     public <T extends View> T f(int id) {
         return super.findViewById(id);
     }
-    private void loadViews(){
+    private void load(){
         Toolbar toolbar=f(R.id.toolbar);
         setSupportActionBar(toolbar);
-        EditText search=f(R.id.searchEditText);
-        search.setOnFocusChangeListener(new OnFocusChangeListener(){
-            InputMethodManager imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                @Override
-                public void onFocusChange(View view, boolean isFocused) {
-                    if(isFocused){}
-                    else{imm.hideSoftInputFromWindow(view.getWindowToken(),0);}
-                }
-            });
+        search=f(R.id.searchEditText);
         DrawerLayout drawer=f(R.id.drawer);
         drawer.requestFocus();
+        recentSongs=f(R.id.recentSongs);
+        imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
 }
