@@ -48,6 +48,7 @@ public class MyApplicationImpl extends Application
 				GLibraryManager.add(new GLibrary(file,true));
 		}
 	}
+    public void createFile(String name){}
     private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
 
         @Override
