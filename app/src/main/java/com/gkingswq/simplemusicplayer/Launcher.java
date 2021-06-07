@@ -25,7 +25,7 @@ public class Launcher extends Activity {
         finish();
     }
     private void loadResources(){
-        MyResources.nav_header_bg=new BitmapDrawable(
+        MyResources.nav_header_bg=new BitmapDrawable(getResources(),
             cutPicture(BitmapFactory.decodeResource(getResources(),R.drawable.nav_header_bg)));
         FW.w("d"+MyResources.nav_header_bg.getIntrinsicWidth()+" "+MyResources.nav_header_bg.getIntrinsicHeight());
     }
