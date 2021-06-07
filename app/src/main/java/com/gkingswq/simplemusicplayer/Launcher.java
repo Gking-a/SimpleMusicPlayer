@@ -35,7 +35,7 @@ public class Launcher extends Activity {
         double whW=GMath.getDec(width,height),
             whB=GMath.getDec(source.getWidth(),source.getHeight());
         Bitmap result;
-        if(whW==whB)return source;
+        if(whW==whB)return Bitmap.createScaledBitmap(source,width,height,true);
         if(whW<whB){
             int cutWidth=(int)(height*whB);
             int cutStart=(source.getWidth()-cutWidth)/2;
@@ -48,6 +48,9 @@ public class Launcher extends Activity {
         }
         FW.w("whw"+whW);
         result=Bitmap.createScaledBitmap(result,width,height,true);
+        FW.w("h"+height);
+        FW.w("sh"+result.getHeight());
+        FW.w("whb"+whB);
         return result;
     }
 }
