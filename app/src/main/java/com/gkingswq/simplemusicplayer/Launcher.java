@@ -19,15 +19,20 @@ public class Launcher extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launcher);
-        loadResources();
-        Intent intent=new Intent(this,MainActivity.class);
-        startActivity(intent);
-        finish();
     }
     private void loadResources(){
         MyResources.nav_header_bg=new BitmapDrawable(getResources(),
             cutPicture(BitmapFactory.decodeResource(getResources(),R.drawable.nav_header_bg2)));
         FW.w("d"+MyResources.nav_header_bg.getIntrinsicWidth()+" "+MyResources.nav_header_bg.getIntrinsicHeight());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadResources();
+        Intent intent=new Intent(this,MainActivity.class);
+        startActivity(intent);
+        finish();
     }
     private Bitmap cutPicture(Bitmap source){
         DisplayMetrics dm=getResources().getDisplayMetrics();
