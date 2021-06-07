@@ -48,11 +48,8 @@ public class Launcher extends Activity {
             int cutStart=(source.getHeight()-cutHeight)/2;
             result=Bitmap.createBitmap(source,0,cutStart,source.getWidth(),cutHeight);
         }
-        FW.w("whw"+whW);
         result=Bitmap.createScaledBitmap(result,width,height,true);
-        FW.w("h"+height);
-        FW.w("sh"+result.getHeight());
-        FW.w("whb"+whB);
+        FW.w("r"+result.getWidth()+" "+result.getHeight()+" "+GMath.getDec(result.getWidth(),result.getHeight()));
         return result;
     }
 }
