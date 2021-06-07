@@ -13,10 +13,8 @@
         android:layout_gravity="left"
         android:gravity="left"
         android:fitsSystemWindows="true"
-        app:menu="@menu/nav"
         android:id="@+id/nav"
         app:headerLayout="@layout/nav_header"/>
-
     <LinearLayout
         android:focusable="true"
         android:focusableInTouchMode="true"

@@ -36,9 +36,8 @@ public class MainActivity extends BaseActivity {
         search=f(R.id.searchEditText);
         recentSongs=f(R.id.recentSongs);
         nav=f(R.id.nav);
-        nav.getHeaderView(0).
-            findViewById(R.id.nav_headerLayout).
-            setBackground(MyResources.nav_header_bg);
-        
+        View header=nav.getHeaderView(0).
+            findViewById(R.id.nav_headerLayout);
+        header.setBackground(MyResources.nav_header_bg);
     }
 }
