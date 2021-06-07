@@ -34,6 +34,8 @@ public class Launcher extends Activity {
             width=(int)(480*dm.density);
         double whW=GMath.getDec(width,height),
             whB=GMath.getDec(source.getWidth(),source.getHeight());
+        FW.w("w"+width+" "+height+" "+whW);
+        FW.w("sw"+source.getWidth()+" "+source.getHeight()+" "+whB);
         Bitmap result;
         if(whW==whB)return Bitmap.createScaledBitmap(source,width,height,true);
         if(whW<whB){
