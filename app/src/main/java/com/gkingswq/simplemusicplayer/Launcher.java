@@ -31,7 +31,7 @@ public class Launcher extends Activity {
     private Bitmap cutPicture(Bitmap source){
         DisplayMetrics dm=getResources().getDisplayMetrics();
         int height=dm.heightPixels,
-            width=(int)(480*dm.density);
+            width=(int)(280*dm.density);
         double whW=GMath.getDec(width,height),
             whB=GMath.getDec(source.getWidth(),source.getHeight());
         FW.w("w"+width+" "+height+" "+whW);
