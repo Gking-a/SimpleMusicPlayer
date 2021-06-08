@@ -45,12 +45,12 @@ public class Launcher extends Activity {
         Bitmap result;
         if(whW==whB)return Bitmap.createScaledBitmap(source,width,height,true);
         if(whW<whB){
-            int cutWidth=(int)(height*whB);
+            int cutWidth=(int)(source.getHeight()*whB);
             int cutStart=(source.getWidth()-cutWidth)/2;
             result=Bitmap.createBitmap(source,cutStart,0,cutWidth,source.getHeight());
         }
         else{
-            int cutHeight=(int)GMath.getDec(width,whB);
+            int cutHeight=(int)GMath.getDec(source.getWidth(),whB);
             int cutStart=(source.getHeight()-cutHeight)/2;
             result=Bitmap.createBitmap(source,0,cutStart,source.getWidth(),cutHeight);
         }
