@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 import com.gkingswq.simplemusicplayer.util.FW;
 import com.gkingswq.simplemusicplayer.util.GMath;
+import android.content.Context;
 
 public class Launcher extends Activity {
     
@@ -19,21 +20,22 @@ public class Launcher extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launcher);
+        new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    loadResources();
+                    Intent intent=new Intent(getContext(),MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }).start();
     }
     private void loadResources(){
         MyResources.nav_header_bg=new BitmapDrawable(getResources(),
             cutPicture(BitmapFactory.decodeResource(getResources(),R.drawable.nav_header_bg2)));
         FW.w("d"+MyResources.nav_header_bg.getIntrinsicWidth()+" "+MyResources.nav_header_bg.getIntrinsicHeight());
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        loadResources();
-        Intent intent=new Intent(this,MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
+    
     private Bitmap cutPicture(Bitmap source){
         DisplayMetrics dm=getResources().getDisplayMetrics();
         int height=dm.heightPixels,
@@ -58,5 +60,8 @@ public class Launcher extends Activity {
         result=Bitmap.createScaledBitmap(result,width,height,true);
         ;
         return result;
+    }
+    public Context getContext(){
+        return this;
     }
 }
