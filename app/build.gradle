@@ -6,20 +6,12 @@ android {
     android { compileOptions.encoding = "UTF-8" }//解决build output输出乱码的问题
     defaultConfig {
         applicationId "com.gkingswq.simplemusicplayer"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "b1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-//    signingConfigs {
-//        debug {
-//            storeFile file("/home/runner/work/SimpleMusicPlayer/SimpleMusicPlayer/debug.keystore")
-//            storePassword "gking"
-//            keyAlias "aidekey"
-//            keyPassword "gking"
-//        }
-//    }
     buildTypes {
         release {
             minifyEnabled false
