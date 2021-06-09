@@ -47,18 +47,16 @@ public class Launcher extends Activity {
         Bitmap result;
         if(whW==whB)return Bitmap.createScaledBitmap(source,width,height,true);
         if(whW<whB){
-            int cutWidth=(int)(source.getHeight()*whB);
-            int cutStart=(source.getWidth()-cutWidth)/2;
-            result=Bitmap.createBitmap(source,cutStart,0,cutWidth,source.getHeight());
+            source=Bitmap.createScaledBitmap(source,(int)(source.getWidth()*GMath.getDec(height,source.getHeight())),height,true);
+            int cutStart=(source.getWidth()-width)/2;
+            result=Bitmap.createBitmap(source,cutStart,0,width,height);
         }
         else{
-            int cutHeight=(int)GMath.getDec(source.getWidth(),whB);
-            int cutStart=(source.getHeight()-cutHeight)/2;
-            result=Bitmap.createBitmap(source,0,cutStart,source.getWidth(),cutHeight);
+            source=Bitmap.createScaledBitmap(source,width,(int)(source.getHeight()*GMath.getDec(height,source.getHeight())),true);
+            int cutStart=(source.getHeight()-height)/2;
+            result=Bitmap.createBitmap(source,0,cutStart,width,height);
         }
         FW.w("r"+result.getWidth()+" "+result.getHeight()+" "+GMath.getDec(result.getWidth(),result.getHeight()));
-        result=Bitmap.createScaledBitmap(result,width,height,true);
-        ;
         return result;
     }
     public Context getContext(){
