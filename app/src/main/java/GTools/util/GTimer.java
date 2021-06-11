@@ -16,7 +16,10 @@ public class GTimer
     public long getRise(){
         return System.currentTimeMillis()-t1;
     }
-    public boolean compare(long t){
+    public boolean compareBigger(long t){
         return System.currentTimeMillis()-t1>t;
+    }
+    public void reset(){
+        t1=System.currentTimeMillis();
     }
 }

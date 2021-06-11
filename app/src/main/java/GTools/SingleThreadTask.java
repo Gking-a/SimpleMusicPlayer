@@ -38,7 +38,7 @@ public class SingleThreadTask
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {}
-            }while(!timer.compare(outTime));
+            }while(!timer.compareBigger(outTime));
             return null;
         }
         public static void setThreadLength(int length){
