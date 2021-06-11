@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
     GTimer timer=new GTimer();
     @Override
     public void onBackPressed() {
-        if(timer.compareBigger(1000))super.onBackPressed();
+        if(!timer.compareBigger(1000))super.onBackPressed();
         if(drawerLayout.isOpen())drawerLayout.close();
         else drawerLayout.open();
         timer.reset();
