@@ -1,4 +1,4 @@
-package com.gkingswq.simplemusicplayer.util;
+package com.gking.simplemusicplayer.util;
 
 import java.io.FileWriter;
 import java.io.IOException;

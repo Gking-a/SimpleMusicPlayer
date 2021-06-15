@@ -2,7 +2,7 @@
  *@time 2020.6.11 13:11
  */
 
-package com.gkingswq.simplemusicplayer.util;
+package com.gking.simplemusicplayer.util;
 import gtools.managers.GHolder;
 
 public class GCounting {

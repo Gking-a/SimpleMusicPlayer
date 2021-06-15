@@ -1,7 +1,7 @@
 /*
  */
 
-package com.gkingswq.simplemusicplayer;
+package com.gking.simplemusicplayer;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,8 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
-import com.gkingswq.simplemusicplayer.util.FW;
-import com.gkingswq.simplemusicplayer.util.GMath;
+import com.gking.simplemusicplayer.util.FW;
+import com.gking.simplemusicplayer.util.GMath;
 import android.content.Context;
 
 public class Launcher extends Activity {

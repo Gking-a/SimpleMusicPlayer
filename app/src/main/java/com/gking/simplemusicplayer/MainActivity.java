@@ -1,21 +1,21 @@
 /*
  */
 
-package com.gkingswq.simplemusicplayer;
+package com.gking.simplemusicplayer;
 
-import android.app.Activity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import com.gkingswq.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.base.BaseActivity;
 import com.google.android.material.navigation.NavigationView;
-import com.gkingswq.simplemusicplayer.util.GCounting;
+
 import gtools.util.GTimer;
 
 public class MainActivity extends BaseActivity {
+
     private static final String Count_openedDrawer="openedDrawer";
     public static final String TAG = "MainActivity";
     EditText search;

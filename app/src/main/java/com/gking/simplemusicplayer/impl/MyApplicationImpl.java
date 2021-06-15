@@ -1,4 +1,4 @@
-package com.gkingswq.simplemusicplayer.impl;
+package com.gking.simplemusicplayer.impl;
 
 import gtools.GLibrary;
 import gtools.managers.GLibraryManager;
@@ -9,9 +9,9 @@ import java.util.Objects;
 import android.app.Application;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.gkingswq.simplemusicplayer.util.FW;
+import com.gking.simplemusicplayer.util.FW;
 import java.util.Date;
-import static com.gkingswq.simplemusicplayer.MySettings.*;
+import static com.gking.simplemusicplayer.MySettings.*;
 public class MyApplicationImpl extends Application
 {
 

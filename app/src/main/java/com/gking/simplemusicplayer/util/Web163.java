@@ -1,7 +1,7 @@
 /*
  */
 
-package com.gkingswq.simplemusicplayer.util;
+package com.gking.simplemusicplayer.util;
 import java.util.HashMap;
 import java.util.List;
 import java.math.BigInteger;

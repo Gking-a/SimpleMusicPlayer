@@ -2,7 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.gkingswq.simplemusicplayer">
+    package="com.gking.simplemusicplayer">
     <!-- 修改或删除您的 SD 卡中的内容 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 完全的网络访问权限 -->
@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
-        android:name=".impl.MyApplicationImpl"
+        android:name="com.gking.simplemusicplayer.impl.MyApplicationImpl"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,7 +25,7 @@
         android:resizeableActivity="false">
         <service android:name=".PlayingService"/>
         <service android:name=".ServiceA"/>
-        <activity android:name=".Receiver">
+        <activity android:name="com.gking.simplemusicplayer.Receiver">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -33,9 +33,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Search"/>
-        <activity android:name=".MainActivity"/>
+        <activity android:name="com.gking.simplemusicplayer.MainActivity"/>
         <activity
-            android:name=".Launcher"
+            android:name="com.gking.simplemusicplayer.Launcher"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".About"/>
-        <activity android:name=".MySettings">
+        <activity android:name="com.gking.simplemusicplayer.MySettings">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
                 <category android:name="android.intent.category.OPENABLE"/>

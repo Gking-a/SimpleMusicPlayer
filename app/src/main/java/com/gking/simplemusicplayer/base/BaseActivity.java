@@ -1,7 +1,7 @@
 /*
  */
 
-package com.gkingswq.simplemusicplayer.base;
+package com.gking.simplemusicplayer.base;
 
 import android.os.Bundle;
 import android.view.View;

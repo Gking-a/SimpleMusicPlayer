@@ -1,8 +1,7 @@
 /*
  */
 
-package com.gkingswq.simplemusicplayer;
-import android.graphics.Bitmap;
+package com.gking.simplemusicplayer;
 import android.graphics.drawable.BitmapDrawable;
 
 public class MyResources {
