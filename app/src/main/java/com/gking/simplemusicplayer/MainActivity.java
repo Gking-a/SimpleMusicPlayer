@@ -13,6 +13,8 @@ import com.gking.simplemusicplayer.base.BaseActivity;
 import com.google.android.material.navigation.NavigationView;
 
 import gtools.util.GTimer;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class MainActivity extends BaseActivity {
 
@@ -53,7 +55,13 @@ public class MainActivity extends BaseActivity {
         load2();
     }
     private void load2(){
-        
+        OkHttpClient okHttpClient=new OkHttpClient();
+        Request request=new Request.Builder()
+                .url("https://music.163.com/weapi/w/login/cellphone?csrf_token=")
+                .header("Accept" ,"*/*")
+                .header("Accept-Encoding","gzip, deflate, br")
+                .header()
+
     }
     
 }
