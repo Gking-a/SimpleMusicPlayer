@@ -69,7 +69,7 @@ public class Proxy {
     public boolean restart(){
         runtimeThread=SingleThreadTask.ThreadManager.require(this,3*1000);
         if(runtimeThread!=null){
-            runtimeThread.setPxory(this);
+            runtimeThread.setProxy(this);
             return true;
         }
         return false;

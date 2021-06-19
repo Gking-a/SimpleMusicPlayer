@@ -12,6 +12,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
@@ -23,25 +24,29 @@ import org.json.JSONObject;
 import com.gking.simplemusicplayer.util.CopyWeb;
 import org.json.JSONException;
 import com.gking.simplemusicplayer.util.FW;
+import com.gking.simplemusicplayer.util.GFile;
 import com.gking.simplemusicplayer.util.UnCrypt;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import gtools.GLibrary;
+import gtools.managers.GLibraryManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.Playlists;
+
 public class Receiver extends Activity {
     public static final String TAG="Receiver";
-    public static final File CoverImg=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/CoverImg/");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!CoverImg.exists())CoverImg.mkdirs();
         Intent ti=getIntent();
         String action=ti.getAction();
         String type=ti.getType();
@@ -51,7 +56,7 @@ public class Receiver extends Activity {
 //        }
         uid = ti.getStringExtra(Intent.EXTRA_TEXT);
         //http://music.163.com/playlist/6606033030/1607939711/?userid=1607939711 
-        Pattern idPattern1=Pattern.compile("userid=(.*?)");
+        Pattern idPattern1=Pattern.compile("userid=(.*) \\(");
         Matcher matcher=idPattern1.matcher(uid);
         if(matcher.find()){
             final String Uid=uid=matcher.group(1);
@@ -63,9 +68,10 @@ public class Receiver extends Activity {
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.i(TAG,response.body().string());
+                    String body=response.body().string();
+                    Log.i(TAG,body);
                     JsonParser jsonParser=new JsonParser();
-                    JsonArray array=jsonParser.parse(response.body().string()).getAsJsonObject().get("playlist").getAsJsonArray();
+                    JsonArray array=jsonParser.parse(body).getAsJsonObject().get("playlist").getAsJsonArray();
                     Iterator<JsonElement> iterator=array.iterator();
                     while (iterator.hasNext()){
                         JsonObject jsonObject=iterator.next().getAsJsonObject();
@@ -73,11 +79,19 @@ public class Receiver extends Activity {
                         String coverImgId=jsonObject.get("coverImgId").getAsString();
                         String id=jsonObject.get("id").getAsString();
                         String userId=jsonObject.get("userId").getAsString();
+                        String name=jsonObject.get("name").getAsString();
                         if(Uid.equals(userId)){
                             Bitmap image= BitmapFactory.decodeStream(new URL(coverImgUrl).openStream());
-                            File coverImgFile=new File(CoverImg,coverImgId);
+                            File coverImgFile=new File(CoverImg,coverImgId+".jpeg");
                             image.compress(Bitmap.CompressFormat.JPEG,100,new FileOutputStream(coverImgFile));
-
+                            File playlistFile = new File(Playlists, id);
+                            GFile.createFile(playlistFile);
+                            GLibrary gLibrary=new GLibrary(playlistFile,true);
+                            gLibrary.add("name",name,GLibrary.TYPE_STRING);
+                            gLibrary.add("coverImgId",coverImgId,GLibrary.TYPE_STRING);
+                            gLibrary.add("id",id,GLibrary.TYPE_STRING);
+                            gLibrary.save();
+                            GLibraryManager.add(gLibrary);
                         }
                     }
                     finish();
@@ -90,7 +104,6 @@ public class Receiver extends Activity {
             });
 
         }
-        finish();
     }
     
 }

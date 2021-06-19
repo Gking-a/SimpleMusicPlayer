@@ -1,5 +1,7 @@
 package gtools;
 
+import gtools.managers.GHolder;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -318,6 +320,22 @@ public class GLibrary {
 		set.toArray(result);
 		return result;
 	}
+	public GHolder toGHolder(){
+        GHolder gHolder=new GHolder();
+        for (String sign:StringList.keySet()) {
+            gHolder.add(sign,StringList.get(sign));
+        }
+        for (String sign:StringMap.keySet()) {
+            gHolder.add(sign,StringMap.get(sign));
+        }
+        for (String sign:LibsList.keySet()) {
+            gHolder.add(sign,LibsList.get(sign));
+        }
+        for (String sign:LibsMap.keySet()) {
+            gHolder.add(sign,LibsMap.get(sign));
+        }
+        return gHolder;
+    }
 	public void delete(){
 		library.delete();
 	}

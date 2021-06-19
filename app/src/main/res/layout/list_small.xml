@@ -3,25 +3,25 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="96dp"
+	android:id="@+id/list_small_layout"
+	android:clickable="true"
+	android:focusableInTouchMode="true"
+	android:focusable="true"
 	android:layout_height="96dp">
 
 	<ImageView
 		android:id="@+id/list_small_icon"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:layout_marginTop="10dp"
-		android:layout_marginStart="10dp"
-		android:layout_marginEnd="10dp"
-		android:paddingBottom="56dp"/>
+		android:layout_width="80dp"
+		android:layout_height="80dp"
+		android:layout_gravity="center" />
 
 	<TextView
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="96dp"
 		android:gravity="center"
 		android:layout_gravity="center"
 		android:id="@+id/list_small_title"
-		android:textSize="12sp"/>
+		android:textSize="14sp"/>
 
 </LinearLayout>
 

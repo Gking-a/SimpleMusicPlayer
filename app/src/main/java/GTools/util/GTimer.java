@@ -19,7 +19,5 @@ public class GTimer
     public boolean compareBigger(long t){
         return System.currentTimeMillis()-t1>t;
     }
-    public void reset(){
-        t1=System.currentTimeMillis();
-    }
+    public void reset(){t1=System.currentTimeMillis();}
 }

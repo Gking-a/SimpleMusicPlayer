@@ -3,7 +3,7 @@ import gtools.managers.GHolder;
 public class RuntimeThread extends Thread{
     Proxy proxy;
     private boolean isReleased=false;
-    public void setPxory(Proxy p){
+    public void setProxy(Proxy p){
         this.proxy=p;
     }
     public Proxy getProxy(){
@@ -19,8 +19,8 @@ public class RuntimeThread extends Thread{
             }
             if(proxy!=null){
                 GHolder args;
-                if((args=proxy.getTask())!=null){
-                    proxy.getInstance().execute(args);
+                if(proxy.getQueue().size()!=0&&(args=proxy.getTask())!=null){
+                    proxy.newInstance().execute(args);
                     if(proxy.finished()){
                         proxy=null;
                     }

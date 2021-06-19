@@ -10,11 +10,15 @@ import android.app.Application;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.gking.simplemusicplayer.util.FW;
+import com.gking.simplemusicplayer.util.GFile;
+
 import java.util.Date;
 import static com.gking.simplemusicplayer.MySettings.*;
 public class MyApplicationImpl extends Application
 {
-
+	public static final File CoverImg=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/CoverImg/");
+	public static final File Playlists=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Playlists/");
+//	public static final File Index=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Index");
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,13 +46,12 @@ public class MyApplicationImpl extends Application
 			} catch (IOException e) {
             }
 		}
-		
+		GFile.createDirs(CoverImg,Playlists);
 		for (File file: Objects.requireNonNull(getFilesDir().listFiles())){
 			if(file.isFile())
 				GLibraryManager.add(new GLibrary(file,true));
 		}
 	}
-    public void createFile(String name){}
     private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
 
         @Override
