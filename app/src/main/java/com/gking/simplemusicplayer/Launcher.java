@@ -10,11 +10,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
+
+import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GMath;
 import android.content.Context;
 
-public class Launcher extends Activity {
+import java.io.File;
+
+import gtools.managers.GHolder;
+
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
+
+public class Launcher extends BaseActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +42,10 @@ public class Launcher extends Activity {
     private void loadResources(){
         MyResources.nav_header_bg=new BitmapDrawable(getResources(),
             cutPicture(BitmapFactory.decodeResource(getResources(),R.drawable.zsjlnj)));
-        FW.w("d"+MyResources.nav_header_bg.getIntrinsicWidth()+" "+MyResources.nav_header_bg.getIntrinsicHeight());
+        super.loadPictures();
+//        FW.w("d"+MyResources.nav_header_bg.getIntrinsicWidth()+" "+MyResources.nav_header_bg.getIntrinsicHeight());
     }
-    
+
     private Bitmap cutPicture(Bitmap source){
         DisplayMetrics dm=getResources().getDisplayMetrics();
         int height=dm.heightPixels,
