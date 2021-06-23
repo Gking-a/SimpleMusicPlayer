@@ -1,7 +1,7 @@
 /*
  */
 
-package com.gking.simplemusicplayer;
+package com.gking.simplemusicplayer.activity;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+
+import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.util.CopyWeb;
 import org.json.JSONException;
 import com.gking.simplemusicplayer.util.FW;

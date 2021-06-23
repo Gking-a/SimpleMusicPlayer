@@ -1,8 +1,9 @@
 /*
  */
 
-package com.gking.simplemusicplayer;
+package com.gking.simplemusicplayer.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,6 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gking.simplemusicplayer.MyResources;
+import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.google.android.material.navigation.NavigationView;
 
@@ -38,9 +41,10 @@ public class MainActivity extends BaseActivity {
     DrawerLayout drawerLayout;
     LinearLayout playlistView;
     GHolder<String,Bitmap> pictures;
-    @Override
+    @SuppressLint("MissingSuperCall")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContext(this);
         setContentView(R.layout.main);
         load();
     }
@@ -64,13 +68,11 @@ public class MainActivity extends BaseActivity {
                 playlistView.addView(layout);
             }
         }
-
     }
     private void reloadOnStart() {
         if(pictures.getIds().size()!=CoverImg.list().length)
             super.loadPictures();
     }
-
 
     private void load(){
         Toolbar toolbar=f(R.id.toolbar);
@@ -79,9 +81,22 @@ public class MainActivity extends BaseActivity {
         recentSongs=f(R.id.recentSongs);
         nav=f(R.id.nav);
         drawerLayout=f(R.id.drawer);
-        View header=nav.getHeaderView(0).
+        LinearLayout header=nav.getHeaderView(0).
             findViewById(R.id.nav_headerLayout);
         header.setBackground(MyResources.nav_header_bg);
+        TextView textView=new TextView(this);
+        if(MySettings.get(MySettings.login)!=null){
+            textView.setText(MySettings.get(MySettings.login));
+        }else textView.setText("登录");
+        header.addView(textView);
+        header.setClickable(true);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getContext(),Login_cellphone.class);
+                startActivity(intent);
+            }
+        });
         playlistView=f(R.id.songLists);
 
         load2();

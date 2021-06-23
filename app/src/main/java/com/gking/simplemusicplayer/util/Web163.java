@@ -2,16 +2,27 @@
  */
 
 package com.gking.simplemusicplayer.util;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.math.BigInteger;
-import java.util.Collections;
+import java.util.Map;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.Arrays;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
+
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+
 public class Web163 {
     private static final String modulus = "00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7";
     private static final String nonce = "0CoJUm6Qyw8W8jud";
@@ -56,14 +67,19 @@ public class Web163 {
      * @return
      * @throws Exception
      */
-    public static String aesEncrypt(String sSrc, String sKey) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] raw = sKey.getBytes();
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        IvParameterSpec iv = new IvParameterSpec("0102030405060708".getBytes());//使用CBC模式，需要一个向量iv，可增加加密算法的强度
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
-        return new Base64().encodeToString(encrypted);//此处使用BASE64做转码。
+    public static String aesEncrypt(String sSrc, String sKey){
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            byte[] raw = sKey.getBytes();
+            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+            IvParameterSpec iv = new IvParameterSpec("0102030405060708".getBytes());//使用CBC模式，需要一个向量iv，可增加加密算法的强度
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+            byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
+            return new Base64().encodeToString(encrypted);//此处使用BASE64做转码。
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
     /**
      * 截取长度
@@ -128,7 +144,7 @@ public class Web163 {
      * @return
      * @throws Exception
      */
-    public static HashMap<String,String> encrypt(String paras) throws Exception {
+    public static HashMap<String,String> encrypt(String paras) {
         System.err.println(paras);
         String secKey = createSecreKey(16);
         String encText = aesEncrypt(aesEncrypt(paras,nonce),secKey);
@@ -137,6 +153,34 @@ public class Web163 {
         datas.put("params",encText);
         datas.put("encSecKey",encSecKey);
         return datas;
+    }
+    public static void post(String url, Map<String,String> params, String cookie, Callback callback){
+        OkHttpClient client=new OkHttpClient();
+        Headers headers=new Headers.Builder()
+                .add("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0")
+                .add("Content-Type","application/x-www-form-urlencoded")
+                .add("Referer","https://music.163.com")
+                .add("Cookie",cookie)
+                .build();
+        FormBody.Builder builder =new FormBody.Builder();
+        for(String key:params.keySet()){
+            builder.add(key,params.get(key));
+        }
+        Request request=new Request.Builder()
+                .url(url)
+                .headers(headers)
+                .post(builder.build())
+                .build();
+        client.newCall(request)
+                .enqueue(callback);
+    }
+    static {
+        Map<String,String> header=new HashMap<>();
+        header.put("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0");
+        header.put("Content-Type","application/x-www-form-urlencoded");
+        header.put("Referer","https://music.163.com");
+        header.put("Cookie","os=pc");
+
     }
 }
 

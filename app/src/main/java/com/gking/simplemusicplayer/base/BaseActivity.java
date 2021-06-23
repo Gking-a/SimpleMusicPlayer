@@ -3,12 +3,15 @@
 
 package com.gking.simplemusicplayer.base;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
@@ -18,11 +21,6 @@ import gtools.managers.GHolder;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
     public <T extends View> T f(int id) {
         return super.findViewById(id);
     }
@@ -45,4 +43,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         GHolder.standardInstance.add("PlaylistPictures",gHolder);
         System.gc();
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    Context context;
+
 }

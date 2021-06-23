@@ -1,9 +1,8 @@
 /*
  */
 
-package com.gking.simplemusicplayer;
+package com.gking.simplemusicplayer.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,17 +10,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
 
+import com.gking.simplemusicplayer.MyResources;
+import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GMath;
 import android.content.Context;
-
-import java.io.File;
-
-import gtools.managers.GHolder;
-
-import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
 
 public class Launcher extends BaseActivity {
     

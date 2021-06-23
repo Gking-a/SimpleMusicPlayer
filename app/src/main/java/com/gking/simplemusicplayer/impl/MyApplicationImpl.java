@@ -2,10 +2,10 @@ package com.gking.simplemusicplayer.impl;
 
 import gtools.GLibrary;
 import gtools.managers.GLibraryManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-//import com.rey.material.widget.Slider;
 import android.app.Application;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -13,12 +13,13 @@ import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GFile;
 
 import java.util.Date;
-import static com.gking.simplemusicplayer.MySettings.*;
+import static com.gking.simplemusicplayer.activity.MySettings.*;
 public class MyApplicationImpl extends Application
 {
 	public static final File CoverImg=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/CoverImg/");
 	public static final File Playlists=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Playlists/");
-//	public static final File Index=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Index");
+	public static final File Cookies=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Cookies/");
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -46,7 +47,7 @@ public class MyApplicationImpl extends Application
 			} catch (IOException e) {
             }
 		}
-		GFile.createDirs(CoverImg,Playlists);
+		GFile.createDirs(CoverImg,Playlists, Cookies);
 		for (File file: Objects.requireNonNull(getFilesDir().listFiles())){
 			if(file.isFile())
 				GLibraryManager.add(new GLibrary(file,true));
