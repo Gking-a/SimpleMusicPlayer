@@ -18,7 +18,7 @@ public class WebRequest {
         jsonObject.addProperty("csrf_token", "");
         HashMap<String, String> data = Web163.encrypt(jsonObject.toString());
         replace(data, "params", encode(data.get("params")));
-        Web163.post(URLs.cellphone, data, "os=pc", callback);
+        Web163.post(URLs.login_cellphone, data, "os=pc", callback);
     }
     static HashMap<String,String> en=new HashMap<>();
     static {
