@@ -21,7 +21,7 @@ public class MySettings extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    static GLibrary library= GLibraryManager.getLib(SettingsFile);
+    static GLibrary library= new GLibrary(SettingsFile,true);
     public static String get(String key){
         return library.get(key);
     }

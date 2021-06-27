@@ -3,9 +3,15 @@ package com.gking.simplemusicplayer.util;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 
 public class WebRequest {
@@ -16,9 +22,17 @@ public class WebRequest {
         jsonObject.addProperty("rememberLogin", true);
         jsonObject.addProperty("countrycode", 86);
         jsonObject.addProperty("csrf_token", "");
-        HashMap<String, String> data = Web163.encrypt(jsonObject.toString());
-        replace(data, "params", encode(data.get("params")));
-        Web163.post(URLs.login_cellphone, data, "os=pc", callback);
+        post(URLs.login_cellphone, jsonObject, "os=pc", callback);
+    }
+    public static void user_playlist(String uid,int limit,int offset, List<Cookie> cookies){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("uid",uid);
+        jsonObject.addProperty("limit",limit);
+        jsonObject.addProperty("offset",offset);
+//        post(URLs.user_playlist,jsonObject,);
+    }
+    public static void user_playlist(String uid, List<Cookie> cookies){
+        user_playlist(uid,100,0,cookies);
     }
     static HashMap<String,String> en=new HashMap<>();
     static {
@@ -35,5 +49,29 @@ public class WebRequest {
     public static void replace(Map map,String key,String value){
         map.remove(key);
         map.put(key,value);
+    }
+    public static void post(String url, JsonObject params, String cookie, Callback callback){
+        HashMap<String, String> data = Web163.encrypt(params.toString());
+        replace(data, "params", encode(data.get("params")));
+        OkHttpClient client=new OkHttpClient.Builder()
+                .cookieJar(new MyCookieJar())
+                .build();
+        Headers headers=new Headers.Builder()
+                .add("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0")
+                .add("Content-Type","application/x-www-form-urlencoded")
+                .add("Referer","https://music.163.com")
+                .add("Cookie",cookie)
+                .build();
+        FormBody.Builder builder =new FormBody.Builder();
+        for(String key:params.keySet()){
+            builder.add(key,data.get(key));
+        }
+        Request request=new Request.Builder()
+                .url(url)
+                .headers(headers)
+                .post(builder.build())
+                .build();
+        client.newCall(request)
+                .enqueue(callback);
     }
 }

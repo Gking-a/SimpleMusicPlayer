@@ -154,26 +154,7 @@ public class Web163 {
         datas.put("encSecKey",encSecKey);
         return datas;
     }
-    public static void post(String url, Map<String,String> params, String cookie, Callback callback){
-        OkHttpClient client=new OkHttpClient();
-        Headers headers=new Headers.Builder()
-                .add("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0")
-                .add("Content-Type","application/x-www-form-urlencoded")
-                .add("Referer","https://music.163.com")
-                .add("Cookie",cookie)
-                .build();
-        FormBody.Builder builder =new FormBody.Builder();
-        for(String key:params.keySet()){
-            builder.add(key,params.get(key));
-        }
-        Request request=new Request.Builder()
-                .url(url)
-                .headers(headers)
-                .post(builder.build())
-                .build();
-        client.newCall(request)
-                .enqueue(callback);
-    }
+
     static {
         Map<String,String> header=new HashMap<>();
         header.put("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0");
