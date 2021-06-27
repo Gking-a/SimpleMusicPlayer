@@ -52,8 +52,7 @@ public class MainActivity extends BaseActivity {
         playlistView=f(R.id.songLists);
         nav=f(R.id.nav);
         drawerLayout=f(R.id.drawer);
-        LinearLayout header=nav.getHeaderView(0).
-            findViewById(R.id.nav_headerLayout);
+        View header=nav.inflateHeaderView(R.layout.nav_header);
         header.setBackground(MyResources.nav_header_bg);
         RecyclerView recyclerView=header.findViewById(R.id.headerContent);
         List<GHolder<Object,String>> items=new ArrayList<>();
@@ -63,7 +62,7 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         RecyclerViewAdapter adapter=new RecyclerViewAdapter(this,items);
         recyclerView.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
         load2();
     }
     private void load2(){

@@ -23,7 +23,7 @@ public class MyApplicationImpl extends Application
     @Override
     public void onCreate() {
         super.onCreate();
-//        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadSettings();
     }
     

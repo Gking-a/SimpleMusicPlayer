@@ -18,7 +18,7 @@ import java.util.List;
 
 import gtools.managers.GHolder;
 
-public class RecyclerViewAdapter<VHolder> extends RecyclerView.Adapter<RecyclerViewAdapter.VHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.VHolder> {
     List<GHolder<Object,String>> content;
     Context context;
     public RecyclerViewAdapter(Context context,List<GHolder<Object,String>> content){
