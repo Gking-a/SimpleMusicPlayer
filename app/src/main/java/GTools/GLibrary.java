@@ -25,7 +25,7 @@ public class GLibrary {
 	private String name;
     private FileWriter f2;
 	public GLibrary(File file){
-	    this(file.getName(),file);
+	    this(file.getName(),file,true);
     }
     public GLibrary(File file,boolean connect){
         this(file.getName(),file,connect);

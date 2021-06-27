@@ -23,15 +23,12 @@ public class Launcher extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launcher);
-        new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    loadResources();
-                    Intent intent=new Intent(getContext(),MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }).start();
+        new Thread(() -> {
+            loadResources();
+            Intent intent=new Intent(getContext(),MainActivity.class);
+            startActivity(intent);
+            finish();
+        }).start();
     }
     private void loadResources(){
         MyResources.nav_header_bg=new BitmapDrawable(getResources(),

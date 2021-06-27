@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         RecyclerViewAdapter adapter=new RecyclerViewAdapter(this,items);
         recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
         load2();
     }
     private void load2(){
