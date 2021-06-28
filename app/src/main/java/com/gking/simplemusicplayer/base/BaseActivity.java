@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,4 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     Context context;
 
+    public void makeToast(Object msg){
+        Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_LONG).show();
+    }
 }

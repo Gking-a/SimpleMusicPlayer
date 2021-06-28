@@ -1,30 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-        android:id="@+id/entryexit"
-        android:title="退出"
-        android:icon="@drawable/exit_to_app"/>
-    <item
-        android:id="@+id/entryadd"
-        android:title="添加歌曲"
-        android:icon="@drawable/add"/>
+        android:id="@+id/login"
+        android:title="切换账户" />
     <item
         android:id="@+id/entrysettings"
         android:title="设置"
         android:icon="@drawable/tune"/>
-    <item
-        android:id="@+id/entrysearch"
-        android:title="全局搜索"
-        android:icon="@drawable/about"/>
-	<item
-		android:id="@+id/entrylocation"
-		android:title="本地音乐"
-		android:icon="@drawable/file_music"/>
-	<group android:checkableBehavior="single">
-    <item
-        android:title="您的列表">
-        <menu>
-        </menu>
-    </item>
-	</group>
 </menu>

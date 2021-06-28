@@ -3,7 +3,8 @@
 
 package com.gking.simplemusicplayer.util;
 
-import org.apache.commons.codec.binary.Base64;
+import android.util.Base64;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigInteger;
@@ -17,13 +18,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-
-public class Web163 {
+public class MyCrypto {
     private static final String modulus = "00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7";
     private static final String nonce = "0CoJUm6Qyw8W8jud";
     private static final String pubKey = "010001";
@@ -75,7 +70,7 @@ public class Web163 {
             IvParameterSpec iv = new IvParameterSpec("0102030405060708".getBytes());//使用CBC模式，需要一个向量iv，可增加加密算法的强度
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
             byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
-            return new Base64().encodeToString(encrypted);//此处使用BASE64做转码。
+            return Base64.encodeToString(encrypted,Base64.DEFAULT);
         }catch (Exception e){
             e.printStackTrace();
             return null;

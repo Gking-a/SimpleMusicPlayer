@@ -1,4 +1,4 @@
-package com.gking.simplemusicplayer.util;
+package com.gking.simplemusicplayer.impl;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +20,10 @@ public class MyCookieJar implements CookieJar {
     @Override
     public void saveFromResponse(@NotNull HttpUrl httpUrl, @NotNull List<Cookie> list) {
         System.out.println(list.size());
+        for (Cookie c :
+                list) {
+            System.out.println(c.toString());
+        }
         cookies.put(httpUrl, list);
     }
     public Cookie getLoginCookie(){

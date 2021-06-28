@@ -35,6 +35,7 @@ public class Login_cellphone extends BaseActivity {
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();
             if(!(ph==null||pw==null||ph.equals("")||pw.equals("")||ph.length()!=11)){
+                System.out.println(ph+pw);
                 WebRequest.cellphone(ph, pw, new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {

@@ -1,5 +1,6 @@
 package com.gking.simplemusicplayer.util;
 
+import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class WebRequest {
         map.put(key,value);
     }
     public static void post(String url, JsonObject params, String cookie, Callback callback){
-        HashMap<String, String> data = Web163.encrypt(params.toString());
+        HashMap<String, String> data = MyCrypto.encrypt(params.toString());
         replace(data, "params", encode(data.get("params")));
         OkHttpClient client=new OkHttpClient.Builder()
                 .cookieJar(new MyCookieJar())
