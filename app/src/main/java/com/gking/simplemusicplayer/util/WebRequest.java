@@ -37,31 +37,21 @@ public class WebRequest {
         jsonObject.addProperty("csrf_token", "");
         post(URLs.login_cellphone, jsonObject, "os=pc", callback);
     }
-    public static void user_playlist(String uid,int limit,int offset, List<Cookie> cookies){
+    public static void user_playlist(String uid,int limit,int offset,String cookie,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("uid",uid);
         jsonObject.addProperty("limit",limit);
         jsonObject.addProperty("offset",offset);
-//        post(URLs.user_playlist,jsonObject,);
+        post(URLs.user_playlist,jsonObject,cookie,callback);
     }
-    public static void user_playlist(String uid, List<Cookie> cookies){
-        user_playlist(uid,100,0,cookies);
+    public static void user_playlist(String uid, String cookie,Callback callback){
+        user_playlist(uid,100,0,cookie,callback);
     }
     static HashMap<String,String> en=new HashMap<>();
     static {
         en.put("+","%2B");
         en.put("/","%2F");
         en.put("=","%3D");
-    }
-    public static String encode(String text){
-        text=text.replaceAll("\\+",en.get("+"));
-        text=text.replaceAll("=",en.get("="));
-        text=text.replaceAll("/",en.get("/"));
-        return text;
-    }
-    public static void replace(Map map,String key,String value){
-        map.remove(key);
-        map.put(key,value);
     }
     public static void post(String url, JsonObject params, String cookie, Callback callback){
         HashMap<String, String> data = MyCrypto.encrypt(params.toString());

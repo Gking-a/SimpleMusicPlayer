@@ -26,6 +26,7 @@ import okhttp3.Response;
 
 public class Login_cellphone extends BaseActivity {
     public static final String TAG="login_cellphone";
+    public static final int RequestCode=1000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,39 +34,56 @@ public class Login_cellphone extends BaseActivity {
         setContext(this);
         EditText phone=f(R.id.loginPhone);
         EditText password=f(R.id.loginPassword);
-        phone.setText("18263610381");
-        password.setText("gking1980");
+        Intent intent=getIntent();
+        String dph=intent.getStringExtra("ph");
+        String dpw=intent.getStringExtra("pw");
+        if(dph!=null&&dpw!=null){
+            WebRequest.cellphone(dph,dpw,new MyCallBack(dph,dpw));
+        }
         Button button=f(R.id.loginLogin);
+        setResult(RequestCode,new Intent());
         button.setOnClickListener(v -> {
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();
             if(!(ph==null||pw==null||ph.equals("")||pw.equals("")||ph.length()!=11)){
-                WebRequest.cellphone(ph, pw, new Callback() {
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        makeToast("登陆失败");
-                        FW.w(e);
-                        System.out.println(e);
-                    }
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        String body=response.body().string();
-                        System.out.println(body);
-                        System.out.println(MyCookieJar.getLoginCookie());
-                        JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
-                        String code=jsonObject.get("code").getAsString();
-                        if(code.equals("200")){
-                            makeToast("登录成功");
-                            finish();
-                            GHolder.standardInstance.add(TAG,JsonParser.parseString(body).getAsJsonObject());
-                        }else {
-                            makeToast("登录失败 "+jsonObject.get("msg").getAsString());
-                        }
-                    }
-                });
+                WebRequest.cellphone(ph, pw, new MyCallBack(ph,pw));
             }else {
                 makeToast("账号密码格式错误");
             }
         });
+    }
+    class MyCallBack implements Callback{
+        String ph,pw;
+        public MyCallBack(String ph, String pw) {
+            this.ph = ph;
+            this.pw = pw;
+        }
+
+        @Override
+        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            makeToast("登陆失败");
+            FW.w(e);
+            System.out.println(e);
+        }
+        @Override
+        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+            String body=response.body().string();
+            System.out.println(body);
+            System.out.println(MyCookieJar.getLoginCookie());
+            JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
+            String code=jsonObject.get("code").getAsString();
+            if(code.equals("200")){
+                makeToast("登录成功");
+                Intent result=new Intent();
+                result.putExtra("refresh",true);
+                result.putExtra("phone",ph);
+                result.putExtra("pw",pw);
+                setResult(RequestCode,result);
+                GHolder.standardInstance.add(RequestCode,JsonParser.parseString(body).getAsJsonObject());
+                finish();
+            }else {
+                makeToast("登录失败 "+jsonObject.get("msg").getAsString());
+            }
+        }
     }
 }

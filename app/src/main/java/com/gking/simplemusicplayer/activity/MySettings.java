@@ -6,6 +6,7 @@ package com.gking.simplemusicplayer.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import java.io.File;
+import java.io.IOException;
 
 import gtools.GLibrary;
 import gtools.managers.GLibraryManager;
@@ -25,7 +26,13 @@ public class MySettings extends Activity {
     public static String get(String key){
         return library.get(key);
     }
-    public void set(String key,String v){
+    public static void set(String key,String v){
         library.add(key,v,GLibrary.TYPE_STRING);
+        try {
+            library.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 }
