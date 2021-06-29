@@ -135,7 +135,6 @@ public class MainActivity extends BaseActivity {
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             String body=response.body().string();
                             System.out.println(body);
-                            FW.w(body);
                             JsonArray jsonArray= JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
                             for (int i = 0; i < jsonArray.size(); i++) {
                                 JsonObject playlist=jsonArray.get(i).getAsJsonObject();
@@ -179,6 +178,7 @@ public class MainActivity extends BaseActivity {
                             startActivity(intent);
                             return true;
                         });
+                        playlistView.addView(view);
                     }
                     break;
             }

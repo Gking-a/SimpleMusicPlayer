@@ -30,23 +30,7 @@ public class MyApplicationImpl extends Application
 	private void loadSettings() {
 		if(!getFilesDir().exists())
 			getFilesDir().mkdirs();
-		if(!SettingsFile.exists()){
-			try {
-				SettingsFile.createNewFile();
-				GLibrary lib= new GLibrary(SettingsFile.getName(), SettingsFile);
-//				lib.create(true);
-				lib.connect();
-				lib.add(DEFAULT_LIST,"null",GLibrary.TYPE_STRING);
-//				lib.add(playflag,FLAG_SOLO,GLibrary.TYPE_STRING);
-				lib.add(LOCKEDNOTIFICATIONSHOW,false,GLibrary.TYPE_STRING);
-				lib.add(WINDOW_COLOR,"0xffff0000",GLibrary.TYPE_STRING);
-				lib.add(DEFAULT_WINDOW_SHOW,false,GLibrary.TYPE_STRING);
-                lib.add("debugroot",true,GLibrary.TYPE_STRING);
-				lib.close(true);
-				//GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
-			} catch (IOException e) {
-            }
-		}
+
 		GFile.createDirs(CoverImg,Playlists, Cookies);
 		for (File file: Objects.requireNonNull(getFilesDir().listFiles())){
 			if(file.isFile())

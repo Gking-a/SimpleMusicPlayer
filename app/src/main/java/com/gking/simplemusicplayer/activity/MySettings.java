@@ -34,5 +34,24 @@ public class MySettings extends Activity {
             e.printStackTrace();
         }
     }
-
+    static {
+        if(!SettingsFile.exists()){
+            try {
+                SettingsFile.createNewFile();
+                library= new GLibrary(SettingsFile.getName(), SettingsFile);
+//				lib.create(true);
+                library.connect();
+                library.add(DEFAULT_LIST,"null",GLibrary.TYPE_STRING);
+//				lib.add(playflag,FLAG_SOLO,GLibrary.TYPE_STRING);
+                library.add(LOCKEDNOTIFICATIONSHOW,false,GLibrary.TYPE_STRING);
+                library.add(WINDOW_COLOR,"0xffff0000",GLibrary.TYPE_STRING);
+                library.add(DEFAULT_WINDOW_SHOW,false,GLibrary.TYPE_STRING);
+                library.add("debugroot",true,GLibrary.TYPE_STRING);
+                library.save();
+                //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
+            } catch (IOException e) {
+            }
+        }
+        library= new GLibrary(SettingsFile,true);
+    }
 }
