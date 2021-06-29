@@ -44,7 +44,13 @@ public class MainActivity extends BaseActivity {
         setContext(this);
         setContentView(R.layout.main);
         load();
+        debug();
     }
+
+    private void debug() {
+        startActivity(new Intent(getContext(),Login_cellphone.class));
+    }
+
     @Override
     protected void onStart() {
         super.onStart();

@@ -3,6 +3,10 @@ package com.gking.simplemusicplayer.util;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.google.gson.JsonObject;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,14 @@ import okhttp3.Request;
 public class WebRequest {
     public static void cellphone(String phone, String password, Callback callback) {
         JsonObject jsonObject = new JsonObject();
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("md5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] b = md5.digest(password.getBytes(StandardCharsets.UTF_8));
+        password = new BigInteger(1, b).toString(16);
         jsonObject.addProperty("phone", phone);
         jsonObject.addProperty("password", password);
         jsonObject.addProperty("rememberLogin", true);
@@ -53,7 +65,7 @@ public class WebRequest {
     }
     public static void post(String url, JsonObject params, String cookie, Callback callback){
         HashMap<String, String> data = MyCrypto.encrypt(params.toString());
-        replace(data, "params", encode(data.get("params")));
+//        replace(data, "params", encode(data.get("params")));
         OkHttpClient client=new OkHttpClient.Builder()
                 .cookieJar(new MyCookieJar())
                 .build();
@@ -64,7 +76,7 @@ public class WebRequest {
                 .add("Cookie",cookie)
                 .build();
         FormBody.Builder builder =new FormBody.Builder();
-        for(String key:params.keySet()){
+        for(String key:data.keySet()){
             builder.add(key,data.get(key));
         }
         Request request=new Request.Builder()

@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonObject;
@@ -18,42 +19,52 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+import gtools.managers.GHolder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class Login_cellphone extends BaseActivity {
+    public static final String TAG="login_cellphone";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_cellphone);
         setContext(this);
+        EditText phone=f(R.id.loginPhone);
+        EditText password=f(R.id.loginPassword);
+        phone.setText("18263610381");
+        password.setText("gking1980");
         Button button=f(R.id.loginLogin);
         button.setOnClickListener(v -> {
-            EditText phone=f(R.id.loginPhone);
-            EditText password=f(R.id.loginPassword);
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();
             if(!(ph==null||pw==null||ph.equals("")||pw.equals("")||ph.length()!=11)){
-                System.out.println(ph+pw);
                 WebRequest.cellphone(ph, pw, new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        Toast.makeText(getContext(),"登陆失败",Toast.LENGTH_SHORT);
+                        makeToast("登陆失败");
+                        FW.w(e);
+                        System.out.println(e);
                     }
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String body=response.body().string();
+                        System.out.println(body);
+                        System.out.println(MyCookieJar.getLoginCookie());
                         JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
-                        String code=jsonObject.get("code").getAsString(),
-                                msg=jsonObject.get("msg").getAsString();
+                        String code=jsonObject.get("code").getAsString();
                         if(code.equals("200")){
-//                                startActivity(new Intent(getContext(),));
+                            makeToast("登录成功");
+                            finish();
+                            GHolder.standardInstance.add(TAG,JsonParser.parseString(body).getAsJsonObject());
+                        }else {
+                            makeToast("登录失败 "+jsonObject.get("msg").getAsString());
                         }
                     }
                 });
             }else {
-                Toast.makeText(getContext(),"请输入正确的账号密码",Toast.LENGTH_SHORT);
+                makeToast("账号密码格式错误");
             }
         });
     }
