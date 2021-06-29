@@ -198,7 +198,7 @@ public class URLs {
     public static final String user_followeds="https://music.163.com/eapi/user/getfolloweds/${query.uid}";
     public static final String user_follows="https://music.163.com/weapi/user/getfollows/${query.uid}";
     public static final String user_level="https://music.163.com/weapi/user/level";
-    public static final String user_playlist="https://music.163.com/api/user/playlist";
+    public static final String user_playlist="https://music.163.com/weapi/user/playlist";
     public static final String user_record="https://music.163.com/weapi/v1/play/record";
     public static final String user_replacephone="https://music.163.com/api/user/replaceCellphone";
     public static final String user_subcount="https://music.163.com/weapi/subcount";

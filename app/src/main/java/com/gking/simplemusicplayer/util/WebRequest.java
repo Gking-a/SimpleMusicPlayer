@@ -34,14 +34,14 @@ public class WebRequest {
         jsonObject.addProperty("password", password);
         jsonObject.addProperty("rememberLogin", true);
         jsonObject.addProperty("countrycode", 86);
-        jsonObject.addProperty("csrf_token", "");
         post(URLs.login_cellphone, jsonObject, "os=pc", callback);
     }
     public static void user_playlist(String uid,int limit,int offset,String cookie,Callback callback){
         JsonObject jsonObject=new JsonObject();
-        jsonObject.addProperty("uid",uid);
+        jsonObject.addProperty("uid",Long.parseLong(uid));
         jsonObject.addProperty("limit",limit);
         jsonObject.addProperty("offset",offset);
+        jsonObject.addProperty("includeVideo",true);
         post(URLs.user_playlist,jsonObject,cookie,callback);
     }
     public static void user_playlist(String uid, String cookie,Callback callback){
@@ -54,8 +54,8 @@ public class WebRequest {
         en.put("=","%3D");
     }
     public static void post(String url, JsonObject params, String cookie, Callback callback){
+        params.addProperty("csrf_token", "");
         HashMap<String, String> data = MyCrypto.encrypt(params.toString());
-//        replace(data, "params", encode(data.get("params")));
         OkHttpClient client=new OkHttpClient.Builder()
                 .cookieJar(new MyCookieJar())
                 .build();

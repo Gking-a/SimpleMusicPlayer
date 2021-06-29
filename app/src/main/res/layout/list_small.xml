@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.gking.simplemusicplayer.view.InterceptTouchLinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="96dp"
@@ -23,5 +23,5 @@
 		android:id="@+id/list_small_title"
 		android:textSize="12sp"/>
 
-</LinearLayout>
+</com.gking.simplemusicplayer.view.InterceptTouchLinearLayout>
 
