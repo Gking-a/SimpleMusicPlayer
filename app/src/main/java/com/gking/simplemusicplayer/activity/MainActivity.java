@@ -33,6 +33,7 @@ import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.impl.RecyclerViewAdapter;
 import com.gking.simplemusicplayer.util.FW;
+import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
@@ -143,6 +144,9 @@ public class MainActivity extends BaseActivity {
                                     ).openStream());
                                     holder.add("cover",cover);
                                     holder.add("name",playlist.get("name").getAsString());
+                                    holder.add("json",playlist);
+                                    holder.add("id",id);
+                                    GHolder.standardInstance.add(id,playlist);
                                     playlists.put(id,holder);
                                 }
                             }
@@ -171,6 +175,7 @@ public class MainActivity extends BaseActivity {
                         View layout=view.findViewById(R.id.list_small_layout);
                         layout.setOnClickListener(v -> {
                             Intent intent=new Intent(getContext(),Playlist.class);
+                            intent.putExtra("id",(String)holder.get("id"));
                             startActivity(intent);
                         });
                         playlistView.addView(view);

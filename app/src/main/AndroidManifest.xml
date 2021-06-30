@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gking.simplemusicplayer">
+
     <!-- 修改或删除您的 SD 卡中的内容 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 完全的网络访问权限 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 防止手机休眠 -->
@@ -19,7 +20,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.Playlist"></activity>
+        <service
+            android:name=".service.MusicService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".activity.Playlist" />
         <activity android:name=".activity.Login_cellphone" />
         <activity android:name=".activity.Receiver">
             <intent-filter>
@@ -47,6 +53,7 @@
                 <category android:name="android.intent.category.OPENABLE" />
             </intent-filter>
         </activity>
+
         <receiver
             android:name=".MyBroadcastReceiver"
             android:enabled="true"
@@ -60,6 +67,7 @@
                 <action android:name="com.gkingswq.simplemusicplayer.window" />
             </intent-filter>
         </receiver>
+
         <meta-data
             android:name="android.max_aspect"
             android:value="4.0" />

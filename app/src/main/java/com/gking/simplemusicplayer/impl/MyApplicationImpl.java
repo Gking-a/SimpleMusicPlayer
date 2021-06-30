@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import android.app.Application;
+import android.media.MediaPlayer;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.gking.simplemusicplayer.util.FW;
@@ -19,7 +20,7 @@ public class MyApplicationImpl extends Application
 	public static final File CoverImg=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/CoverImg/");
 	public static final File Playlists=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Playlists/");
 	public static final File Cookies=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Cookies/");
-
+	MediaPlayer mMusicPlayer=new MediaPlayer();
     @Override
     public void onCreate() {
         super.onCreate();
