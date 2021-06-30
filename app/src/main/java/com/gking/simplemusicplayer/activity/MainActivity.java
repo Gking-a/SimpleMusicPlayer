@@ -71,9 +71,6 @@ public class MainActivity extends BaseActivity {
         load();
 //        debug();
     }
-    private void debug() {
-        startActivity(new Intent(getContext(),Login_cellphone.class));
-    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -86,7 +83,6 @@ public class MainActivity extends BaseActivity {
         playlistView=f(R.id.songLists);
         nav=f(R.id.nav);
         drawerLayout=f(R.id.drawer);
-//        List<GHolder<Object,String>> items=new ArrayList<>();
         MenuItem login=nav.getMenu().findItem(R.id.login);
         if(MySettings.get("account_name")!=null){
            login.setTitle(MySettings.get("account_name"));
@@ -173,10 +169,9 @@ public class MainActivity extends BaseActivity {
                         iv.setImageBitmap((Bitmap) holder.get("cover"));
                         tv.setText((String) holder.get("name"));
                         View layout=view.findViewById(R.id.list_small_layout);
-                        layout.setOnTouchListener((v, event) -> {
+                        layout.setOnClickListener(v -> {
                             Intent intent=new Intent(getContext(),Playlist.class);
                             startActivity(intent);
-                            return true;
                         });
                         playlistView.addView(view);
                     }
