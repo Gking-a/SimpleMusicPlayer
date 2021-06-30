@@ -53,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         this.context = context;
     }
 
-    Context context;
+    Context context=this;
 
     public void makeToast(Object msg){
         Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_LONG).show();

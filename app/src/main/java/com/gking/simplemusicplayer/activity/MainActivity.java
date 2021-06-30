@@ -131,7 +131,6 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             String body=response.body().string();
-                            System.out.println(body);
                             JsonArray jsonArray= JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
                             for (int i = 0; i < jsonArray.size(); i++) {
                                 JsonObject playlist=jsonArray.get(i).getAsJsonObject();

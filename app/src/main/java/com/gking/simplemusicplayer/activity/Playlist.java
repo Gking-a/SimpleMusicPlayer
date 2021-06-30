@@ -1,19 +1,22 @@
 package com.gking.simplemusicplayer.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -32,25 +35,31 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class Playlist extends AppCompatActivity {
+public class Playlist extends BaseActivity {
+    MyHandler myHandler = new MyHandler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
+        setContext(this);
+        RecyclerView recyclerView=f(R.id.songs);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         String id = getIntent().getStringExtra("id");
-        JsonObject playlist=(JsonObject) GHolder.standardInstance.get(id);
+        JsonObject playlist = (JsonObject) GHolder.standardInstance.get(id);
         WebRequest.playlist_detail(JsonUtil.getAsString(playlist, "id"), MyCookieJar.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }
+
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                String body=response.body().string();
-                JsonObject object= JsonParser.parseString(body).getAsJsonObject();
+                String body = response.body().string();
+                JsonObject object = JsonParser.parseString(body).getAsJsonObject();
                 JsonArray trackIds = JsonUtil.getAsJsonArray(object, "playlist", "trackIds");
-                List<String> ids=new ArrayList<>();
+                List<String> ids = new ArrayList<>();
                 for (int i = 0; i < trackIds.size(); i++) {
-                    String id=JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(),"id");
+                    String id = JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(), "id");
                     ids.add(id);
                 }
                 WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
@@ -59,25 +68,78 @@ public class Playlist extends AppCompatActivity {
                     }
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        String body=response.body().string();
-                        JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
+                        String body = response.body().string();
+                        GHolder<String, JsonObject> holder = (GHolder<String, JsonObject>) GHolder.standardInstance.get("songs");
+                        JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                         JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
                         for (int i = 0; i < songs.size(); i++) {
-                            String name = songs.get(i).getAsJsonObject().get("name").getAsString();
-
+                            JsonObject song = songs.get(i).getAsJsonObject();
+                            String id = song.get("id").getAsString();
+                            if (!holder.getIds().contains(id))
+                                holder.add(id, song);
                         }
+                        Message message = new Message();
+                        message.what = MyHandler.UPDATE_UI;
+                        message.obj=ids;
+                        myHandler.sendMessage(message);
                     }
                 });
             }
         });
     }
-    class MyHandler extends Handler{
-        public static final int UPDATE_COVER=0;
+
+    class MyHandler extends Handler {
+        public static final int UPDATE_UI = 0;
+
         @Override
         public void handleMessage(@NonNull @NotNull Message msg) {
-            switch (msg.what){
-                case UPDATE_COVER:
+            switch (msg.what) {
+                case UPDATE_UI:
+                    RecyclerView recyclerView = f(R.id.songs);
+                    MyAdapter adapter=new MyAdapter(getContext(), (List<String>) msg.obj);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                     break;
+            }
+        }
+    }
+
+    class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
+        List<String> content;
+        Context context;
+
+        public MyAdapter(Context context, List<String> content) {
+            this.content = content;
+            this.context = context;
+        }
+
+        @NonNull
+        @NotNull
+        @Override
+        public MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(context).inflate(R.layout.song_small, null);
+            return new MyVH(v);
+        }
+        @Override
+        public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
+            String id = content.get(position);
+            JsonObject jsonObject=((GHolder<Object,JsonObject>)GHolder.standardInstance.get("songs")).get(id);
+            myVH.Play_bt.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
+            myVH.SongName_tv.setText(JsonUtil.getAsString(jsonObject,"name"));
+        }
+        @Override
+        public int getItemCount() {
+            return content.size();
+        }
+
+        class MyVH extends RecyclerView.ViewHolder {
+            TextView SongName_tv;
+            ImageButton Play_bt;
+
+            public MyVH(@NonNull @NotNull View itemView) {
+                super(itemView);
+                SongName_tv = itemView.findViewById(R.id.song_name);
+                Play_bt=itemView.findViewById(R.id.song_play);
             }
         }
     }

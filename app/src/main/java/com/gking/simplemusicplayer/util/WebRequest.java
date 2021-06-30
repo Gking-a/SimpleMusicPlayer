@@ -19,7 +19,6 @@ import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-
 public final class WebRequest {
     public static void song_detail(List<String> ids,String cookie,Callback callback){
         JsonObject jsonObject=new JsonObject();
@@ -68,12 +67,6 @@ public final class WebRequest {
     }
     public static void user_playlist(String uid, String cookie,Callback callback){
         user_playlist(uid,100,0,cookie,callback);
-    }
-    static HashMap<String,String> en=new HashMap<>();
-    static {
-        en.put("+","%2B");
-        en.put("/","%2F");
-        en.put("=","%3D");
     }
     public static void post(String url, JsonObject params, String cookie, Callback callback){
         params.addProperty("csrf_token", "");
