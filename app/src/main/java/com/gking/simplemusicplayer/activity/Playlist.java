@@ -1,10 +1,13 @@
 package com.gking.simplemusicplayer.activity;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,13 +23,16 @@ import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.WebRequest;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +57,6 @@ public class Playlist extends BaseActivity {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }
-
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String body = response.body().string();
@@ -69,14 +74,17 @@ public class Playlist extends BaseActivity {
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String body = response.body().string();
-                        GHolder<String, JsonObject> holder = (GHolder<String, JsonObject>) GHolder.standardInstance.get("songs");
+                        GHolder<String, JsonObject> holder = ((MyApplicationImpl) getApplication()).getSongInfo();
                         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                         JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
                         for (int i = 0; i < songs.size(); i++) {
                             JsonObject song = songs.get(i).getAsJsonObject();
                             String id = song.get("id").getAsString();
-                            if (!holder.getIds().contains(id))
+                            if (!holder.getIds().contains(id)) {
                                 holder.add(id, song);
+                                Bitmap cover= BitmapFactory.decodeStream(new URL(JsonUtil.getAsString(playlist,"al","picUrl")+"?param=50y50").openStream());
+                                ((MyApplicationImpl) getApplication()).getSongCover().add(id,cover);
+                            }
                         }
                         Message message = new Message();
                         message.what = MyHandler.UPDATE_UI;
@@ -90,7 +98,6 @@ public class Playlist extends BaseActivity {
 
     class MyHandler extends Handler {
         public static final int UPDATE_UI = 0;
-
         @Override
         public void handleMessage(@NonNull @NotNull Message msg) {
             switch (msg.what) {
@@ -112,20 +119,31 @@ public class Playlist extends BaseActivity {
             this.content = content;
             this.context = context;
         }
-
         @NonNull
         @NotNull
         @Override
         public MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(context).inflate(R.layout.song_small, null);
+            View v = LayoutInflater.from(context).inflate(R.layout.song_item, null);
             return new MyVH(v);
         }
         @Override
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
             String id = content.get(position);
-            JsonObject jsonObject=((GHolder<Object,JsonObject>)GHolder.standardInstance.get("songs")).get(id);
-            myVH.Play_bt.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
-            myVH.SongName_tv.setText(JsonUtil.getAsString(jsonObject,"name"));
+            JsonObject song= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
+            myVH.Layout.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
+            myVH.Name.setText(JsonUtil.getAsString(song,"name"));
+            myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
+            String au;
+            {
+                StringBuilder sb=new StringBuilder();
+                JsonArray ar = JsonUtil.getAsJsonArray(song, "ar");
+                for (int i = 0; i < ar.size(); i++) {
+                    sb.append(ar.get(i).getAsJsonObject().get("name").getAsString()).append("/");
+                }
+                au=sb.substring(0,sb.length()-1);
+            }
+            myVH.Author.setText(au);
+            myVH.More.setOnClickListener(v->{});
         }
         @Override
         public int getItemCount() {
@@ -133,13 +151,17 @@ public class Playlist extends BaseActivity {
         }
 
         class MyVH extends RecyclerView.ViewHolder {
-            TextView SongName_tv;
-            ImageButton Play_bt;
-
+            ConstraintLayout Layout;
+            TextView Name,Author;
+            MaterialButton More;
+            RoundedImageView Cover;
             public MyVH(@NonNull @NotNull View itemView) {
                 super(itemView);
-                SongName_tv = itemView.findViewById(R.id.song_name);
-                Play_bt=itemView.findViewById(R.id.song_play);
+                Name = itemView.findViewById(R.id.song_name);
+                Author=itemView.findViewById(R.id.song_author);
+                More=itemView.findViewById(R.id.song_more);
+                Cover=itemView.findViewById(R.id.song_cover);
+                Layout = itemView.findViewById(R.id.song_item_layout);
             }
         }
     }

@@ -48,6 +48,7 @@ public class GLibrary {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        connect();
     }
 	public GLibrary(String name,String filepath){
 		this(name,new File(filepath));

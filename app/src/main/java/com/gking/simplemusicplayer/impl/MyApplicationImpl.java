@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -25,6 +26,16 @@ public class MyApplicationImpl extends Application
 
     public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
+    }
+    public GHolder<String, Bitmap> songCover=new GHolder<>();
+
+    public GHolder<String, JsonObject> getSongInfo() {
+        return songInfo;
+    }
+
+    public GHolder<String, JsonObject> songInfo=new GHolder<>();
+    public GHolder<String, Bitmap> getSongCover() {
+        return songCover;
     }
 
     public MusicPlayer mMusicPlayer=new MusicPlayer();
