@@ -1,8 +1,17 @@
 package com.gking.simplemusicplayer.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
@@ -48,13 +57,28 @@ public class Playlist extends AppCompatActivity {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     }
-
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        String body=response.body().string();
+                        JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
+                        JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
+                        for (int i = 0; i < songs.size(); i++) {
+                            String name = songs.get(i).getAsJsonObject().get("name").getAsString();
 
+                        }
                     }
                 });
             }
         });
+    }
+    class MyHandler extends Handler{
+        public static final int UPDATE_COVER=0;
+        @Override
+        public void handleMessage(@NonNull @NotNull Message msg) {
+            switch (msg.what){
+                case UPDATE_COVER:
+                    break;
+            }
+        }
     }
 }
