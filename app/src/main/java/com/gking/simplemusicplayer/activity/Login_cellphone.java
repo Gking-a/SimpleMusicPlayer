@@ -2,10 +2,8 @@ package com.gking.simplemusicplayer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
@@ -38,7 +36,7 @@ public class Login_cellphone extends BaseActivity {
         String dph=intent.getStringExtra("ph");
         String dpw=intent.getStringExtra("pw");
         if(dph!=null&&dpw!=null){
-            WebRequest.cellphone(dph,dpw,new MyCallBack(dph,dpw));
+            WebRequest.login_cellphone(dph,dpw,new MyCallBack(dph,dpw));
         }
         Button button=f(R.id.loginLogin);
         setResult(RequestCode,new Intent());
@@ -46,7 +44,7 @@ public class Login_cellphone extends BaseActivity {
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();
             if(!(ph==null||pw==null||ph.equals("")||pw.equals("")||ph.length()!=11)){
-                WebRequest.cellphone(ph, pw, new MyCallBack(ph,pw));
+                WebRequest.login_cellphone(ph, pw, new MyCallBack(ph,pw));
             }else {
                 makeToast("账号密码格式错误");
             }
@@ -68,8 +66,6 @@ public class Login_cellphone extends BaseActivity {
         @Override
         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
             String body=response.body().string();
-            System.out.println(body);
-            System.out.println(MyCookieJar.getLoginCookie());
             JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
             String code=jsonObject.get("code").getAsString();
             if(code.equals("200")){

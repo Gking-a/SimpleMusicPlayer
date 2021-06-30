@@ -19,5 +19,4 @@ public class MusicService extends Service {
         wakeLock.acquire();
         return super.onStartCommand(intent, flags, startId);
     }
-
 }

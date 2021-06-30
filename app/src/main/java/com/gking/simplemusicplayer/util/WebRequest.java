@@ -1,6 +1,7 @@
 package com.gking.simplemusicplayer.util;
 
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.math.BigInteger;
@@ -19,8 +20,29 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 
-public class WebRequest {
-    public static void cellphone(String phone, String password, Callback callback) {
+public final class WebRequest {
+    public static void song_detail(List<String> ids,String cookie,Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        JsonArray array=new JsonArray();
+        for(String id:ids){
+            JsonObject object=new JsonObject();
+            object.addProperty("id",Long.parseLong(id));
+            array.add(object);
+        }
+        jsonObject.add("c",array);
+        jsonObject.addProperty("csrf_token", "");
+        String s=jsonObject.toString();
+        s=s.replaceAll("\"id\"","\\\\\"id\\\\\"");
+        s=s.replace("[","\"[");
+        s=s.replace("]","]\"");
+        post(URLs.song_detail,s,cookie,callback);
+    }
+    public static void playlist_detail(String id,String cookie,Callback callback){
+        JsonObject object=new JsonObject();
+        object.addProperty("id",id);
+        post(URLs.playlist_detail,object,cookie,callback);
+    }
+    public static void login_cellphone(String phone, String password, Callback callback) {
         JsonObject jsonObject = new JsonObject();
         MessageDigest md5 = null;
         try {
@@ -55,7 +77,10 @@ public class WebRequest {
     }
     public static void post(String url, JsonObject params, String cookie, Callback callback){
         params.addProperty("csrf_token", "");
-        HashMap<String, String> data = MyCrypto.encrypt(params.toString());
+        post(url, params.toString(), cookie, callback);
+    }
+    public static void post(String url,String params,String cookie,Callback callback){
+        HashMap<String, String> data = MyCrypto.encrypt(params);
         OkHttpClient client=new OkHttpClient.Builder()
                 .cookieJar(new MyCookieJar())
                 .build();
@@ -66,7 +91,7 @@ public class WebRequest {
                 .add("Cookie",cookie)
                 .build();
         FormBody.Builder builder =new FormBody.Builder();
-        for(String key:data.keySet()){
+        for (String key:data.keySet()) {
             builder.add(key,data.get(key));
         }
         Request request=new Request.Builder()

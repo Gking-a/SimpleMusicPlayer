@@ -131,7 +131,7 @@ public class URLs {
     public static final String playlist_cover_update="https://music.163.com/weapi/playlist/cover/update";
     public static final String playlist_create="https://music.163.com/api/playlist/create";
     public static final String playlist_delete="https://music.163.com/weapi/playlist/remove";
-    public static final String playlist_detail="https://music.163.com/api/v6/playlist/detail";
+    public static final String playlist_detail="https://music.163.com/weapi/v6/playlist/detail";
     public static final String playlist_detail_dynamic="https://music.163.com/api/playlist/detail/dynamic";
     public static final String playlist_highquality_tags="https://music.163.com/api/playlist/highquality/tags";
     public static final String playlist_hot="https://music.163.com/weapi/playlist/hottags";
@@ -170,7 +170,7 @@ public class URLs {
     public static final String simi_playlist="https://music.163.com/weapi/discovery/simiPlaylist";
     public static final String simi_song="https://music.163.com/weapi/v1/discovery/simiSong";
     public static final String simi_user="https://music.163.com/weapi/discovery/simiUser";
-    public static final String song_detail="https://music.163.com/api/v3/song/detail";
+    public static final String song_detail="https://music.163.com/weapi/v3/song/detail";
     public static final String song_purchased="https://music.163.com/weapi/single/mybought/song/list";
     public static final String topic_detail="https://music.163.com/api/act/detail";
     public static final String topic_detail_event_hot="https://music.163.com/api/act/event/hot";
