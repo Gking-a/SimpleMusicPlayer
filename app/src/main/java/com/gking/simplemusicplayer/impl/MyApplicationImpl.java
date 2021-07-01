@@ -1,5 +1,6 @@
 package com.gking.simplemusicplayer.impl;
 
+import com.kongzue.dialogx.DialogX;
 import gtools.GLibrary;
 import gtools.managers.GHolder;
 import gtools.managers.GLibraryManager;
@@ -41,6 +42,7 @@ public class MyApplicationImpl extends Application
     public MusicPlayer mMusicPlayer=new MusicPlayer();
     @Override
     public void onCreate() {
+        DialogX.init(this);
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadSettings();

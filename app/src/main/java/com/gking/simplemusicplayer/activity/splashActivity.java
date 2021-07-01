@@ -17,12 +17,12 @@ import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GMath;
 import android.content.Context;
 
-public class Launcher extends BaseActivity {
+public class splashActivity extends BaseActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.launcher);
+        setContentView(R.layout.activity_splash);
         new Thread(() -> {
             loadResources();
             Intent intent=new Intent(getContext(),MainActivity.class);

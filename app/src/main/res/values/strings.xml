@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">SimpleMusicPlayer</string>
-    <string name="author">Gking2665241312&amp;SwQ1916641463</string>
+    <string name="app_name" translatable="false">SimpleMusicPlayer</string>
+    <string name="author" translatable="false">Gking2665241312&amp;SwQ1916641463</string>
+    <string name="loading">Now loading...</string>
 </resources>

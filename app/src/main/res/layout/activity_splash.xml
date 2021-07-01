@@ -9,7 +9,7 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="wrap_content"
-		android:text="SimpleMusicPlayer"
+		android:text="@string/app_name"
 		android:layout_gravity="center"
 		android:layout_marginTop="180dp"/>
 
@@ -17,7 +17,7 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="wrap_content"
-		android:text="Gking 2665241312@qq.com"
+		android:text="@string/author"
 		android:layout_gravity="center"
 		android:textSize="16sp"/>
 
@@ -25,7 +25,7 @@
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:layout_width="wrap_content"
-		android:text="loading..."
+		android:text="@string/loading"
 		android:layout_gravity="center"
 		android:layout_marginBottom="10dp"
 		android:layout_marginTop="150dp"/>
