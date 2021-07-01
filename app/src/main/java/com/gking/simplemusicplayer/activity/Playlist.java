@@ -144,7 +144,10 @@ public class Playlist extends BaseActivity {
                 au=sb.substring(0,sb.length()-1);
             }
             myVH.Author.setText(au);
-            myVH.More.setOnClickListener(v->{});
+            myVH.More.setOnClickListener(v->{
+                MyFunction fun = new MyFunction();
+                fun.moreOnClick();
+            });
         }
         @Override
         public int getItemCount() {

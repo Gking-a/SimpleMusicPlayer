@@ -12,7 +12,6 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -22,12 +21,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.util.CopyWeb;
-import org.json.JSONException;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GFile;
 import com.gking.simplemusicplayer.util.UnCrypt;
 import com.google.gson.JsonArray;
@@ -51,7 +46,7 @@ public class Receiver extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.launcher);
+        setContentView(R.layout.activity_splash);
         Intent ti=getIntent();
         String action=ti.getAction();
         String type=ti.getType();
