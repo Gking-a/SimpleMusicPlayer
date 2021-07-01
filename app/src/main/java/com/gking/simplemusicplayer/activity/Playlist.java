@@ -1,7 +1,6 @@
 package com.gking.simplemusicplayer.activity;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,7 +13,6 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
@@ -40,6 +38,8 @@ import gtools.managers.GHolder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 
 public class Playlist extends BaseActivity {
     MyHandler myHandler = new MyHandler();
@@ -67,6 +67,7 @@ public class Playlist extends BaseActivity {
                     String id = JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(), "id");
                     ids.add(id);
                 }
+                l(ids.size());
                 WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -82,7 +83,7 @@ public class Playlist extends BaseActivity {
                             String id = song.get("id").getAsString();
                             if (!holder.getIds().contains(id)) {
                                 holder.add(id, song);
-                                Bitmap cover= BitmapFactory.decodeStream(new URL(JsonUtil.getAsString(playlist,"al","picUrl")+"?param=50y50").openStream());
+                                Bitmap cover= BitmapFactory.decodeStream(new URL(JsonUtil.getAsString(song,"al","picUrl")+"?param=50y50").openStream());
                                 ((MyApplicationImpl) getApplication()).getSongCover().add(id,cover);
                             }
                         }
@@ -123,14 +124,14 @@ public class Playlist extends BaseActivity {
         @NotNull
         @Override
         public MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(context).inflate(R.layout.song_item, null);
+            View v = LayoutInflater.from(context).inflate(R.layout.song_item, parent,false);
             return new MyVH(v);
         }
         @Override
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
             String id = content.get(position);
             JsonObject song= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
-            myVH.Layout.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
+            myVH.Root.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
             myVH.Name.setText(JsonUtil.getAsString(song,"name"));
             myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
             String au;
@@ -151,7 +152,7 @@ public class Playlist extends BaseActivity {
         }
 
         class MyVH extends RecyclerView.ViewHolder {
-            ConstraintLayout Layout;
+            View Root;
             TextView Name,Author;
             MaterialButton More;
             RoundedImageView Cover;
@@ -161,7 +162,8 @@ public class Playlist extends BaseActivity {
                 Author=itemView.findViewById(R.id.song_author);
                 More=itemView.findViewById(R.id.song_more);
                 Cover=itemView.findViewById(R.id.song_cover);
-                Layout = itemView.findViewById(R.id.song_item_layout);
+                Root =itemView;
+//                Layout = itemView.findViewById(R.id.song_item_layout);
             }
         }
     }

@@ -30,6 +30,11 @@ public class Login_cellphone extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_cellphone);
         setContext(this);
+        setResult(RequestCode,new Intent());
+        if(!MyCookieJar.getLoginCookie().equals("")){
+            finish();
+            return;
+        }
         EditText phone=f(R.id.loginPhone);
         EditText password=f(R.id.loginPassword);
         Intent intent=getIntent();
@@ -39,7 +44,6 @@ public class Login_cellphone extends BaseActivity {
             WebRequest.login_cellphone(dph,dpw,new MyCallBack(dph,dpw));
         }
         Button button=f(R.id.loginLogin);
-        setResult(RequestCode,new Intent());
         button.setOnClickListener(v -> {
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();

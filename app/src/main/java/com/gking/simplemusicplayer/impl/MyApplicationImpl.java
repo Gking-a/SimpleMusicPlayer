@@ -66,5 +66,11 @@ public class MyApplicationImpl extends Application
             FW.w(e);
         }
 	}
+	public static void l(Object o){
+        Log.e("app",o.toString());
+        System.out.println(o.toString());
+        FW.w(o.toString());
+
+    }
 }
 
