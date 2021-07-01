@@ -120,13 +120,15 @@ public class Playlist extends BaseActivity {
                 iv.setImageBitmap(cover);
                 return;
             }
-            try {
-                cover = BitmapFactory.decodeStream(new URL(url+"?param="+x+"y"+y).openStream());
-                ((MyApplicationImpl) getApplication()).getSongCover().add(url,cover);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            iv.setImageBitmap(cover);
+            new Thread(()->{
+                try {
+                    Bitmap cover1 = BitmapFactory.decodeStream(new URL(url+"?param="+x+"y"+y).openStream());
+                    ((MyApplicationImpl) getApplication()).getSongCover().add(url,cover1);
+                    myHandler.post(()->iv.setImageBitmap(cover1));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
     class MyHandler extends Handler {
