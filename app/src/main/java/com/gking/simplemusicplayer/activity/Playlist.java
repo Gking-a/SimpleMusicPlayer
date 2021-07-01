@@ -1,6 +1,7 @@
 package com.gking.simplemusicplayer.activity;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
@@ -51,6 +53,7 @@ public class Playlist extends BaseActivity {
         setContext(this);
         RecyclerView recyclerView=f(R.id.songs);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         String id = getIntent().getStringExtra("id");
         JsonObject playlist = (JsonObject) GHolder.standardInstance.get(id);
         WebRequest.playlist_detail(JsonUtil.getAsString(playlist, "id"), MyCookieJar.getLoginCookie(), new Callback() {
@@ -83,8 +86,6 @@ public class Playlist extends BaseActivity {
                             String id = song.get("id").getAsString();
                             if (!holder.getIds().contains(id)) {
                                 holder.add(id, song);
-                                Bitmap cover= BitmapFactory.decodeStream(new URL(JsonUtil.getAsString(song,"al","picUrl")+"?param=50y50").openStream());
-                                ((MyApplicationImpl) getApplication()).getSongCover().add(id,cover);
                             }
                         }
                         Message message = new Message();
@@ -96,7 +97,38 @@ public class Playlist extends BaseActivity {
             }
         });
     }
+    class MyRunnable implements Runnable{
+        String url;
+        int x;
+        ImageView iv;
+        public MyRunnable(ImageView iv,String id, int x, int y) {
+            this.iv=iv;
+            this.url = id;
+            this.x = x;
+            this.y = y;
+        }
 
+        int y;
+        public MyRunnable(ImageView iv,String id) {
+            this(iv,id,50,50);
+        }
+
+        @Override
+        public void run() {
+            Bitmap cover= ((MyApplicationImpl) getApplication()).getSongCover().get(url);
+            if(cover!=null){
+                iv.setImageBitmap(cover);
+                return;
+            }
+            try {
+                cover = BitmapFactory.decodeStream(new URL(url+"?param="+x+"y"+y).openStream());
+                ((MyApplicationImpl) getApplication()).getSongCover().add(url,cover);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            iv.setImageBitmap(cover);
+        }
+    }
     class MyHandler extends Handler {
         public static final int UPDATE_UI = 0;
         @Override
@@ -111,7 +143,6 @@ public class Playlist extends BaseActivity {
             }
         }
     }
-
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
         List<String> content;
         Context context;
@@ -134,6 +165,7 @@ public class Playlist extends BaseActivity {
             myVH.Root.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
             myVH.Name.setText(JsonUtil.getAsString(song,"name"));
             myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
+            myHandler.post(new MyRunnable(myVH.Cover,JsonUtil.getAsString(song,"al","picUrl")));
             String au;
             {
                 StringBuilder sb=new StringBuilder();

@@ -5,13 +5,13 @@
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:layout_height="50dp"
+    android:layout_height="40dp"
     android:id="@+id/song_item_layout">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/song_cover"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         android:paddingLeft="2dp"
         android:paddingTop="2dp"
@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@id/song_cover"
-        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textAppearance="16sp"
         app:layout_constraintBottom_toTopOf="@id/song_author"
         app:layout_constraintTop_toTopOf="parent"
         android:clickable="false"
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@id/song_cover"
-        android:textAppearance="?attr/textAppearanceBody2"
+        android:textAppearance="12sp"
         android:textColor="?android:attr/textColorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/song_name"

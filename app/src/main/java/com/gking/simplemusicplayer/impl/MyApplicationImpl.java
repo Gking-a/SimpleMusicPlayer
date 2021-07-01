@@ -42,8 +42,8 @@ public class MyApplicationImpl extends Application
     public MusicPlayer mMusicPlayer=new MusicPlayer();
     @Override
     public void onCreate() {
-        DialogX.init(this);
         super.onCreate();
+        DialogX.init(this);
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadSettings();
     }
