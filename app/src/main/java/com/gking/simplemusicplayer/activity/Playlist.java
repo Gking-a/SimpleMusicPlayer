@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.SongManager;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.util.JsonUtil;
@@ -27,8 +31,9 @@ import com.google.android.material.button.MaterialButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.kongzue.dialogx.interfaces.OnIconChangeCallBack;
 import com.makeramen.roundedimageview.RoundedImageView;
-
+import com.kongzue.dialogx.dialogs.BottomMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -51,6 +56,7 @@ public class Playlist extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
         setContext(this);
+        setLoadControlPanel(true);
         RecyclerView recyclerView=f(R.id.songs);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
@@ -83,6 +89,7 @@ public class Playlist extends BaseActivity {
                         JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
                         for (int i = 0; i < songs.size(); i++) {
                             JsonObject song = songs.get(i).getAsJsonObject();
+                            SongManager.getInstance().addSong(((MyApplicationImpl) getApplication()).mMusicPlayer.new MusicBean(song));
                             String id = song.get("id").getAsString();
                             if (!holder.getIds().contains(id)) {
                                 holder.add(id, song);
@@ -97,39 +104,26 @@ public class Playlist extends BaseActivity {
             }
         });
     }
-    class MyRunnable implements Runnable{
-        String url;
-        int x;
-        ImageView iv;
-        public MyRunnable(ImageView iv,String id, int x, int y) {
-            this.iv=iv;
-            this.url = id;
-            this.x = x;
-            this.y = y;
+    public void getCover(ImageView iv,String url){
+        getCover(iv,url,50,50);
+    }
+    public void getCover(ImageView iv,String url, int x, int y){
+        Bitmap cover= ((MyApplicationImpl) getApplication()).getSongCover().get(url);
+        if(cover!=null){
+            iv.setImageBitmap(cover);
+            return;
         }
-
-        int y;
-        public MyRunnable(ImageView iv,String id) {
-            this(iv,id,50,50);
-        }
-
-        @Override
-        public void run() {
-            Bitmap cover= ((MyApplicationImpl) getApplication()).getSongCover().get(url);
-            if(cover!=null){
-                iv.setImageBitmap(cover);
-                return;
+        new Thread(()->{
+            try {
+                Bitmap cover1 = BitmapFactory.decodeStream(new URL(url+"?param="+x+"y"+y).openStream());
+                ((MyApplicationImpl) getApplication()).getSongCover().add(url,cover1);
+                myHandler.post(()-> {
+                    iv.setImageBitmap(cover1);
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            new Thread(()->{
-                try {
-                    Bitmap cover1 = BitmapFactory.decodeStream(new URL(url+"?param="+x+"y"+y).openStream());
-                    ((MyApplicationImpl) getApplication()).getSongCover().add(url,cover1);
-                    myHandler.post(()->iv.setImageBitmap(cover1));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
+        }).start();
     }
     class MyHandler extends Handler {
         public static final int UPDATE_UI = 0;
@@ -148,10 +142,10 @@ public class Playlist extends BaseActivity {
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
         List<String> content;
         Context context;
-
         public MyAdapter(Context context, List<String> content) {
             this.content = content;
             this.context = context;
+            SongManager.getInstance().setPointer(SongManager.getInstance().songs);
         }
         @NonNull
         @NotNull
@@ -164,10 +158,10 @@ public class Playlist extends BaseActivity {
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
             String id = content.get(position);
             JsonObject song= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
-            myVH.Root.setOnClickListener(v-> ((MyApplicationImpl) getApplication()).getMusicPlayer().start(id,null));
+            MusicPlayer.MusicBean musicBean=((MyApplicationImpl) getApplication()).mMusicPlayer.new MusicBean(song);
             myVH.Name.setText(JsonUtil.getAsString(song,"name"));
             myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
-            myHandler.post(new MyRunnable(myVH.Cover,JsonUtil.getAsString(song,"al","picUrl")));
+            getCover(myVH.Cover,JsonUtil.getAsString(song,"al","picUrl"));
             String au;
             {
                 StringBuilder sb=new StringBuilder();
@@ -177,10 +171,38 @@ public class Playlist extends BaseActivity {
                 }
                 au=sb.substring(0,sb.length()-1);
             }
+            View.OnClickListener onClickListener= v -> {
+                ((MyApplicationImpl) getApplication()).getMusicPlayer().start(SongManager.songManager.songs.get(position),null);
+                myHandler.post(() -> ((MyApplicationImpl) getApplication()).setControlCover(id,JsonUtil.getAsString(song,"name"),au,myHandler));
+            };
             myVH.Author.setText(au);
+            myVH.Root.setOnClickListener(onClickListener);
+            myVH.Name.setOnClickListener(onClickListener);
+            myVH.Author.setOnClickListener(onClickListener);
+            myVH.Cover.setOnClickListener(onClickListener);
             myVH.More.setOnClickListener(v->{
-                MyFunction fun = new MyFunction();
-                fun.moreOnClick();
+                String[] items=new String[]{"分享","查看统计"};
+                BottomMenu.show(items)
+                        .setOnIconChangeCallBack(new OnIconChangeCallBack(true) {
+                            @Override
+                            public int getIcon(BottomMenu bottomMenu, int index, String s) {
+                                switch (index){
+                                    case 0:return android.R.mipmap.sym_def_app_icon;
+                                    case 1:return android.R.mipmap.sym_def_app_icon;
+                                }
+                                return 0;
+                            }})
+                        .setOnMenuItemClickListener((bottomMenu, text, index) -> {
+                            switch (index){
+                                case 0:
+                                    ClipboardManager cm= (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                                    cm.setPrimaryClip(ClipData.newPlainText("Label","https://music.163.com/#/song?id="+id));
+                                    makeToast("链接已经复制到剪切板");
+                                case 1:
+                                    makeToast("尚未开始研发");
+                            }
+                            return false;
+                        });
             });
         }
         @Override
@@ -195,12 +217,12 @@ public class Playlist extends BaseActivity {
             RoundedImageView Cover;
             public MyVH(@NonNull @NotNull View itemView) {
                 super(itemView);
-                Name = itemView.findViewById(R.id.song_name);
-                Author=itemView.findViewById(R.id.song_author);
+                Name = itemView.findViewById(R.id.c_song_name);
+                Author=itemView.findViewById(R.id.c_song_author);
                 More=itemView.findViewById(R.id.song_more);
-                Cover=itemView.findViewById(R.id.song_cover);
-                Root =itemView;
-//                Layout = itemView.findViewById(R.id.song_item_layout);
+                Cover=itemView.findViewById(R.id.c_song_cover);
+//                Root =itemView;
+                Root = itemView.findViewById(R.id.song_item_layout);
             }
         }
     }

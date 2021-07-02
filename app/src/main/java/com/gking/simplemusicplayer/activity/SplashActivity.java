@@ -3,6 +3,7 @@
 
 package com.gking.simplemusicplayer.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,7 +18,7 @@ import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GMath;
 import android.content.Context;
 
-public class splashActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class splashActivity extends BaseActivity {
         FW.w("r"+result.getWidth()+" "+result.getHeight()+" "+GMath.getDec(result.getWidth(),result.getHeight()));
         return result;
     }
-    public Context getContext(){
+    public Activity getContext(){
         return this;
     }
 }

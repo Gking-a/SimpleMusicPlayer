@@ -9,12 +9,11 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,16 +23,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gking.simplemusicplayer.MyResources;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
-import com.gking.simplemusicplayer.impl.RecyclerViewAdapter;
 import com.gking.simplemusicplayer.util.FW;
-import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
@@ -44,10 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import gtools.managers.GHolder;
@@ -68,10 +61,12 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(this);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
+        setLoadControlPanel(true);
         load();
 //        debug();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -100,6 +95,7 @@ public class MainActivity extends BaseActivity {
     }
     private void load2(){
     }
+
     GTimer timer=new GTimer();
     @Override
     public void onBackPressed() {
