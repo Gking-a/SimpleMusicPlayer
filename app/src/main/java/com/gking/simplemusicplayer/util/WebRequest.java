@@ -20,6 +20,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void lyric(String id,String cookie,Callback callback){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("id",id);
+        jsonObject.addProperty("kv",-1);
+        jsonObject.addProperty("lv",-1);
+        jsonObject.addProperty("tv",-1);
+        post(URLs.lyric,jsonObject,cookie,callback);
+    }
     public static void song_detail(List<String> ids,String cookie,Callback callback){
         JsonObject jsonObject=new JsonObject();
         JsonArray array=new JsonArray();

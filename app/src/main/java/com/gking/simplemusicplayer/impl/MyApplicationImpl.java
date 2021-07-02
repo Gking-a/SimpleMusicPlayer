@@ -28,6 +28,8 @@ import java.util.Date;
 
 public class MyApplicationImpl extends Application
 {
+    public static Handler handler=new Handler();
+    public static MyApplicationImpl myApplication;
 	public static final File CoverImg=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/CoverImg/");
 	public static final File Playlists=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Playlists/");
 	public static final File Cookies=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Cookies/");
@@ -47,6 +49,7 @@ public class MyApplicationImpl extends Application
     @Override
     public void onCreate() {
         super.onCreate();
+        myApplication=this;
         DialogX.init(this);
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         load();
@@ -70,28 +73,43 @@ public class MyApplicationImpl extends Application
         last.setOnClickListener(v-> getMusicPlayer().last(null));
         pause.setOnClickListener(v-> getMusicPlayer().pause());
     }
-    public void setControlCover(String id, String name, String au, Handler handler){
-        Bitmap bitmap= getSongCover().get(id);
-        Name.setText(name);
-        Author.setText(au);
-        if(bitmap!=null)cover.setImageBitmap(bitmap);
-        else {
-            new Thread(){
-                @Override
-                public void run() {
-                    do {
-                        try {
-                            sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }while (getSongCover().get(id)==null);
-                    Bitmap bitmap= getSongCover().get(id);
-                    handler.post(()->cover.setImageBitmap(bitmap));
-                    cover.setImageBitmap(bitmap);
-                }
-            }.start();
+    class MyRunnable implements Runnable{
+        String id;
+        String name;
+        String au;
+
+        public MyRunnable(String id, String name, String au) {
+            this.id = id;
+            this.name = name;
+            this.au = au;
         }
+
+        @Override
+        public void run() {
+            Bitmap bitmap= getSongCover().get(id);
+            Name.setText(name);
+            Author.setText(au);
+            if(bitmap!=null)cover.setImageBitmap(bitmap);
+            else {
+                new Thread(){
+                    @Override
+                    public void run() {
+                        do {
+                            try {
+                                sleep(10);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }while (getSongCover().get(id)==null);
+                        Bitmap bitmap= getSongCover().get(id);
+                        handler.post(()->cover.setImageBitmap(bitmap));
+                    }
+                }.start();
+            }
+        }
+    }
+    public void setControlInfo(String id, String name, String au, Handler handler){
+        handler.post(new MyRunnable(id,name,au));
     }
     private void loadSettings() {
 		if(!getFilesDir().exists())

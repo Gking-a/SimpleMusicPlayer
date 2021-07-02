@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SongActivity"></activity>
+        <activity android:name=".activity.SongActivity"></activity>
 
         <service
             android:name=".service.MusicService"

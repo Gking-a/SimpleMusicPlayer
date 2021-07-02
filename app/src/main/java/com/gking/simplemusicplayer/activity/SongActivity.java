@@ -1,9 +1,10 @@
-package com.gking.simplemusicplayer;
+package com.gking.simplemusicplayer.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 
 public class SongActivity extends BaseActivity {

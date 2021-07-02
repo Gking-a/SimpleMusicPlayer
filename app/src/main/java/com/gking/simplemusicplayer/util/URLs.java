@@ -101,7 +101,7 @@ public class URLs {
     public static final String login_refresh="https://music.163.com/weapi/login/token/refresh";
     public static final String login_status="https://music.163.com/weapi/w/nuser/account/get";
     public static final String logout="https://music.163.com/weapi/logout";
-    public static final String lyric="https://music.163.com/api/song/lyric";
+    public static final String lyric="https://music.163.com/weapi/song/lyric";
     public static final String mlog_to_video="https://music.163.com/weapi/mlog/video/convert/id";
     public static final String mlog_url="https://music.163.com/weapi/mlog/detail/v1";
     public static final String msg_comments="https://music.163.com/api/v1/user/comments/${query.uid}";

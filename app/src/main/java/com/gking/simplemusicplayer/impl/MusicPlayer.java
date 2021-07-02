@@ -42,6 +42,8 @@ public class MusicPlayer extends MediaPlayer {
                     prepare();
                     prepared=true;
                     player.start();
+                    MyApplicationImpl myApplication=MyApplicationImpl.myApplication;
+                    myApplication.setControlInfo(musicBean.id,musicBean.name,musicBean.author,myApplication.handler);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

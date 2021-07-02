@@ -158,7 +158,6 @@ public class Playlist extends BaseActivity {
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
             String id = content.get(position);
             JsonObject song= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
-            MusicPlayer.MusicBean musicBean=((MyApplicationImpl) getApplication()).mMusicPlayer.new MusicBean(song);
             myVH.Name.setText(JsonUtil.getAsString(song,"name"));
             myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
             getCover(myVH.Cover,JsonUtil.getAsString(song,"al","picUrl"));
@@ -173,7 +172,7 @@ public class Playlist extends BaseActivity {
             }
             View.OnClickListener onClickListener= v -> {
                 ((MyApplicationImpl) getApplication()).getMusicPlayer().start(SongManager.songManager.songs.get(position),null);
-                myHandler.post(() -> ((MyApplicationImpl) getApplication()).setControlCover(id,JsonUtil.getAsString(song,"name"),au,myHandler));
+//                myHandler.post(() -> ((MyApplicationImpl) getApplication()).setControlInfo(id,JsonUtil.getAsString(song,"name"),au,myHandler));
             };
             myVH.Author.setText(au);
             myVH.Root.setOnClickListener(onClickListener);
