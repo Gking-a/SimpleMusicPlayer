@@ -12,8 +12,6 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -72,7 +69,7 @@ public class MainActivity extends BaseActivity {
         super.onStart();
     }
     private void load(){
-        Toolbar toolbar=f(R.id.toolbar);
+        Toolbar toolbar=f(R.id.playlist_toolbar);
         setSupportActionBar(toolbar);
         search=f(R.id.searchEditText);
         recentSongs=f(R.id.recentSongs);

@@ -7,7 +7,11 @@ import com.gking.simplemusicplayer.util.JsonUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MusicPlayer extends MediaPlayer {
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
@@ -92,13 +96,29 @@ public class MusicPlayer extends MediaPlayer {
             if(song==null)return;
             id=JsonUtil.getAsString(song,"id");
             name= JsonUtil.getAsString(song,"name");
-            StringBuilder sb=new StringBuilder();
+            List<String> ars=new LinkedList<>();
             JsonArray ar = JsonUtil.getAsJsonArray(song, "ar");
             for (int i = 0; i < ar.size(); i++) {
-                sb.append(ar.get(i).getAsJsonObject().get("name").getAsString()).append("/");
+                ars.add(JsonUtil.getAsString(ar.get(i).getAsJsonObject(),"name"));
             }
-            author=sb.substring(0,sb.length()-1);
+            author= StringUtils.join(ars,"/");
+            System.out.println(author);
         }
+
+        public MusicBean(String id, String name, String author) {
+            this.id = id;
+            this.name = name;
+            this.author = author;
+        }
+
+        public MusicBean(String id, String name, String author, MusicBean next, MusicBean last) {
+            this.id = id;
+            this.name = name;
+            this.author = author;
+            this.next = next;
+            this.last = last;
+        }
+
         public String id,name,author;
         public Bitmap cover;
         public MusicBean next,last;

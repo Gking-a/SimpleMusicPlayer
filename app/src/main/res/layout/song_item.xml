@@ -11,7 +11,7 @@
     android:id="@+id/song_item_layout">
 
     <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/c_song_cover"
+        android:id="@+id/song_cover"
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
@@ -25,27 +25,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:riv_corner_radius="5dp" />
     <TextView
-        android:id="@+id/c_song_name"
+        android:id="@+id/song_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toLeftOf="@id/song_more"
-        app:layout_constraintLeft_toRightOf="@id/c_song_cover"
+        app:layout_constraintLeft_toRightOf="@id/song_cover"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintBottom_toTopOf="@id/c_song_author"
+        app:layout_constraintBottom_toTopOf="@id/song_author"
         app:layout_constraintTop_toTopOf="parent"
         android:singleLine="true"
         android:textSize="16sp"/>
 
     <TextView
-        android:id="@+id/c_song_author"
+        android:id="@+id/song_author"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toLeftOf="@id/song_more"
-        app:layout_constraintLeft_toRightOf="@id/c_song_cover"
+        app:layout_constraintLeft_toRightOf="@id/song_cover"
         android:textAppearance="?attr/textAppearanceBody2"
         android:textColor="?android:attr/textColorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/c_song_name"
+        app:layout_constraintTop_toBottomOf="@id/song_name"
         android:textSize="12sp"
         android:singleLine="true"/>
     <com.google.android.material.button.MaterialButton

@@ -16,6 +16,13 @@ public class SongManager {
         songs.add(musicBean);
         randomSongs.add(musicBean);
     }
+    public void clear(){
+        songs=null;
+        randomSongs=null;
+        System.gc();
+        songs =new LinkedList<>();
+        randomSongs=new LinkedList<>();
+    }
     public LinkedList<MusicPlayer.MusicBean> songs =new LinkedList<>();
     public LinkedList<MusicPlayer.MusicBean> randomSongs=new LinkedList<>();
     public void randomSort(){

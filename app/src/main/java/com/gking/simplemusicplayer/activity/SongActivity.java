@@ -8,10 +8,11 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 
 public class SongActivity extends BaseActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContext(this);
+        setLoadControlPanel(false);
         setContentView(R.layout.activity_song);
     }
 }

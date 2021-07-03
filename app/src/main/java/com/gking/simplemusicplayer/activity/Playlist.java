@@ -1,6 +1,7 @@
 package com.gking.simplemusicplayer.activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,10 +14,17 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
@@ -39,6 +47,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import gtools.managers.GHolder;
@@ -57,11 +67,10 @@ public class Playlist extends BaseActivity {
         setContentView(R.layout.activity_playlist);
         setContext(this);
         setLoadControlPanel(true);
-        RecyclerView recyclerView=f(R.id.songs);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        SongManager.getInstance().clear();
         String id = getIntent().getStringExtra("id");
         JsonObject playlist = (JsonObject) GHolder.standardInstance.get(id);
+        load(playlist);
         WebRequest.playlist_detail(JsonUtil.getAsString(playlist, "id"), MyCookieJar.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -89,20 +98,59 @@ public class Playlist extends BaseActivity {
                         JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
                         for (int i = 0; i < songs.size(); i++) {
                             JsonObject song = songs.get(i).getAsJsonObject();
-                            SongManager.getInstance().addSong(((MyApplicationImpl) getApplication()).mMusicPlayer.new MusicBean(song));
                             String id = song.get("id").getAsString();
+                            MusicPlayer.MusicBean bean=((MyApplicationImpl) getApplication()).mMusicPlayer.new MusicBean(song);
+                            bean.id=id;
+                            SongManager.getInstance().addSong(bean);
+                            nameMap.put(JsonUtil.getAsString(song,"name"),bean);
+                            music.add(bean);
                             if (!holder.getIds().contains(id)) {
                                 holder.add(id, song);
                             }
                         }
                         Message message = new Message();
                         message.what = MyHandler.UPDATE_UI;
-                        message.obj=ids;
+                        message.obj=music;
                         myHandler.sendMessage(message);
                     }
                 });
             }
         });
+    }
+    List<MusicPlayer.MusicBean> music=new LinkedList<>();
+    boolean isSearching=false;
+    RecyclerView songList;
+    private void load(JsonObject playlist) {
+        songList=f(R.id.songs);
+        songList.setLayoutManager(new LinearLayoutManager(getContext()));
+        songList.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        Button back=f(R.id.playlist_toolbar_back);
+        back.setOnClickListener(v->finish());
+        TextView title=f(R.id.playlist_toolbar_title);
+        title.setText(playlist.get("name").getAsString());
+        EditText search=f(R.id.playlist_toolbar_search);
+        MyTextWatcher watcher=new MyTextWatcher();
+        search.addTextChangedListener(watcher);
+        Button menu=f(R.id.playlist_toolbar_menu);
+        PopupMenu popupMenu=new PopupMenu(getContext(),menu);
+        View.OnClickListener l1= v -> {
+            isSearching=false;
+            search.setVisibility(View.GONE);
+            watcher.cancel();
+        };
+        View.OnClickListener l2=v-> popupMenu.show();
+        MenuInflater inflater=popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.playlist,popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()){
+                case R.id.playlist_menu_search:
+                    search.setVisibility(View.VISIBLE);
+                    isSearching=true;
+                    menu.setOnClickListener(l1);
+            }
+            return false;
+        });
+        menu.setOnClickListener(l2);
     }
     public void getCover(ImageView iv,String url){
         getCover(iv,url,50,50);
@@ -132,7 +180,7 @@ public class Playlist extends BaseActivity {
             switch (msg.what) {
                 case UPDATE_UI:
                     RecyclerView recyclerView = f(R.id.songs);
-                    MyAdapter adapter=new MyAdapter(getContext(), (List<String>) msg.obj);
+                    MyAdapter adapter=new MyAdapter(getContext(), (List<MusicPlayer.MusicBean>) msg.obj);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     break;
@@ -140,9 +188,9 @@ public class Playlist extends BaseActivity {
         }
     }
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
-        List<String> content;
+        List<MusicPlayer.MusicBean> content;
         Context context;
-        public MyAdapter(Context context, List<String> content) {
+        public MyAdapter(Context context, List<MusicPlayer.MusicBean> content) {
             this.content = content;
             this.context = context;
             SongManager.getInstance().setPointer(SongManager.getInstance().songs);
@@ -156,7 +204,7 @@ public class Playlist extends BaseActivity {
         }
         @Override
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
-            String id = content.get(position);
+            String id = content.get(position).id;
             JsonObject song= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
             myVH.Name.setText(JsonUtil.getAsString(song,"name"));
             myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
@@ -216,13 +264,40 @@ public class Playlist extends BaseActivity {
             RoundedImageView Cover;
             public MyVH(@NonNull @NotNull View itemView) {
                 super(itemView);
-                Name = itemView.findViewById(R.id.c_song_name);
-                Author=itemView.findViewById(R.id.c_song_author);
+                Name = itemView.findViewById(R.id.song_name);
+                Author=itemView.findViewById(R.id.song_author);
                 More=itemView.findViewById(R.id.song_more);
-                Cover=itemView.findViewById(R.id.c_song_cover);
-//                Root =itemView;
+                Cover=itemView.findViewById(R.id.song_cover);
                 Root = itemView.findViewById(R.id.song_item_layout);
             }
+        }
+    }
+    LinkedHashMap<String, MusicPlayer.MusicBean> nameMap=new LinkedHashMap<>();
+    public class MyTextWatcher implements TextWatcher{
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+            if(!isSearching)return;
+            String text=s.toString();
+            LinkedList<MusicPlayer.MusicBean> beans=new LinkedList<>();
+            for(String name:nameMap.keySet()){
+                if(name.contains(text))beans.add(nameMap.get(name));
+            }
+            MyAdapter myAdapter=new MyAdapter(getContext(),beans);
+            songList.setAdapter(myAdapter);
+            myAdapter.notifyDataSetChanged();
+        }
+        public void cancel(){
+            MyAdapter myAdapter=new MyAdapter(getContext(),SongManager.getInstance().songs);
+            songList.setAdapter(myAdapter);
+            myAdapter.notifyDataSetChanged();
         }
     }
 }

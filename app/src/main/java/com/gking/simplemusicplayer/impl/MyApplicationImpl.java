@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,7 +50,7 @@ public class MyApplicationImpl extends Application
         super.onCreate();
         myApplication=this;
         DialogX.init(this);
-        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
+//        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         load();
         loadSettings();
     }
@@ -63,6 +62,7 @@ public class MyApplicationImpl extends Application
     ImageView cover;
     TextView Name,Author;
     public void loadControlPanel(){
+        controlPanel.setBackgroundColor(0xFFffFFff);
         cover= controlPanel.findViewById(R.id.c_song_cover);
         Name= controlPanel.findViewById(R.id.c_song_name);
         Author= controlPanel.findViewById(R.id.c_song_author);
