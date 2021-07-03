@@ -13,4 +13,5 @@
     <dimen name="play_height_half">55dp</dimen>
     <dimen name="btwidth">50dp</dimen>
     <dimen name="settings_item_height">48dp</dimen>
+    <dimen name="sound">32dp</dimen>
 </resources>

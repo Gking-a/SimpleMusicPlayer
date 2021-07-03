@@ -1,8 +1,4 @@
-package com.gking.simplemusicplayer;
-
-import android.graphics.Bitmap;
-
-import com.gking.simplemusicplayer.impl.MusicPlayer;
+package com.gking.simplemusicplayer.manager;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -12,7 +8,7 @@ public class SongManager {
     public static final SongManager getInstance(){
         return songManager;
     }
-    public void addSong(MusicPlayer.MusicBean musicBean){
+    public void addSong(SongBean musicBean){
         songs.add(musicBean);
         randomSongs.add(musicBean);
     }
@@ -23,21 +19,21 @@ public class SongManager {
         songs =new LinkedList<>();
         randomSongs=new LinkedList<>();
     }
-    public LinkedList<MusicPlayer.MusicBean> songs =new LinkedList<>();
-    public LinkedList<MusicPlayer.MusicBean> randomSongs=new LinkedList<>();
+    public LinkedList<SongBean> songs =new LinkedList<>();
+    public LinkedList<SongBean> randomSongs=new LinkedList<>();
     public void randomSort(){
         Random random=new Random();
         for (int i = 0; i < randomSongs.size(); i++) {
             int p=Math.abs(random.nextInt())% randomSongs.size();
-            MusicPlayer.MusicBean temp= randomSongs.get(i);
+            SongBean temp= randomSongs.get(i);
             randomSongs.set(i, randomSongs.get(p));
             randomSongs.set(p,temp);
         }
         setPointer(randomSongs);
     }
-    public void setPointer(LinkedList<MusicPlayer.MusicBean> list){
+    public void setPointer(LinkedList<SongBean> list){
         for (int i = 0; i < list.size(); i++) {
-            MusicPlayer.MusicBean bean=list.get(i);
+            SongBean bean=list.get(i);
             if(i==0){
                 bean.last=list.getLast();
                 bean.next=list.get((i+1)%list.size());

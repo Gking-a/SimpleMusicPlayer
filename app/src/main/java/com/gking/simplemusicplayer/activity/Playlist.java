@@ -1,7 +1,6 @@
 package com.gking.simplemusicplayer.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +17,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,9 +26,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.SongManager;
+import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.util.JsonUtil;
@@ -99,8 +97,7 @@ public class Playlist extends BaseActivity {
                         for (int i = 0; i < songs.size(); i++) {
                             JsonObject song = songs.get(i).getAsJsonObject();
                             String id = song.get("id").getAsString();
-                            MusicPlayer.MusicBean bean=((MyApplicationImpl) getApplication()).mMusicPlayer.new MusicBean(song);
-                            bean.id=id;
+                            SongBean bean= new SongBean(song);
                             SongManager.getInstance().addSong(bean);
                             nameMap.put(JsonUtil.getAsString(song,"name"),bean);
                             music.add(bean);
@@ -117,7 +114,7 @@ public class Playlist extends BaseActivity {
             }
         });
     }
-    List<MusicPlayer.MusicBean> music=new LinkedList<>();
+    List<SongBean> music=new LinkedList<>();
     boolean isSearching=false;
     RecyclerView songList;
     private void load(JsonObject playlist) {
@@ -180,7 +177,7 @@ public class Playlist extends BaseActivity {
             switch (msg.what) {
                 case UPDATE_UI:
                     RecyclerView recyclerView = f(R.id.songs);
-                    MyAdapter adapter=new MyAdapter(getContext(), (List<MusicPlayer.MusicBean>) msg.obj);
+                    MyAdapter adapter=new MyAdapter(getContext(), (List<SongBean>) msg.obj);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     break;
@@ -188,9 +185,9 @@ public class Playlist extends BaseActivity {
         }
     }
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
-        List<MusicPlayer.MusicBean> content;
+        List<SongBean> content;
         Context context;
-        public MyAdapter(Context context, List<MusicPlayer.MusicBean> content) {
+        public MyAdapter(Context context, List<SongBean> content) {
             this.content = content;
             this.context = context;
             SongManager.getInstance().setPointer(SongManager.getInstance().songs);
@@ -272,7 +269,7 @@ public class Playlist extends BaseActivity {
             }
         }
     }
-    LinkedHashMap<String, MusicPlayer.MusicBean> nameMap=new LinkedHashMap<>();
+    LinkedHashMap<String, SongBean> nameMap=new LinkedHashMap<>();
     public class MyTextWatcher implements TextWatcher{
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -286,7 +283,7 @@ public class Playlist extends BaseActivity {
         public void afterTextChanged(Editable s) {
             if(!isSearching)return;
             String text=s.toString();
-            LinkedList<MusicPlayer.MusicBean> beans=new LinkedList<>();
+            LinkedList<SongBean> beans=new LinkedList<>();
             for(String name:nameMap.keySet()){
                 if(name.contains(text))beans.add(nameMap.get(name));
             }
