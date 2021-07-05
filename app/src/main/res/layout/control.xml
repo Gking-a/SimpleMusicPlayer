@@ -21,7 +21,7 @@
         android:paddingBottom="2dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:riv_corner_radius="5dp" />
     <TextView
@@ -29,9 +29,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toLeftOf="@id/c_song_last"
-        app:layout_constraintLeft_toRightOf="@id/song_cover"
+        app:layout_constraintLeft_toRightOf="@id/c_song_cover"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintBottom_toTopOf="@id/song_author"
+        app:layout_constraintBottom_toTopOf="@id/c_song_author"
         app:layout_constraintTop_toTopOf="parent"
         android:singleLine="true"
         android:textSize="16sp"/>

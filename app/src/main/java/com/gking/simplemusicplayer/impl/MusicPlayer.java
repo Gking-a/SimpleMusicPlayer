@@ -26,7 +26,10 @@ public class MusicPlayer extends MediaPlayer {
         this.auto = auto;
     }
 
-    public void start(SongBean musicBean, OnPreparedListener onPreparedListener){
+    public void start(SongBean songBean,OnPreparedListener listener){
+        start(songBean);
+    }
+    public void start(SongBean musicBean){
         this.musicBean=musicBean;
         new Thread(){
             @Override
@@ -34,11 +37,13 @@ public class MusicPlayer extends MediaPlayer {
                 try {
                     try{ player.stop(); }catch (Exception e){}
                     try{ reset(); }catch (Exception e){}
+                    System.out.println(musicBean.id);
                     setDataSource(Outer+musicBean.id);
-                    setOnPreparedListener(onPreparedListener);
-                    prepare();
-                    prepared=true;
-                    player.start();
+                    setOnPreparedListener(mp -> {
+                        prepared=true;
+                        player.start();
+                    });
+                    prepareAsync();
                     MyApplicationImpl myApplication=MyApplicationImpl.myApplication;
                     myApplication.setControlInfo(musicBean.id,musicBean.name,musicBean.author,myApplication.handler);
                 } catch (IOException e) {
@@ -47,12 +52,29 @@ public class MusicPlayer extends MediaPlayer {
             }
         }.start();
     }
+    public void operateAfterPrepared(OnPreparedListener listener){
+        Thread thread=new Thread(){
+            @Override
+            public void run() {
+                while (!prepared){
+                    try {
+                        sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(listener!=null)
+                    listener.onPrepared(MusicPlayer.this);
+            }
+        };
+        thread.start();
+
+    }
     @Override
     public void reset() {
         super.reset();
         prepared=false;
     }
-
     @Override
     public void stop() throws IllegalStateException {
         try { super.stop(); }catch (Exception e){ }

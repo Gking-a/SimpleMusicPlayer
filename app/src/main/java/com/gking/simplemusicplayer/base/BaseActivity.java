@@ -22,6 +22,7 @@ import java.io.File;
 import gtools.managers.GHolder;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public <T extends View> T f(int id) {
@@ -75,6 +76,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             parentViewGroup.addView(v, index);
         }
         super.onPause();
+    }
+    protected final void init(Activity activity,boolean loadControlPanel){
+        this.context=activity;
+        this.loadControlPanel=loadControlPanel;
     }
     public void setContext(Activity context) {
         this.context = context;

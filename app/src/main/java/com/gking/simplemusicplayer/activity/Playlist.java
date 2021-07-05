@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -130,20 +131,19 @@ public class Playlist extends BaseActivity {
         search.addTextChangedListener(watcher);
         Button menu=f(R.id.playlist_toolbar_menu);
         PopupMenu popupMenu=new PopupMenu(getContext(),menu);
+        View.OnClickListener l2=v-> popupMenu.show();
         View.OnClickListener l1= v -> {
-            isSearching=false;
             search.setVisibility(View.GONE);
             watcher.cancel();
+            menu.setOnClickListener(l2);
         };
-        View.OnClickListener l2=v-> popupMenu.show();
         MenuInflater inflater=popupMenu.getMenuInflater();
         inflater.inflate(R.menu.playlist,popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()){
-                case R.id.playlist_menu_search:
-                    search.setVisibility(View.VISIBLE);
-                    isSearching=true;
-                    menu.setOnClickListener(l1);
+            if(item.getItemId()==R.id.playlist_menu_search){
+                search.setVisibility(View.VISIBLE);
+                watcher.start(search);
+                menu.setOnClickListener(l1);
             }
             return false;
         });
@@ -202,24 +202,19 @@ public class Playlist extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
             String id = content.get(position).id;
-            JsonObject song= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
-            myVH.Name.setText(JsonUtil.getAsString(song,"name"));
+            JsonObject json= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
+            SongBean song=content.get(position);
+            myVH.Name.setText(song.name);
             myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
-            getCover(myVH.Cover,JsonUtil.getAsString(song,"al","picUrl"));
-            String au;
-            {
-                StringBuilder sb=new StringBuilder();
-                JsonArray ar = JsonUtil.getAsJsonArray(song, "ar");
-                for (int i = 0; i < ar.size(); i++) {
-                    sb.append(ar.get(i).getAsJsonObject().get("name").getAsString()).append("/");
-                }
-                au=sb.substring(0,sb.length()-1);
-            }
+            getCover(myVH.Cover,JsonUtil.getAsString(json,"al","picUrl"));
             View.OnClickListener onClickListener= v -> {
-                ((MyApplicationImpl) getApplication()).getMusicPlayer().start(SongManager.songManager.songs.get(position),null);
+                ((MyApplicationImpl) getApplication()).getMusicPlayer().start(song,null);
+                Intent intent = new Intent(getContext(), SongActivity.class);
+                intent.putExtra("bean",song);
+                startActivity(intent);
 //                myHandler.post(() -> ((MyApplicationImpl) getApplication()).setControlInfo(id,JsonUtil.getAsString(song,"name"),au,myHandler));
             };
-            myVH.Author.setText(au);
+            myVH.Author.setText(song.author);
             myVH.Root.setOnClickListener(onClickListener);
             myVH.Name.setOnClickListener(onClickListener);
             myVH.Author.setOnClickListener(onClickListener);
@@ -292,9 +287,14 @@ public class Playlist extends BaseActivity {
             myAdapter.notifyDataSetChanged();
         }
         public void cancel(){
+            isSearching=false;
             MyAdapter myAdapter=new MyAdapter(getContext(),SongManager.getInstance().songs);
             songList.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
+        }
+        public void start(EditText et){
+            isSearching=true;
+            et.setText(et.getText());
         }
     }
 }

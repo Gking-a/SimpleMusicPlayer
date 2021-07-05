@@ -27,5 +27,10 @@ public class LyricBean {
     }
     LinkedList<Long> time=new LinkedList<>();
     LinkedList<String> lyric=new LinkedList<>();
+
+    public LinkedList<String> getLyric() {
+        return lyric;
+    }
+
     private Pattern pattern=Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{3})\\](.*)}");
 }

@@ -9,10 +9,11 @@ import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SongBean {
+public class SongBean implements Serializable {
     public SongBean(JsonObject song) {
         if (song == null) return;
         id = JsonUtil.getAsString(song, "id");
