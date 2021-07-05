@@ -1,38 +1,20 @@
 package com.gking.simplemusicplayer.manager;
 
-import gtools.util.GTimer;
+import java.util.LinkedList;
 
 public class LyricManager {
     LyricBean lyricBean;
-    Thread runThread;
-    OnLyricChangedListener listener;
-    public void start(LyricBean lyricBean, OnLyricChangedListener listener){
-        this.lyricBean=lyricBean;
-        this.listener=listener;
-        runThread=new Thread(()->{
-            try{
-                GTimer gTimer=new GTimer();
-                while(!runThread.isInterrupted()){
-
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        });
-        runThread.start();
+    public int getPosition(int msec){
+        if(lyricBean.nolyric)return -1;
+        LinkedList<Integer> time = lyricBean.time;
+        for (int i = 0; i < time.size()-1; i++) {
+            if(i==time.size()-1)break;
+            int last=time.get(i);
+            int next=time.get(i+1);
+            if(last<=msec&&msec<=next)return i-1;
+        }
+        return time.size()-1;
     }
-
-    public void reset(){
-        runThread.interrupt();
-        runThread.stop();
-        runThread=null;
-        listener=null;
-        lyricBean=null;
-    }
-
-
-
-
     interface OnLyricChangedListener {
         public void onLyricChanged(long millsec,String lyric);
     }
@@ -46,7 +28,8 @@ public class LyricManager {
 
     public static final LyricManager Instance=new LyricManager();
     private LyricManager(){}
-    public static LyricManager getInstance() {
+    public static LyricManager getInstance(LyricBean lyricBean) {
+        Instance.lyricBean=lyricBean;
         return Instance;
     }
 }

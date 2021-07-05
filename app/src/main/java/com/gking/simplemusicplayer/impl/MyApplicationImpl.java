@@ -11,6 +11,7 @@ import java.util.Objects;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.Process;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -136,7 +137,7 @@ public class MyApplicationImpl extends Application
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
             }
-            System.exit(-1);
+            Process.killProcess(Process.myPid());
         }
 	}
 	public static void l(Object o){
