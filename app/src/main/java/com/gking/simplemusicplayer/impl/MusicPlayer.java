@@ -11,6 +11,11 @@ public class MusicPlayer extends MediaPlayer {
     public MusicPlayer player=this;
     private boolean prepared=false;
     private boolean auto=false;
+    private boolean lockProgress=false;
+
+    public void setLockProgress(boolean lockProgress) {
+        this.lockProgress = lockProgress;
+    }
     private SongBean musicBean=new SongBean(null);
     MusicPlayer(){
         super();
@@ -97,7 +102,10 @@ public class MusicPlayer extends MediaPlayer {
 
     @Override
     public void seekTo(int msec) throws IllegalStateException {
-        try { super.seekTo(msec); }catch (Exception e){ }
+        try {
+            if(!lockProgress)
+                super.seekTo(msec);
+        }catch (Exception e){ }
     }
 
     public void next(OnPreparedListener onPreparedListener) {

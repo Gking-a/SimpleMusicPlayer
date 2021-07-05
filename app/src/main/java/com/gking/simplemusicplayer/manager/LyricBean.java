@@ -8,6 +8,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LyricBean {
+    public boolean isNolyric() {
+        return nolyric;
+    }
+
+    boolean nolyric=false;
+    public LyricBean(){
+        nolyric=true;
+    }
     public LyricBean(JsonObject data){
         String lrc= JsonUtil.getAsString(data,"lrc","lyric");
         String[] split = lrc.split("\n");
@@ -21,6 +29,7 @@ public class LyricBean {
                 long time=min*60*1000+sec*1000+mil;
                 this.time.add(time);
                 this.lyric.add(lyric);
+                System.out.println(lyric);
             }
         }
         lrc=null;
@@ -32,5 +41,5 @@ public class LyricBean {
         return lyric;
     }
 
-    private Pattern pattern=Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{3})\\](.*)}");
+    private Pattern pattern=Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{3})\\](.*)");
 }

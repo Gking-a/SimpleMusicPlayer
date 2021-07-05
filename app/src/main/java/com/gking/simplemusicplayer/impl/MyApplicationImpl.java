@@ -50,7 +50,7 @@ public class MyApplicationImpl extends Application
         super.onCreate();
         myApplication=this;
         DialogX.init(this);
-//        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         load();
         loadSettings();
     }
@@ -131,6 +131,12 @@ public class MyApplicationImpl extends Application
             FW.w(new Date()+"\n");
             FW.w(t+"\n");
             FW.w(e);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
+            System.exit(-1);
         }
 	}
 	public static void l(Object o){

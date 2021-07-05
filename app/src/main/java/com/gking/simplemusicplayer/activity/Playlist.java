@@ -133,6 +133,7 @@ public class Playlist extends BaseActivity {
         PopupMenu popupMenu=new PopupMenu(getContext(),menu);
         View.OnClickListener l2=v-> popupMenu.show();
         View.OnClickListener l1= v -> {
+            menu.setBackgroundResource(R.drawable.dots);
             search.setVisibility(View.GONE);
             watcher.cancel();
             menu.setOnClickListener(l2);
@@ -144,6 +145,7 @@ public class Playlist extends BaseActivity {
                 search.setVisibility(View.VISIBLE);
                 watcher.start(search);
                 menu.setOnClickListener(l1);
+                menu.setBackgroundResource(R.drawable.close);
             }
             return false;
         });

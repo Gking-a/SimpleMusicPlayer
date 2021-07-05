@@ -24,7 +24,6 @@ public class SongBean implements Serializable {
             ars.add(JsonUtil.getAsString(ar.get(i).getAsJsonObject(), "name"));
         }
         author = StringUtils.join(ars, "/");
-        System.out.println(author);
     }
 
     public SongBean(String id, String name, String author) {
