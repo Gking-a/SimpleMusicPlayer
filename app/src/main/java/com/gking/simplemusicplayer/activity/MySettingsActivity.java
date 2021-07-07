@@ -11,7 +11,7 @@ import java.io.IOException;
 import gtools.GLibrary;
 import gtools.managers.GLibraryManager;
 
-public class MySettings extends Activity {
+public class MySettingsActivity extends Activity {
     public static final String DEFAULT_LIST ="defaultlist";
     public static final String LOCKEDNOTIFICATIONSHOW="lockednotificationshow";
     public static final String WINDOW_COLOR="windowcolor";

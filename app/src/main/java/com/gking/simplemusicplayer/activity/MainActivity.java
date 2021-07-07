@@ -77,15 +77,15 @@ public class MainActivity extends BaseActivity {
         nav=f(R.id.nav);
         drawerLayout=f(R.id.drawer);
         MenuItem login=nav.getMenu().findItem(R.id.login);
-        if(MySettings.get("account_name")!=null){
-           login.setTitle(MySettings.get("account_name"));
-           Intent i=new Intent(this,Login_cellphone.class);
-           i.putExtra("ph",MySettings.get("account_phone"));
-           i.putExtra("pw",MySettings.get("account_pw"));
-           startActivityForResult(i,Login_cellphone.RequestCode);
+        if(MySettingsActivity.get("account_name")!=null){
+           login.setTitle(MySettingsActivity.get("account_name"));
+           Intent i=new Intent(this, LoginCellphoneActivity.class);
+           i.putExtra("ph", MySettingsActivity.get("account_phone"));
+           i.putExtra("pw", MySettingsActivity.get("account_pw"));
+           startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }else login.setTitle("登录");
         nav.setNavigationItemSelectedListener(item -> {
-            if(item.getItemId()==R.id.login)startActivityForResult(new Intent(getContext(), Login_cellphone.class),Login_cellphone.RequestCode);
+            if(item.getItemId()==R.id.login)startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
             return true;
         });
         load2();
@@ -104,16 +104,16 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode==Login_cellphone.RequestCode){
+        if(requestCode== LoginCellphoneActivity.RequestCode){
             if(data.getBooleanExtra("refresh",false)){
-                JsonObject object= (JsonObject) GHolder.standardInstance.get(Login_cellphone.RequestCode);
+                JsonObject object= (JsonObject) GHolder.standardInstance.get(LoginCellphoneActivity.RequestCode);
                 String name=object.getAsJsonObject("profile").get("nickname").getAsString();
                 MenuItem login=nav.getMenu().findItem(R.id.login);
                 login.setTitle(name);
-                MySettings.set("account_phone",data.getStringExtra("phone"));
-                MySettings.set("account_pw",data.getStringExtra("pw"));
-                MySettings.set("account_id",object.getAsJsonObject("account").get("id").getAsString());
-                MySettings.set("account_name",name);
+                MySettingsActivity.set("account_phone",data.getStringExtra("phone"));
+                MySettingsActivity.set("account_pw",data.getStringExtra("pw"));
+                MySettingsActivity.set("account_id",object.getAsJsonObject("account").get("id").getAsString());
+                MySettingsActivity.set("account_name",name);
                 {
                     WebRequest.user_playlist(object.getAsJsonObject("account").get("id").getAsString(), MyCookieJar.getLoginCookie(), new Callback() {
                         @Override
@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
                             for (int i = 0; i < jsonArray.size(); i++) {
                                 JsonObject playlist=jsonArray.get(i).getAsJsonObject();
                                 String uid=playlist.getAsJsonObject("creator").get("userId").getAsString();
-                                if(uid.equals(MySettings.get("account_id"))){
+                                if(uid.equals(MySettingsActivity.get("account_id"))){
                                     String id=playlist.get("id").getAsString();
                                     GHolder holder=new GHolder();
                                     Bitmap cover= BitmapFactory.decodeStream(new URL(
@@ -166,7 +166,7 @@ public class MainActivity extends BaseActivity {
                         tv.setText((String) holder.get("name"));
                         View layout=view.findViewById(R.id.list_small_layout);
                         layout.setOnClickListener(v -> {
-                            Intent intent=new Intent(getContext(),Playlist.class);
+                            Intent intent=new Intent(getContext(), PlaylistActivity.class);
                             intent.putExtra("id",(String)holder.get("id"));
                             startActivity(intent);
                         });

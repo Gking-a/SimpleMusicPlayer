@@ -26,9 +26,9 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.Playlist" />
-        <activity android:name=".activity.Login_cellphone" />
-        <activity android:name=".activity.Receiver">
+        <activity android:name=".activity.PlaylistActivity" />
+        <activity android:name=".activity.LoginCellphoneActivity" />
+        <activity android:name=".activity.Receiver_Deprecated">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -47,7 +47,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MySettings">
+        <activity android:name=".activity.MySettingsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
 

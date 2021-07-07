@@ -11,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.Login_cellphone;
-import com.gking.simplemusicplayer.activity.MySettings;
+import com.gking.simplemusicplayer.activity.LoginCellphoneActivity;
+import com.gking.simplemusicplayer.activity.MySettingsActivity;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         GHolder<Object,String> info=content.get(position);
         holder.title.setText(info.get(1));
         switch (info.get(0)){
-            case MySettings.login:holder.title.setOnClickListener(view->context.startActivity(new Intent(context, Login_cellphone.class)));
+            case MySettingsActivity.login:holder.title.setOnClickListener(view->context.startActivity(new Intent(context, LoginCellphoneActivity.class)));
         }
     }
     @Override

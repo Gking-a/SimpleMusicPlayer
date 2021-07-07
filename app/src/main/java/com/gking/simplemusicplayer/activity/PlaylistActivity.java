@@ -57,7 +57,7 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 
-public class Playlist extends BaseActivity {
+public class PlaylistActivity extends BaseActivity {
     MyHandler myHandler = new MyHandler();
 
     @Override

@@ -41,8 +41,8 @@ import okhttp3.Response;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.Playlists;
 
-public class Receiver extends Activity {
-    public static final String TAG="Receiver";
+public class Receiver_Deprecated extends Activity {
+    public static final String TAG="Receiver_Deprecated";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

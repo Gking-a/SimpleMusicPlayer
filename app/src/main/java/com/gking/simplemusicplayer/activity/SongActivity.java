@@ -51,7 +51,6 @@ public class SongActivity extends BaseActivity {
         init(this,false);
         setContentView(R.layout.activity_song);
         load();
-        musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
         musicPlayer.setOnSongBeanChangeListener((musicPlayer, songBean) -> {
             song=musicPlayer.getMusicBean();
             musicPlayer.operateAfterPrepared(mp -> {
@@ -66,9 +65,13 @@ public class SongActivity extends BaseActivity {
     SeekBar progress;
     TimeThread timeThread;
     private void load() {
+        musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
         progress=f(R.id.song_progress);
         lyricView=f(R.id.song_lyric);
         lyricView.setLayoutManager(new LinearLayoutManager(getContext()));
+        f(R.id.song_next).setOnClickListener(v -> musicPlayer.next(null));
+        f(R.id.song_last).setOnClickListener(v -> musicPlayer.last(null));
+        f(R.id.song_pause).setOnClickListener(v -> musicPlayer.pause());
     }
     class TimeThread extends Thread{
         @Override

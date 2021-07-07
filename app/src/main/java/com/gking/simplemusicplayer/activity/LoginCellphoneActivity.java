@@ -22,7 +22,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class Login_cellphone extends BaseActivity {
+public class LoginCellphoneActivity extends BaseActivity {
     public static final String TAG="login_cellphone";
     public static final int RequestCode=1000;
     @Override
