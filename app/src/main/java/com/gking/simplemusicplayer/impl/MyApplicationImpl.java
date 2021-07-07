@@ -9,6 +9,7 @@ import gtools.managers.GLibraryManager;
 import java.io.File;
 import java.util.Objects;
 import android.app.Application;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Process;
@@ -60,20 +61,23 @@ public class MyApplicationImpl extends Application
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);
         loadControlPanel();
     }
-    ImageView cover;
-    TextView Name,Author;
-    public void loadControlPanel(){
+    public ImageView cover;
+    public TextView Name,Author;
+    public void loadControlPanel() {
         controlPanel.setBackgroundColor(0xFFffFFff);
-        cover= controlPanel.findViewById(R.id.c_song_cover);
-        Name= controlPanel.findViewById(R.id.c_song_name);
-        Author= controlPanel.findViewById(R.id.c_song_author);
-        ImageButton next= controlPanel.findViewById(R.id.c_song_next),
-                last= controlPanel.findViewById(R.id.c_song_last),
-                pause= controlPanel.findViewById(R.id.c_song_pause);
-        next.setOnClickListener(v-> getMusicPlayer().next(null));
-        last.setOnClickListener(v-> getMusicPlayer().last(null));
-        pause.setOnClickListener(v-> getMusicPlayer().pause());
+        cover = controlPanel.findViewById(R.id.c_song_cover);
+        Name = controlPanel.findViewById(R.id.c_song_name);
+        Author = controlPanel.findViewById(R.id.c_song_author);
+        ImageButton next = controlPanel.findViewById(R.id.c_song_next),
+                last = controlPanel.findViewById(R.id.c_song_last),
+                pause = controlPanel.findViewById(R.id.c_song_pause);
+        next.setOnClickListener(v -> getMusicPlayer().next(null));
+        last.setOnClickListener(v -> getMusicPlayer().last(null));
+        pause.setOnClickListener(v -> getMusicPlayer().pause());
+        controlPanel.setVisibility(View.GONE);
     }
+
+
     class MyRunnable implements Runnable{
         String id;
         String name;

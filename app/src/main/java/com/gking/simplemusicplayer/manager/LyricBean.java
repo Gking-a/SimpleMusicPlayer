@@ -23,14 +23,10 @@ public class LyricBean {
         for (String s:split) {
             Matcher matcher=pattern.matcher(s);
             if(matcher.find()){
-                int min=Integer.parseInt(matcher.group(1));
-                int sec=Integer.parseInt(matcher.group(2));
-                int mil=0;
-                String temp=matcher.group(3);
-                if(temp.length()==2)mil=Integer.valueOf(temp,10)*10;
-                if(temp.length()==3)mil=Integer.valueOf(temp,10);
-                String lyric= matcher.group(4);
-                int time=min*60*1000+sec*1000+mil;
+                int time=0;
+                time+=Integer.parseInt(matcher.group(1))*60*1000;
+                time+= ((int) (Double.parseDouble(matcher.group(2)) * 1000));
+                String lyric= matcher.group(3);
                 this.time.add(time);
                 this.lyric.add(lyric);
                 System.out.println(lyric);
@@ -45,5 +41,5 @@ public class LyricBean {
         return lyric;
     }
 
-    private Pattern pattern=Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{2,3})\\](.*)");
+    private Pattern pattern=Pattern.compile("\\[(\\d{2}):(.*?)\\](.*)");
 }

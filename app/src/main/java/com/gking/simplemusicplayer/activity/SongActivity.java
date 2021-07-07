@@ -51,13 +51,15 @@ public class SongActivity extends BaseActivity {
         init(this,false);
         setContentView(R.layout.activity_song);
         load();
-        musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
-        song= (SongBean) getIntent().getSerializableExtra("bean");
-        musicPlayer.operateAfterPrepared(mp -> {
-            Message message=new Message();
-            message.what=MyHandler.SET_MAX;
-            message.arg1=musicPlayer.getDuration();
-            handler.sendMessage(message);
+        musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
+        musicPlayer.setOnSongBeanChangeListener((musicPlayer, songBean) -> {
+            song=musicPlayer.getMusicBean();
+            musicPlayer.operateAfterPrepared(mp -> {
+                Message message=new Message();
+                message.what=MyHandler.SET_MAX;
+                message.arg1=musicPlayer.getDuration();
+                handler.sendMessage(message);
+            });
         });
     }
     MyHandler handler=new MyHandler(new WeakReference<>(SongActivity.this));
@@ -69,7 +71,6 @@ public class SongActivity extends BaseActivity {
         lyricView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
     class TimeThread extends Thread{
-
         @Override
         public void run() {
             while (!interrupted()){

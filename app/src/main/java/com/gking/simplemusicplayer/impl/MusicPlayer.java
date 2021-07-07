@@ -1,10 +1,14 @@
 package com.gking.simplemusicplayer.impl;
 
 import android.media.MediaPlayer;
+import android.view.View;
 
 import com.gking.simplemusicplayer.manager.SongBean;
 
 import java.io.IOException;
+
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.handler;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 
 public class MusicPlayer extends MediaPlayer {
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
@@ -12,7 +16,6 @@ public class MusicPlayer extends MediaPlayer {
     private boolean prepared=false;
     private boolean auto=false;
     private boolean lockProgress=false;
-
     public void setLockProgress(boolean lockProgress) {
         this.lockProgress = lockProgress;
     }
@@ -36,6 +39,8 @@ public class MusicPlayer extends MediaPlayer {
     }
     public void start(SongBean musicBean){
         this.musicBean=musicBean;
+        if(onSongBeanChangeListener!=null)
+            onSongBeanChangeListener.onSongBeanChange(this,musicBean);
         new Thread(){
             @Override
             public void run() {
@@ -47,10 +52,12 @@ public class MusicPlayer extends MediaPlayer {
                     setOnPreparedListener(mp -> {
                         prepared=true;
                         player.start();
+                        handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
                     });
                     prepareAsync();
-                    MyApplicationImpl myApplication=MyApplicationImpl.myApplication;
-                    myApplication.setControlInfo(musicBean.id,musicBean.name,musicBean.author,myApplication.handler);
+                    MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
+                    handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
+                    myApplication.setControlInfo(musicBean.id,musicBean.name,musicBean.author, handler);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -73,12 +80,15 @@ public class MusicPlayer extends MediaPlayer {
             }
         };
         thread.start();
-
     }
     @Override
     public void reset() {
         super.reset();
         prepared=false;
+        MyApplicationImpl.handler.post(()->{
+            MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
+            myApplication.controlPanel.setVisibility(View.GONE);
+        });
     }
     @Override
     public void stop() throws IllegalStateException {
@@ -113,5 +123,17 @@ public class MusicPlayer extends MediaPlayer {
     }
     public void last(OnPreparedListener onPreparedListener) {
         start(musicBean.last,onPreparedListener);
+    }
+    private OnSongBeanChangeListener onSongBeanChangeListener;
+
+    public void setOnSongBeanChangeListener(OnSongBeanChangeListener onSongBeanChangeListener) {
+        this.onSongBeanChangeListener = onSongBeanChangeListener;
+        if (musicBean != null) {
+            onSongBeanChangeListener.onSongBeanChange(this,musicBean);
+        }
+    }
+
+    public interface OnSongBeanChangeListener{
+        void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean);
     }
 }

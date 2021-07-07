@@ -5,6 +5,7 @@ package com.gking.simplemusicplayer.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 
 import java.io.File;
@@ -23,6 +25,7 @@ import gtools.managers.GHolder;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public <T extends View> T f(int id) {
@@ -86,6 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     View y;
     Activity context=this;
+    //when onStart(),call this
     private void loadControlPanel(){
         View v=context.findViewById(R.id.control);
         y=v;
@@ -97,6 +101,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             control.setLayoutParams(v.getLayoutParams());
             parentViewGroup.addView(control, index);
         }
+        View.OnClickListener onClickListener=v1 -> startActivity(new Intent(this, SongActivity.class));
+        myApplication.controlPanel.setOnClickListener(onClickListener);
+        myApplication.cover.setOnClickListener(onClickListener);
+        myApplication.Name.setOnClickListener(onClickListener);
+        myApplication.Author.setOnClickListener(onClickListener);
     }
     public void makeToast(Object msg){
         Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_LONG).show();
