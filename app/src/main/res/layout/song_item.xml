@@ -12,7 +12,7 @@
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/song_cover"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         android:paddingLeft="2dp"

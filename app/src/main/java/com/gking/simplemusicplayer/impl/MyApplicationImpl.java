@@ -141,7 +141,7 @@ public class MyApplicationImpl extends Application
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
             }
-            Process.killProcess(Process.myPid());
+//            Process.killProcess(Process.myPid());
         }
 	}
 	public static void l(Object o){

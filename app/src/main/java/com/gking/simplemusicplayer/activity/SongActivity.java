@@ -234,10 +234,11 @@ public class SongActivity extends BaseActivity {
             if(last!=null){
                 last.setTextColor(0xFF000000);
             }
+            lyricView.scrollToPosition(position);
             last=views.get(position);
             if(last!=null)
                 views.get(position).setTextColor(0xFF00FF00);
-            lyricView.scrollToPosition(position);
+            System.out.println(position);
         }
         class MyVH extends RecyclerView.ViewHolder{
             TextView Lyric;
