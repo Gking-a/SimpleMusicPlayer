@@ -3,7 +3,6 @@ package com.gking.simplemusicplayer.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,6 +222,18 @@ public class SongActivity extends BaseActivity {
         public int getItemCount() {
             return content.size();
         }
+
+        @Override
+        public void onViewAttachedToWindow(@NonNull @NotNull MyVH holder) {
+            LyricManager manager=onSeekBarChangeListener.lyricManager;
+            if (manager == null) return;
+            int position=manager.getPosition(musicPlayer.getCurrentPosition());
+            if(holder.getLayoutPosition()==position){
+                last=holder.Lyric;
+                if(last!=null)
+                    last.setTextColor(0xFF00FF00);
+            }
+        }
         public void showLyric(){
             LyricManager manager=onSeekBarChangeListener.lyricManager;
             if (manager == null)return;
@@ -234,10 +244,12 @@ public class SongActivity extends BaseActivity {
             if(last!=null){
                 last.setTextColor(0xFF000000);
             }
+            MyVH vh = (MyVH) lyricView.findViewHolderForAdapterPosition(position);
+            if(vh!=null) {
+                last=vh.Lyric;
+                last.setTextColor(0xFF00FF00);
+            }
             lyricView.scrollToPosition(position);
-            last=views.get(position);
-            if(last!=null)
-                views.get(position).setTextColor(0xFF00FF00);
             System.out.println(position);
         }
         class MyVH extends RecyclerView.ViewHolder{

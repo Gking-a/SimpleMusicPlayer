@@ -126,7 +126,6 @@ public class MyApplicationImpl extends Application
 		}
         GHolder<String, JsonObject> songs=new GHolder<>();
 		GHolder.standardInstance.add("songs",songs);
-		mMusicPlayer.setAuto(true);
 	}
     private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
 

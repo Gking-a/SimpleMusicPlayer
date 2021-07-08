@@ -22,7 +22,7 @@
         <activity android:name=".activity.SongActivity"></activity>
 
         <service
-            android:name=".service.MusicService"
+            android:name=".service.SongService"
             android:enabled="true"
             android:exported="true" />
 

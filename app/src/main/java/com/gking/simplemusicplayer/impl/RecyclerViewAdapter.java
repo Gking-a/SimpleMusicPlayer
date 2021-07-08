@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         GHolder<Object,String> info=content.get(position);
         holder.title.setText(info.get(1));
         switch (info.get(0)){
-            case MySettingsActivity.login:holder.title.setOnClickListener(view->context.startActivity(new Intent(context, LoginCellphoneActivity.class)));
+//            case MySettingsActivity.login:holder.title.setOnClickListener(view->context.startActivity(new Intent(context, LoginCellphoneActivity.class)));
         }
     }
     @Override

@@ -3,6 +3,7 @@ package com.gking.simplemusicplayer.impl;
 import android.media.MediaPlayer;
 import android.view.View;
 
+import com.gking.simplemusicplayer.activity.MySettingsActivity;
 import com.gking.simplemusicplayer.manager.SongBean;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ public class MusicPlayer extends MediaPlayer {
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
     public MusicPlayer player=this;
     private boolean prepared=false;
-    private boolean auto=false;
     private boolean lockProgress=false;
     public void setLockProgress(boolean lockProgress) {
         this.lockProgress = lockProgress;
@@ -22,7 +22,9 @@ public class MusicPlayer extends MediaPlayer {
     private SongBean musicBean=new SongBean(null);
     MusicPlayer(){
         super();
+        setOnErrorListener((mp, what, extra) -> true);
         setOnCompletionListener((mp -> {
+            boolean auto=Boolean.parseBoolean(MySettingsActivity.get(MySettingsActivity.Params.auto_next));
             if(auto)next(null);
         }));
     }
@@ -30,14 +32,11 @@ public class MusicPlayer extends MediaPlayer {
         return musicBean;
     }
 
-    public void setAuto(boolean auto) {
-        this.auto = auto;
-    }
-
     public void start(SongBean songBean,OnPreparedListener listener){
         start(songBean);
     }
     public void start(SongBean musicBean){
+        if(musicBean.id.equals(this.musicBean.id))return;
         this.musicBean=musicBean;
         if(onSongBeanChangeListener!=null)
             onSongBeanChangeListener.onSongBeanChange(this,musicBean);

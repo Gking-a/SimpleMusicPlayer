@@ -46,6 +46,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.*;
 public class MainActivity extends BaseActivity {
     public static final String TAG = "MainActivity";
     Map<String,GHolder> playlists=new LinkedHashMap<>();
@@ -55,6 +56,7 @@ public class MainActivity extends BaseActivity {
     NavigationView nav;
     DrawerLayout drawerLayout;
     LinearLayout playlistView;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(this);
@@ -77,12 +79,12 @@ public class MainActivity extends BaseActivity {
         nav=f(R.id.nav);
         drawerLayout=f(R.id.drawer);
         MenuItem login=nav.getMenu().findItem(R.id.login);
-        if(MySettingsActivity.get("account_name")!=null){
-           login.setTitle(MySettingsActivity.get("account_name"));
-           Intent i=new Intent(this, LoginCellphoneActivity.class);
-           i.putExtra("ph", MySettingsActivity.get("account_phone"));
-           i.putExtra("pw", MySettingsActivity.get("account_pw"));
-           startActivityForResult(i, LoginCellphoneActivity.RequestCode);
+        if(MySettingsActivity.get(account_name)!=null){
+            login.setTitle(MySettingsActivity.get(account_name));
+            Intent i=new Intent(this, LoginCellphoneActivity.class);
+            i.putExtra("ph", MySettingsActivity.get(account_phone));
+            i.putExtra("pw", MySettingsActivity.get(account_pw));
+            startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }else login.setTitle("登录");
         nav.setNavigationItemSelectedListener(item -> {
             if(item.getItemId()==R.id.login)startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
@@ -110,10 +112,10 @@ public class MainActivity extends BaseActivity {
                 String name=object.getAsJsonObject("profile").get("nickname").getAsString();
                 MenuItem login=nav.getMenu().findItem(R.id.login);
                 login.setTitle(name);
-                MySettingsActivity.set("account_phone",data.getStringExtra("phone"));
-                MySettingsActivity.set("account_pw",data.getStringExtra("pw"));
-                MySettingsActivity.set("account_id",object.getAsJsonObject("account").get("id").getAsString());
-                MySettingsActivity.set("account_name",name);
+                MySettingsActivity.set(account_phone,data.getStringExtra("phone"));
+                MySettingsActivity.set(account_pw,data.getStringExtra("pw"));
+                MySettingsActivity.set(account_id,object.getAsJsonObject("account").get("id").getAsString());
+                MySettingsActivity.set(account_name,name);
                 {
                     WebRequest.user_playlist(object.getAsJsonObject("account").get("id").getAsString(), MyCookieJar.getLoginCookie(), new Callback() {
                         @Override
@@ -128,7 +130,7 @@ public class MainActivity extends BaseActivity {
                             for (int i = 0; i < jsonArray.size(); i++) {
                                 JsonObject playlist=jsonArray.get(i).getAsJsonObject();
                                 String uid=playlist.getAsJsonObject("creator").get("userId").getAsString();
-                                if(uid.equals(MySettingsActivity.get("account_id"))){
+                                if(uid.equals(MySettingsActivity.get(account_id))){
                                     String id=playlist.get("id").getAsString();
                                     GHolder holder=new GHolder();
                                     Bitmap cover= BitmapFactory.decodeStream(new URL(

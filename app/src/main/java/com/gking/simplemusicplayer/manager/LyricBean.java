@@ -3,6 +3,7 @@ package com.gking.simplemusicplayer.manager;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.google.gson.JsonObject;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +30,9 @@ public class LyricBean {
                 this.lyric.add(lyric);
                 System.out.println(lyric);
             }
+        }
+        if(lyric.size()==0){
+            lyric.addAll(Arrays.asList(split));
         }
         lrc=null;
     }
