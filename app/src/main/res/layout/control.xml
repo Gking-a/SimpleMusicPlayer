@@ -11,6 +11,7 @@
     android:background="#ffffffff"
     android:id="@+id/c_song_item_layout">
     <com.makeramen.roundedimageview.RoundedImageView
+        android:background="@drawable/next"
         android:id="@+id/c_song_cover"
         android:layout_width="40dp"
         android:layout_height="match_parent"

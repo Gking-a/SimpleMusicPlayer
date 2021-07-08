@@ -135,6 +135,7 @@ public class SongActivity extends BaseActivity {
                                 lyricView.setAdapter(myAdapter);
                                 myAdapter.notifyDataSetChanged();
                                 onSeekBarChangeListener.lyricManager=LyricManager.getInstance(lyricBean);
+                                if(timeThread!=null)timeThread.interrupt();
                                 timeThread=new TimeThread();
                                 timeThread.start();
                                 progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
@@ -263,5 +264,14 @@ public class SongActivity extends BaseActivity {
     public static String time2str(int msec){
         int sec=msec/1000;
         return sec/60+":"+sec%60;
+    }
+
+    @Override
+    protected void onDestroy() {
+        timeThread.interrupt();
+        myAdapter=null;
+        progress.setOnSeekBarChangeListener(null);
+        System.gc();
+        super.onDestroy();
     }
 }

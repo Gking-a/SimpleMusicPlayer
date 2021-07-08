@@ -1,12 +1,17 @@
 package com.gking.simplemusicplayer.impl;
 
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.View;
 
 import com.gking.simplemusicplayer.activity.MySettingsActivity;
 import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.util.Util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.handler;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
@@ -38,8 +43,9 @@ public class MusicPlayer extends MediaPlayer {
     public void start(SongBean musicBean){
         if(musicBean.id.equals(this.musicBean.id))return;
         this.musicBean=musicBean;
-        if(onSongBeanChangeListener!=null)
-            onSongBeanChangeListener.onSongBeanChange(this,musicBean);
+        for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
+            listener.onSongBeanChange(this,musicBean);
+        }
         new Thread(){
             @Override
             public void run() {
@@ -55,8 +61,11 @@ public class MusicPlayer extends MediaPlayer {
                     });
                     prepareAsync();
                     MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
-                    handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
-                    myApplication.setControlInfo(musicBean.id,musicBean.name,musicBean.author, handler);
+                    handler.post(()->{
+                       myApplication.Name.setText(musicBean.name);
+                       myApplication.Author.setText(musicBean.author);
+                    });
+                    Util.getCover(musicBean.coverUrl, bitmap -> handler.post(() -> myApplication.Cover.setImageBitmap(bitmap)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -123,10 +132,10 @@ public class MusicPlayer extends MediaPlayer {
     public void last(OnPreparedListener onPreparedListener) {
         start(musicBean.last,onPreparedListener);
     }
-    private OnSongBeanChangeListener onSongBeanChangeListener;
+    private List<OnSongBeanChangeListener> onSongBeanChangeListenerList=new LinkedList<>();
 
     public void setOnSongBeanChangeListener(OnSongBeanChangeListener onSongBeanChangeListener) {
-        this.onSongBeanChangeListener = onSongBeanChangeListener;
+        onSongBeanChangeListenerList.add(onSongBeanChangeListener);
         if (musicBean != null) {
             onSongBeanChangeListener.onSongBeanChange(this,musicBean);
         }

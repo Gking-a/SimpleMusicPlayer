@@ -51,6 +51,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="40dp"/>
     <include
+        android:visibility="gone"
         layout="@layout/control"
         android:id="@+id/control"
         app:layout_constraintTop_toBottomOf="@id/songs" />

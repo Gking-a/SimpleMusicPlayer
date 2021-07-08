@@ -1,6 +1,7 @@
 package com.gking.simplemusicplayer.impl;
 
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.service.SongService;
 import com.kongzue.dialogx.DialogX;
 import gtools.GLibrary;
 import gtools.managers.GHolder;
@@ -11,8 +12,8 @@ import java.util.Objects;
 import android.app.Application;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
-import android.os.Process;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GFile;
 import com.google.gson.JsonObject;
@@ -47,6 +50,7 @@ public class MyApplicationImpl extends Application
     }
     public MusicPlayer mMusicPlayer=new MusicPlayer();
     public View controlPanel;
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         super.onCreate();
@@ -55,19 +59,21 @@ public class MyApplicationImpl extends Application
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         load();
         loadSettings();
+        startForegroundService(new Intent(this, SongService.class));
     }
 
     private void load() {
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);
         loadControlPanel();
     }
-    public ImageView cover;
+    public ImageView Cover;
     public TextView Name,Author;
     public void loadControlPanel() {
         controlPanel.setBackgroundColor(0xFFffFFff);
-        cover = controlPanel.findViewById(R.id.c_song_cover);
+        Cover = controlPanel.findViewById(R.id.c_song_cover);
         Name = controlPanel.findViewById(R.id.c_song_name);
         Author = controlPanel.findViewById(R.id.c_song_author);
+        Author.setTextColor(0xff000000);
         ImageButton next = controlPanel.findViewById(R.id.c_song_next),
                 last = controlPanel.findViewById(R.id.c_song_last),
                 pause = controlPanel.findViewById(R.id.c_song_pause);
@@ -94,7 +100,7 @@ public class MyApplicationImpl extends Application
             Bitmap bitmap= getSongCover().get(id);
             Name.setText(name);
             Author.setText(au);
-            if(bitmap!=null)cover.setImageBitmap(bitmap);
+            if(bitmap!=null) Cover.setImageBitmap(bitmap);
             else {
                 new Thread(){
                     @Override
@@ -107,7 +113,7 @@ public class MyApplicationImpl extends Application
                             }
                         }while (getSongCover().get(id)==null);
                         Bitmap bitmap= getSongCover().get(id);
-                        handler.post(()->cover.setImageBitmap(bitmap));
+                        handler.post(()-> Cover.setImageBitmap(bitmap));
                     }
                 }.start();
             }

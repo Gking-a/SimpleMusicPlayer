@@ -4,7 +4,6 @@
 package com.gking.simplemusicplayer.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,7 +23,6 @@ import java.io.File;
 import gtools.managers.GHolder;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.CoverImg;
-import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -103,7 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         View.OnClickListener onClickListener=v1 -> startActivity(new Intent(this, SongActivity.class));
         myApplication.controlPanel.setOnClickListener(onClickListener);
-        myApplication.cover.setOnClickListener(onClickListener);
+        myApplication.Cover.setOnClickListener(onClickListener);
         myApplication.Name.setOnClickListener(onClickListener);
         myApplication.Author.setOnClickListener(onClickListener);
     }

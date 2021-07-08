@@ -52,6 +52,7 @@
                 android:id="@+id/recentSongs"/>
         </LinearLayout>
         <include
+            android:visibility="gone"
             layout="@layout/control"
             android:id="@+id/control" />
     </androidx.constraintlayout.widget.ConstraintLayout>

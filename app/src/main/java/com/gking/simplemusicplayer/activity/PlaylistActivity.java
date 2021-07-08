@@ -1,16 +1,9 @@
 package com.gking.simplemusicplayer.activity;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,29 +15,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.manager.SongBean;
-import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.util.JsonUtil;
+import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.kongzue.dialogx.dialogs.BottomMenu;
 import com.kongzue.dialogx.interfaces.OnIconChangeCallBack;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.kongzue.dialogx.dialogs.BottomMenu;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -59,7 +57,7 @@ import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 
 public class PlaylistActivity extends BaseActivity {
     MyHandler myHandler = new MyHandler();
-
+    Handler handler=new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,27 +149,7 @@ public class PlaylistActivity extends BaseActivity {
         });
         menu.setOnClickListener(l2);
     }
-    public void getCover(ImageView iv,String url){
-        getCover(iv,url,50,50);
-    }
-    public void getCover(ImageView iv,String url, int x, int y){
-        Bitmap cover= ((MyApplicationImpl) getApplication()).getSongCover().get(url);
-        if(cover!=null){
-            iv.setImageBitmap(cover);
-            return;
-        }
-        new Thread(()->{
-            try {
-                Bitmap cover1 = BitmapFactory.decodeStream(new URL(url+"?param="+x+"y"+y).openStream());
-                ((MyApplicationImpl) getApplication()).getSongCover().add(url,cover1);
-                myHandler.post(()-> {
-                    iv.setImageBitmap(cover1);
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
+
     class MyHandler extends Handler {
         public static final int UPDATE_UI = 0;
         @Override
@@ -207,8 +185,9 @@ public class PlaylistActivity extends BaseActivity {
             JsonObject json= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
             SongBean song=content.get(position);
             myVH.Name.setText(song.name);
-            myVH.Cover.setImageBitmap(((MyApplicationImpl) getApplication()).getSongCover().get(id));
-            getCover(myVH.Cover,JsonUtil.getAsString(json,"al","picUrl"));
+            Util.getCover(song.coverUrl, bitmap -> {
+                handler.post(()->myVH.Cover.setImageBitmap(bitmap));
+            });
             View.OnClickListener onClickListener= v -> {
                 ((MyApplicationImpl) getApplication()).getMusicPlayer().start(song,null);
                 Intent intent = new Intent(getContext(), SongActivity.class);

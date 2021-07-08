@@ -24,6 +24,7 @@ public class SongBean implements Serializable {
             ars.add(JsonUtil.getAsString(ar.get(i).getAsJsonObject(), "name"));
         }
         author = StringUtils.join(ars, "/");
+        coverUrl = JsonUtil.getAsString(song, "al", "picUrl");
     }
 
     public SongBean(String id, String name, String author) {
@@ -41,6 +42,6 @@ public class SongBean implements Serializable {
     }
 
     public String id, name, author;
-    public Bitmap cover;
+    public String coverUrl;
     public SongBean next, last;
 }
