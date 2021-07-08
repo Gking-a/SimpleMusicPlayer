@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.service.SongService;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
@@ -63,6 +64,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         setLoadControlPanel(true);
         load();
+//        startService(new Intent(this, SongService.class));
 //        debug();
     }
 
