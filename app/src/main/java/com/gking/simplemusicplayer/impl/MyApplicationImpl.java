@@ -59,6 +59,7 @@ public class MyApplicationImpl extends Application
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         load();
         loadSettings();
+        startService(new Intent(this, SongService.class));
     }
 
     private void load() {

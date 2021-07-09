@@ -12,6 +12,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,14 +22,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.service.BackgroundService;
 import com.gking.simplemusicplayer.service.SongService;
 import com.gking.simplemusicplayer.util.FW;
+import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
@@ -39,7 +43,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import gtools.managers.GHolder;
@@ -57,7 +63,7 @@ public class MainActivity extends BaseActivity {
     RecyclerView recentSongs;
     NavigationView nav;
     DrawerLayout drawerLayout;
-    LinearLayout playlistView;
+    RecyclerView playlistView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +71,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         setLoadControlPanel(true);
         load();
-        startService(new Intent(this, SongService.class));
 //        debug();
     }
 
@@ -77,8 +82,8 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar=f(R.id.playlist_toolbar);
         setSupportActionBar(toolbar);
         search=f(R.id.searchEditText);
-        recentSongs=f(R.id.recentSongs);
-        playlistView=f(R.id.songLists);
+        playlistView=f(R.id.main_playlist);
+        playlistView.setLayoutManager(new LinearLayoutManager(getContext()));
         nav=f(R.id.nav);
         drawerLayout=f(R.id.drawer);
         MenuItem login=nav.getMenu().findItem(R.id.login);
@@ -130,25 +135,18 @@ public class MainActivity extends BaseActivity {
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             String body=response.body().string();
                             JsonArray jsonArray= JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
+                            List<PlaylistBean> playlistBeans=new ArrayList<>();
                             for (int i = 0; i < jsonArray.size(); i++) {
                                 JsonObject playlist=jsonArray.get(i).getAsJsonObject();
                                 String uid=playlist.getAsJsonObject("creator").get("userId").getAsString();
                                 if(uid.equals(MySettingsActivity.get(account_id))){
-                                    String id=playlist.get("id").getAsString();
-                                    GHolder holder=new GHolder();
-                                    Bitmap cover= BitmapFactory.decodeStream(new URL(
-                                            playlist.get("coverImgUrl").getAsString()+"?param=50y50"
-                                    ).openStream());
-                                    holder.add("cover",cover);
-                                    holder.add("name",playlist.get("name").getAsString());
-                                    holder.add("json",playlist);
-                                    holder.add("id",id);
-                                    GHolder.standardInstance.add(id,playlist);
-                                    playlists.put(id,holder);
+                                    PlaylistBean playlistBean = new PlaylistBean(playlist);
+                                    playlistBeans.add(playlistBean);
                                 }
                             }
                             Message message=new Message();
                             message.what=MyHandler.UPDATE_COVER;
+                            message.obj=playlistBeans;
                             handler.sendMessage(message);
                         }
                     });
@@ -162,22 +160,57 @@ public class MainActivity extends BaseActivity {
         public void handleMessage(@NonNull @NotNull Message msg) {
             switch (msg.what){
                 case UPDATE_COVER:
-                    for(String id:playlists.keySet()){
-                        GHolder holder=playlists.get(id);
-                        View view= LayoutInflater.from(getContext()).inflate(R.layout.list_small,null);
-                        ImageView iv=view.findViewById(R.id.list_small_icon);
-                        TextView tv=view.findViewById(R.id.list_small_title);
-                        iv.setImageBitmap((Bitmap) holder.get("cover"));
-                        tv.setText((String) holder.get("name"));
-                        View layout=view.findViewById(R.id.list_small_layout);
-                        layout.setOnClickListener(v -> {
-                            Intent intent=new Intent(getContext(), PlaylistActivity.class);
-                            intent.putExtra("id",(String)holder.get("id"));
-                            startActivity(intent);
-                        });
-                        playlistView.addView(view);
-                    }
+                    List<PlaylistBean> beans= ((List<PlaylistBean>) msg.obj);
+                    MyAdapter myAdapter=new MyAdapter(beans);
+                    playlistView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                     break;
+            }
+        }
+    }
+    class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
+        List<PlaylistBean> playlists;
+
+        public MyAdapter(List<PlaylistBean> playlists) {
+            this.playlists = playlists;
+        }
+
+        @NonNull
+        @NotNull
+        @Override
+        public MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+            View view= LayoutInflater.from(getContext()).inflate(R.layout.list_small2,parent,false);
+            return new MyVH(view);
+        }
+        @Override
+        public void onBindViewHolder(@NonNull @NotNull MyVH holder, int position) {
+            PlaylistBean bean=playlists.get(position);
+            holder.title.setText(bean.name);
+            Util.getCover(bean.coverImgUrl,bitmap -> handler.post(()->holder.icon.setImageBitmap(bitmap)));
+            View.OnClickListener onClickListener= v -> {
+                Intent intent=new Intent(getContext(), PlaylistActivity.class);
+                intent.putExtra("bean",bean);
+                startActivity(intent);
+            };
+            holder.icon.setOnClickListener(onClickListener);
+            holder.title.setOnClickListener(onClickListener);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return playlists.size();
+        }
+
+        class MyVH extends RecyclerView.ViewHolder{
+
+            public final TextView title;
+            public final ImageView icon;
+
+            public MyVH(@NonNull @NotNull View itemView) {
+                super(itemView);
+                icon = itemView.findViewById(R.id.list_small_icon);
+                title = itemView.findViewById(R.id.list_small_title);
             }
         }
     }

@@ -10,10 +10,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Callback;
-import okhttp3.Cookie;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -81,7 +79,7 @@ public final class WebRequest {
         post(url, params.toString(), cookie, callback);
     }
     public static void post(String url,String params,String cookie,Callback callback){
-        HashMap<String, String> data = MyCrypto.encrypt(params);
+        HashMap<String, String> data = WebCrypto.encrypt(params);
         OkHttpClient client=new OkHttpClient.Builder()
                 .cookieJar(new MyCookieJar())
                 .build();

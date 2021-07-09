@@ -32,15 +32,6 @@
 
         <activity android:name=".activity.PlaylistActivity" />
         <activity android:name=".activity.LoginCellphoneActivity" />
-        <activity android:name=".activity.Receiver_Deprecated">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/*" />
-            </intent-filter>
-        </activity>
         <activity android:name=".activity.MainActivity" />
         <activity
             android:name=".activity.SplashActivity"

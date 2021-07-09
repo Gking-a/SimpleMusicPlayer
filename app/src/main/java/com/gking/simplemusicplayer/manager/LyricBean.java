@@ -28,7 +28,6 @@ public class LyricBean {
                 String lyric= matcher.group(4);
                 this.time.add(getTime(matcher));
                 this.lyric.add(lyric);
-                System.out.println(lyric);
             }
         }
         if(lyric.size()==0){

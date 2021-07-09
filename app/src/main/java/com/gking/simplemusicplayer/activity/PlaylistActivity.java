@@ -27,6 +27,7 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.util.JsonUtil;
@@ -65,10 +66,9 @@ public class PlaylistActivity extends BaseActivity {
         setContext(this);
         setLoadControlPanel(true);
         SongManager.getInstance().clear();
-        String id = getIntent().getStringExtra("id");
-        JsonObject playlist = (JsonObject) GHolder.standardInstance.get(id);
-        load(playlist);
-        WebRequest.playlist_detail(JsonUtil.getAsString(playlist, "id"), MyCookieJar.getLoginCookie(), new Callback() {
+        PlaylistBean playlistBean = ((PlaylistBean) getIntent().getSerializableExtra("bean"));
+        load(playlistBean);
+        WebRequest.playlist_detail(playlistBean.id, MyCookieJar.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }
@@ -82,7 +82,7 @@ public class PlaylistActivity extends BaseActivity {
                     String id = JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(), "id");
                     ids.add(id);
                 }
-                l(ids.size());
+                playlistBean.trackIds=ids;
                 WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -116,14 +116,14 @@ public class PlaylistActivity extends BaseActivity {
     List<SongBean> music=new LinkedList<>();
     boolean isSearching=false;
     RecyclerView songList;
-    private void load(JsonObject playlist) {
-        songList=f(R.id.songs);
+    private void load(PlaylistBean playlist) {
+        songList=f(R.id.playlist_songs);
         songList.setLayoutManager(new LinearLayoutManager(getContext()));
         songList.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         Button back=f(R.id.playlist_toolbar_back);
         back.setOnClickListener(v->finish());
         TextView title=f(R.id.playlist_toolbar_title);
-        title.setText(playlist.get("name").getAsString());
+        title.setText(playlist.name);
         EditText search=f(R.id.playlist_toolbar_search);
         MyTextWatcher watcher=new MyTextWatcher();
         search.addTextChangedListener(watcher);
@@ -156,7 +156,7 @@ public class PlaylistActivity extends BaseActivity {
         public void handleMessage(@NonNull @NotNull Message msg) {
             switch (msg.what) {
                 case UPDATE_UI:
-                    RecyclerView recyclerView = f(R.id.songs);
+                    RecyclerView recyclerView = f(R.id.playlist_songs);
                     MyAdapter adapter=new MyAdapter(getContext(), (List<SongBean>) msg.obj);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();

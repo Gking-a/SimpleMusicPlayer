@@ -35,21 +35,13 @@
                 android:layout_height="32dp"
                 android:background="@drawable/circle_edit_background"
                 android:id="@+id/searchEditText"/>
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="108dp"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="108dp"
-                    android:id="@+id/songLists"
-                    android:orientation="horizontal" />
-            </HorizontalScrollView>
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/main_playlist"
+                app:layout_constraintTop_toBottomOf="@id/searchEditText"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/recentSongs"/>
+                android:layout_marginBottom="40dp"/>
         </LinearLayout>
         <include
             android:visibility="gone"
