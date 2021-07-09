@@ -23,14 +23,12 @@
         <service
             android:name=".service.BackgroundService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity android:name=".activity.SongActivity" />
 
         <service
-            android:name=".service.SongService"
-            android:enabled="true"
-            android:exported="true" />
+            android:name=".service.SongService"/>
 
         <activity android:name=".activity.PlaylistActivity" />
         <activity android:name=".activity.LoginCellphoneActivity" />

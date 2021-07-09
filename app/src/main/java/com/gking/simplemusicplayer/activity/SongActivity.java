@@ -81,7 +81,6 @@ public class SongActivity extends BaseActivity {
                 try {
                     sleep(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }

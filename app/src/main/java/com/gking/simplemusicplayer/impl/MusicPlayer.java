@@ -24,7 +24,7 @@ public class MusicPlayer extends MediaPlayer {
     public void setLockProgress(boolean lockProgress) {
         this.lockProgress = lockProgress;
     }
-    private SongBean musicBean=new SongBean(null);
+    private SongBean musicBean=null;
     MusicPlayer(){
         super();
         setOnErrorListener((mp, what, extra) -> true);
@@ -41,10 +41,12 @@ public class MusicPlayer extends MediaPlayer {
         start(songBean);
     }
     public void start(SongBean musicBean){
-        if(musicBean.id.equals(this.musicBean.id))return;
+        if (this.musicBean != null) {
+            if(musicBean.id.equals(this.musicBean.id))return;
+        }
         this.musicBean=musicBean;
         for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
-            listener.onSongBeanChange(this,musicBean);
+            listener.onSongBeanChange(this,this.musicBean);
         }
         new Thread(){
             @Override

@@ -35,6 +35,7 @@ public class SongService extends Service {
 //        String id=intent.getStringExtra("id");
         smallView =new RemoteViews(getPackageName(), R.layout.notification_small);
         notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContent(smallView)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -46,7 +47,6 @@ public class SongService extends Service {
             this.song=songBean;
             method1();
         });
-        method1();
         return super.onStartCommand(intent, flags, startId);
     }
     private void method1() {
@@ -58,5 +58,6 @@ public class SongService extends Service {
         smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
         NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
         manager.notify(NOTIFICATION_ID,notification);
+        System.out.println(5);
     }
 }

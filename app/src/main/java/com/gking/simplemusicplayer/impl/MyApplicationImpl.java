@@ -136,15 +136,10 @@ public class MyApplicationImpl extends Application
 
         @Override
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-            Log.e("Exception",t+" "+e);
+            e.printStackTrace();
             FW.w(new Date()+"\n");
             FW.w(t+"\n");
             FW.w(e);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
 //            Process.killProcess(Process.myPid());
         }
 	}
