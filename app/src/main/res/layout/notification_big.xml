@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="128dp">
+
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="56dp">
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/notification_cover"/>
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/notification_title"/>
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/notification_author"/>
+        </LinearLayout>
+	</LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="16dp">
+        <TextView
+            android:id="@+id/notification_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"/>
+        <ProgressBar
+            android:id="@+id/notification_progress"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/notification_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"/>
+    </LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="56dp">
+		<ImageButton
+            android:id="@+id/notification_last"
+            android:layout_height="56dp"
+            android:layout_width="56dp"
+            android:background="@drawable/last"/>
+
+        <ImageButton
+            android:id="@+id/notification_pause"
+            android:layout_height="56dp"
+            android:layout_width="56dp"
+            android:background="@drawable/pause"/>
+        <ImageButton
+            android:id="@+id/notification_next"
+            android:layout_height="56dp"
+            android:layout_width="56dp"
+			android:background="@drawable/next"/>
+        <ImageButton
+            android:id="@+id/notification_window"
+            android:layout_height="56dp"
+            android:layout_width="56dp"
+            android:src="@drawable/w"/>
+
+	</LinearLayout>
+
+</LinearLayout>
+
