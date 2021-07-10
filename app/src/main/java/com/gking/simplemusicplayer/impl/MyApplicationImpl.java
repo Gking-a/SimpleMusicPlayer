@@ -61,7 +61,6 @@ public class MyApplicationImpl extends Application
         loadSettings();
         startService(new Intent(this, SongService.class));
     }
-
     private void load() {
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);
         loadControlPanel();

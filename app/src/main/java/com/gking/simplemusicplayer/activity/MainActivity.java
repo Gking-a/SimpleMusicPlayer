@@ -4,8 +4,6 @@
 package com.gking.simplemusicplayer.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,22 +13,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
-import com.gking.simplemusicplayer.service.BackgroundService;
-import com.gking.simplemusicplayer.service.SongService;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -42,8 +39,8 @@ import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,17 +112,16 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode== LoginCellphoneActivity.RequestCode){
-            if(data.getBooleanExtra("refresh",false)){
-                JsonObject object= (JsonObject) GHolder.standardInstance.get(LoginCellphoneActivity.RequestCode);
-                String name=object.getAsJsonObject("profile").get("nickname").getAsString();
+            if(data.getBooleanExtra("success",false)){
                 MenuItem login=nav.getMenu().findItem(R.id.login);
-                login.setTitle(name);
-                MySettingsActivity.set(account_phone,data.getStringExtra("phone"));
-                MySettingsActivity.set(account_pw,data.getStringExtra("pw"));
-                MySettingsActivity.set(account_id,object.getAsJsonObject("account").get("id").getAsString());
-                MySettingsActivity.set(account_name,name);
+                LoginBean loginBean = LoginCellphoneActivity.loginBean;
+                login.setTitle(loginBean.name);
+                MySettingsActivity.set(account_phone,loginBean.ph);
+                MySettingsActivity.set(account_pw,loginBean.pw);
+                MySettingsActivity.set(account_id, loginBean.id);
+                MySettingsActivity.set(account_name, loginBean.name);
                 {
-                    WebRequest.user_playlist(object.getAsJsonObject("account").get("id").getAsString(), MyCookieJar.getLoginCookie(), new Callback() {
+                    WebRequest.user_playlist(loginBean.id, MyCookieJar.getLoginCookie(), new Callback() {
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             FW.w(e);
@@ -170,11 +166,42 @@ public class MainActivity extends BaseActivity {
     }
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
         List<PlaylistBean> playlists;
-
+        MyItemTouchHelperCallback callback=new MyItemTouchHelperCallback();
+        ItemTouchHelper itemTouchHelper;
         public MyAdapter(List<PlaylistBean> playlists) {
             this.playlists = playlists;
+            itemTouchHelper=new ItemTouchHelper(callback);
+            itemTouchHelper.attachToRecyclerView(playlistView);
         }
+        class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
+            @Override
+            public int getMovementFlags(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder) {
+                int flag=ItemTouchHelper.UP|ItemTouchHelper.DOWN;
+                return makeMovementFlags(flag,0);
+            }
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return true;
+            }
 
+            @Override
+            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder source, @NonNull @NotNull RecyclerView.ViewHolder target) {
+                int start=source.getAdapterPosition();
+                int end=target.getAdapterPosition();
+                Collections.swap(playlists,start,end);
+                notifyItemMoved(start,end);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        }
         @NonNull
         @NotNull
         @Override
@@ -194,9 +221,7 @@ public class MainActivity extends BaseActivity {
             };
             holder.icon.setOnClickListener(onClickListener);
             holder.title.setOnClickListener(onClickListener);
-
         }
-
         @Override
         public int getItemCount() {
             return playlists.size();

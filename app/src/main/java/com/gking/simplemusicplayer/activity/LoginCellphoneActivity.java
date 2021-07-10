@@ -8,6 +8,7 @@ import android.widget.EditText;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonObject;
@@ -22,16 +23,21 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_phone;
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_pw;
 public class LoginCellphoneActivity extends BaseActivity {
     public static final String TAG="login_cellphone";
     public static final int RequestCode=1000;
+    static LoginBean loginBean=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_cellphone);
         setContext(this);
-        setResult(RequestCode,new Intent());
-        if(!MyCookieJar.getLoginCookie().equals("")){
+        Intent result=new Intent();
+        setResult(RequestCode,result);
+        if(loginBean!=null){
+            result.putExtra("success",true);
             finish();
             return;
         }
@@ -60,12 +66,9 @@ public class LoginCellphoneActivity extends BaseActivity {
             this.ph = ph;
             this.pw = pw;
         }
-
         @Override
         public void onFailure(@NotNull Call call, @NotNull IOException e) {
             makeToast("登陆失败");
-            FW.w(e);
-            System.out.println(e);
         }
         @Override
         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -73,13 +76,11 @@ public class LoginCellphoneActivity extends BaseActivity {
             JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
             String code=jsonObject.get("code").getAsString();
             if(code.equals("200")){
+                loginBean=new LoginBean(jsonObject,ph,pw);
                 makeToast("登录成功");
-                Intent result=new Intent();
-                result.putExtra("refresh",true);
-                result.putExtra("phone",ph);
-                result.putExtra("pw",pw);
-                setResult(RequestCode,result);
-                GHolder.standardInstance.add(RequestCode,JsonParser.parseString(body).getAsJsonObject());
+                Intent intent=new Intent();
+                intent.putExtra("success",true);
+                setResult(RequestCode,intent);
                 finish();
             }else {
                 makeToast("登录失败 "+jsonObject.get("msg").getAsString());
