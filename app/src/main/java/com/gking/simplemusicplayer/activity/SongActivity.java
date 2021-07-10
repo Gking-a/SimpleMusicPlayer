@@ -86,8 +86,10 @@ public class SongActivity extends BaseActivity {
         }
     }
     RecyclerView lyricView;
-    class MyHandler extends Handler{
+    static class MyHandler extends Handler{
+        WeakReference<SongActivity> activityWeakReference;
         public MyHandler(WeakReference<SongActivity> activityWeakReference) {
+            this.activityWeakReference=activityWeakReference;
         }
         public void sendMessage(int what,Object o,int arg1,int arg2){
             Message message=new Message();
@@ -100,17 +102,32 @@ public class SongActivity extends BaseActivity {
         public static final int SET_MAX=0;
         public static final int UPDATE_PROGRESS =1;
         public static final int SHOW_LYRIC=2;
-//        public void assign(){
-//            progress = activity.progress;
-//            song = activity.song;
-//            handler = activity.handler;
-//            lyricView = activity.lyricView;
-//            musicPlayer = activity.musicPlayer;
-//        }
+        SeekBar progress;
+        SongBean song;
+        MyHandler handler;
+        RecyclerView lyricView;
+        MusicPlayer musicPlayer;
+        public void assign(){
+            if(activityWeakReference.get()==null)return;
+            SongActivity activity=activityWeakReference.get();
+            progress = activity.progress;
+            song = activity.song;
+            handler = activity.handler;
+            lyricView = activity.lyricView;
+            musicPlayer = activity.musicPlayer;
+        }
+        public <T extends View> T f(int id){
+            SongActivity activity=activityWeakReference.get();
+            if (activity == null)return null;
+            return activity.f(id);
+        }
         @Override
         public void handleMessage(@NonNull @NotNull Message msg) {
+            SongActivity activity=activityWeakReference.get();
+            if (activity == null)return;
             switch (msg.what){
                 case SET_MAX:
+                    assign();
                     progress.setMax(msg.arg1);
                     TextView tv=f(R.id.song_time_duration);
                     tv.setText(time2str(msg.arg1));
@@ -130,14 +147,15 @@ public class SongActivity extends BaseActivity {
                                 lyricBean=new LyricBean(jsonObject);
                             }
                             handler.post(()->{
-                                myAdapter = new MyAdapter(lyricBean);
-                                lyricView.setAdapter(myAdapter);
-                                myAdapter.notifyDataSetChanged();
-                                onSeekBarChangeListener.lyricManager=LyricManager.getInstance(lyricBean);
-                                if(timeThread!=null)timeThread.interrupt();
-                                timeThread=new TimeThread();
-                                timeThread.start();
-                                progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
+                                activity.myAdapter = activity.new MyAdapter(lyricBean);
+                                lyricView.setAdapter(activity.myAdapter);
+                                activity.myAdapter.notifyDataSetChanged();
+                                activity.onSeekBarChangeListener.lyricManager=LyricManager.getInstance(lyricBean);
+                                if(activity.timeThread!=null)activity.timeThread.interrupt();
+                                activity.timeThread=activity.new TimeThread();
+                                activity.timeThread.start();
+                                progress.setOnSeekBarChangeListener(activity.onSeekBarChangeListener);
+
                             });
                         }
                     });
@@ -147,13 +165,13 @@ public class SongActivity extends BaseActivity {
                         progress.setProgress(currentPosition);
                     }
                 case SHOW_LYRIC:
-                    if(myAdapter==null){
+                    if(activity.myAdapter==null){
                         System.out.println("NULL!!!!!!");
                         return;
                     }
                     TextView time_progress = f(R.id.song_time_progress);
                     time_progress.setText(time2str(progress.getProgress()));
-                    myAdapter.showLyric();
+                    activity.myAdapter.showLyric();
             }
         }
     }
@@ -266,11 +284,13 @@ public class SongActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        timeThread.interrupt();
-        myAdapter=null;
-        progress.setOnSeekBarChangeListener(null);
-        System.gc();
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
+        if(isFinishing()){
+            timeThread.interrupt();
+            myAdapter=null;
+            progress.setOnSeekBarChangeListener(null);
+            System.gc();
+        }
     }
 }

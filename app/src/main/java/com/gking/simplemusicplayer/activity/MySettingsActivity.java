@@ -47,6 +47,7 @@ public class MySettingsActivity extends Activity {
                 library.add(WINDOW_COLOR,"0xffff0000",GLibrary.TYPE_STRING);
                 library.add(DEFAULT_WINDOW_SHOW,false,GLibrary.TYPE_STRING);
                 library.add(auto_next,true,GLibrary.TYPE_STRING);
+                library.add(play_mode,PLAY_MODE.RANDOM,GLibrary.TYPE_STRING);
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
             } catch (IOException e) {
@@ -54,11 +55,18 @@ public class MySettingsActivity extends Activity {
         }
         library= new GLibrary(SettingsFile,true);
     }
-    public static class Params{
+    public static final class Params{
         public static final String account_name = "account_name";
         public static final String account_id = "account_id";
         public static final String account_pw = "account_pw";
         public static final String account_phone = "account_phone";
         public static final String auto_next="auto_next";
+        public static final String play_mode="play_mode";
+        public static final class PLAY_MODE{
+            public static final int NONE=0;
+            public static final int LOOP=1;
+            public static final int RANDOM=2;
+            public static final int ORDER=3;
+        }
     }
 }

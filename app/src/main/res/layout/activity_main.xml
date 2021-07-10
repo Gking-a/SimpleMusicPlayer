@@ -22,6 +22,7 @@
                     android:id="@+id/playlist_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    app:menu="@menu/main"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
             </com.google.android.material.appbar.AppBarLayout>
             <EditText

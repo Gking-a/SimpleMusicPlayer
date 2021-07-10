@@ -18,6 +18,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void playlist_order_update(List<String> ids,String cookie,Callback callback){
+
+    }
     public static void lyric(String id,String cookie,Callback callback){
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("id",id);

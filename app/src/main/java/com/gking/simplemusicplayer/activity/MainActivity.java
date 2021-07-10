@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,18 @@ public class MainActivity extends BaseActivity {
         setLoadControlPanel(true);
         load();
 //        debug();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem save_playlist_position=menu.findItem(R.id.main_save_playlist_position);
+        MenuItem.OnMenuItemClickListener onMenuItemClickListener = item -> {
+            if(item.getItemId()==R.id.main_save_playlist_position){
+
+            }
+            return false;
+        };
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

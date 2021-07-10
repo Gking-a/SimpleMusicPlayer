@@ -136,7 +136,7 @@ public class URLs {
     public static final String playlist_highquality_tags="https://music.163.com/api/playlist/highquality/tags";
     public static final String playlist_hot="https://music.163.com/weapi/playlist/hottags";
     public static final String playlist_mylike="https://music.163.com/api/mlog/playlist/mylike/bytime/get";
-    public static final String playlist_order_update="https://music.163.com/api/playlist/order/update";
+    public static final String playlist_order_update="https://music.163.com/weapi/playlist/order/update";
     public static final String playlist_subscribe="https://music.163.com/weapi/playlist/${query.t}";
     public static final String playlist_subscribers="https://music.163.com/weapi/playlist/subscribers";
     public static final String playlist_tracks="https://music.163.com/api/playlist/manipulate/tracks";
