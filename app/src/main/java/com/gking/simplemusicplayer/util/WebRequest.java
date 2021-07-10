@@ -1,16 +1,21 @@
 package com.gking.simplemusicplayer.util;
 
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -18,8 +23,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void playlist_order_update1(List<PlaylistBean> beans, String cookie, Callback callback){
+        List<String> list=new ArrayList<>(beans.size());
+        for(PlaylistBean b:beans)
+            list.add(b.id);
+        playlist_order_update(list,cookie,callback);
+    }
     public static void playlist_order_update(List<String> ids,String cookie,Callback callback){
-
+        if(ids==null||ids.size()==0)return;
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("ids","["+ StringUtils.join(ids,",")+"]");
+        post(URLs.playlist_order_update,jsonObject,cookie,callback);
     }
     public static void lyric(String id,String cookie,Callback callback){
         JsonObject jsonObject = new JsonObject();
@@ -38,7 +52,7 @@ public final class WebRequest {
             array.add(object);
         }
         jsonObject.add("c",array);
-        jsonObject.addProperty("csrf_token", "");
+        jsonObject.addProperty("csrf_token", MyCookieJar.getCsrf());
         String s=jsonObject.toString();
         s=s.replaceAll("\"id\"","\\\\\"id\\\\\"");
         s=s.replace("[","\"[");
@@ -77,10 +91,12 @@ public final class WebRequest {
     public static void user_playlist(String uid, String cookie,Callback callback){
         user_playlist(uid,100,0,cookie,callback);
     }
+    //auto add param csrf_token
     public static void post(String url, JsonObject params, String cookie, Callback callback){
-        params.addProperty("csrf_token", "");
+        params.addProperty("csrf_token", MyCookieJar.getCsrf());
         post(url, params.toString(), cookie, callback);
     }
+    //only post
     public static void post(String url,String params,String cookie,Callback callback){
         HashMap<String, String> data = WebCrypto.encrypt(params);
         OkHttpClient client=new OkHttpClient.Builder()
@@ -101,7 +117,7 @@ public final class WebRequest {
                 .headers(headers)
                 .post(builder.build())
                 .build();
-        client.newCall(request)
-                .enqueue(callback);
+        Call call = client.newCall(request);
+        if (callback != null) call.enqueue(callback);
     }
 }

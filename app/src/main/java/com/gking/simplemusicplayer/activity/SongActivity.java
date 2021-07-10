@@ -39,9 +39,10 @@ import okhttp3.Response;
 
 public class SongActivity extends BaseActivity {
     MusicPlayer musicPlayer;
-    SongBean song;
+    SongBean song=null;
     private MyOnSeekBarChangeListener onSeekBarChangeListener=new MyOnSeekBarChangeListener();
     private MyAdapter myAdapter;
+    private MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +50,26 @@ public class SongActivity extends BaseActivity {
         init(this,false);
         setContentView(R.layout.activity_song);
         load();
-        musicPlayer.setOnSongBeanChangeListener((musicPlayer, songBean) -> {
-            song=musicPlayer.getMusicBean();
+        timeThread=new TimeThread();
+        timeThread.start();
+        onSongBeanChangeListener = (musicPlayer, songBean) -> {
+            song = musicPlayer.getMusicBean();
             musicPlayer.operateAfterPrepared(mp -> {
-                Message message=new Message();
-                message.what=MyHandler.SET_MAX;
-                message.arg1=musicPlayer.getDuration();
+                Message message = new Message();
+                message.what = MyHandler.SET_MAX;
+                message.arg1 = musicPlayer.getDuration();
                 handler.sendMessage(message);
             });
-        });
+        };
+        musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
+        handler=new MyHandler(new WeakReference<>(SongActivity.this));
     }
-    MyHandler handler=new MyHandler(new WeakReference<>(SongActivity.this));
+    MyHandler handler;
     SeekBar progress;
     TimeThread timeThread;
     private void load() {
         musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
+        System.out.println(musicPlayer==null);
         progress=f(R.id.song_progress);
         lyricView=f(R.id.song_lyric);
         lyricView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -75,12 +81,14 @@ public class SongActivity extends BaseActivity {
         @Override
         public void run() {
             while (!interrupted()){
-                Message message=new Message();
-                message.what=MyHandler.UPDATE_PROGRESS;
-                handler.sendMessage(message);
                 try {
                     sleep(100);
                 } catch (InterruptedException e) {
+                    break;
+                }
+                if (song != null) {
+                    Message message=handler.obtainMessage(MyHandler.UPDATE_PROGRESS);
+                    handler.sendMessage(message);
                 }
             }
         }
@@ -108,13 +116,14 @@ public class SongActivity extends BaseActivity {
         RecyclerView lyricView;
         MusicPlayer musicPlayer;
         public void assign(){
+            System.out.println("assign");
             if(activityWeakReference.get()==null)return;
             SongActivity activity=activityWeakReference.get();
             progress = activity.progress;
             song = activity.song;
             handler = activity.handler;
             lyricView = activity.lyricView;
-            musicPlayer = activity.musicPlayer;
+            musicPlayer = ((MyApplicationImpl) activity.getApplication()).mMusicPlayer;
         }
         public <T extends View> T f(int id){
             SongActivity activity=activityWeakReference.get();
@@ -128,6 +137,7 @@ public class SongActivity extends BaseActivity {
             switch (msg.what){
                 case SET_MAX:
                     assign();
+                    ((TextView) activity.f(R.id.song_toolbar_title)).setText(song.name);
                     progress.setMax(msg.arg1);
                     TextView tv=f(R.id.song_time_duration);
                     tv.setText(time2str(msg.arg1));
@@ -151,15 +161,15 @@ public class SongActivity extends BaseActivity {
                                 lyricView.setAdapter(activity.myAdapter);
                                 activity.myAdapter.notifyDataSetChanged();
                                 activity.onSeekBarChangeListener.lyricManager=LyricManager.getInstance(lyricBean);
-                                if(activity.timeThread!=null)activity.timeThread.interrupt();
-                                activity.timeThread=activity.new TimeThread();
-                                activity.timeThread.start();
                                 progress.setOnSeekBarChangeListener(activity.onSeekBarChangeListener);
-
                             });
                         }
                     });
                 case UPDATE_PROGRESS:
+                    if(musicPlayer==null) {
+                        System.out.println("player is null!!!");
+                        return;
+                    }
                     int currentPosition = musicPlayer.getCurrentPosition();
                     if(!progress.isPressed()) {
                         progress.setProgress(currentPosition);
@@ -171,7 +181,7 @@ public class SongActivity extends BaseActivity {
                     }
                     TextView time_progress = f(R.id.song_time_progress);
                     time_progress.setText(time2str(progress.getProgress()));
-                    activity.myAdapter.showLyric();
+                    activity.myAdapter.showLyric(msg.arg1);
             }
         }
     }
@@ -180,11 +190,16 @@ public class SongActivity extends BaseActivity {
         LyricManager lyricManager;
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if(lyricManager==null)return;
-            int position = lyricManager.getPosition(progress);
-            handler.sendMessage(MyHandler.SHOW_LYRIC,null,position,position);
+            {
+                LyricManager manager=onSeekBarChangeListener.lyricManager;
+                if (manager == null)return;
+                int position=manager.getPosition(musicPlayer.getCurrentPosition());
+                if(position<0)return;
+                if(this.position==position)return;
+                this.position=position;
+                handler.sendMessage(MyHandler.SHOW_LYRIC,null,position,position);
+            }
         }
-
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             musicPlayer.setLockProgress(true);
@@ -197,7 +212,7 @@ public class SongActivity extends BaseActivity {
             thread.setText(time2str(seekBar.getProgress()));
             handler.post(thread);
         }
-
+        private int position=0;
         class MyThread extends Thread {
             String text;
 
@@ -212,12 +227,12 @@ public class SongActivity extends BaseActivity {
             }
         }
     }
+
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
         List<String> content;
         LyricBean lyricBean;
         Map<Integer,TextView> views=new HashMap<>();
         TextView last=null;
-        int position=0;
         public MyAdapter(LyricBean lyricBean){
             this.lyricBean=lyricBean;
             this.content=lyricBean.getLyric();
@@ -252,13 +267,7 @@ public class SongActivity extends BaseActivity {
                     last.setTextColor(0xFF00FF00);
             }
         }
-        public void showLyric(){
-            LyricManager manager=onSeekBarChangeListener.lyricManager;
-            if (manager == null)return;
-            int position=manager.getPosition(musicPlayer.getCurrentPosition());
-            if(position<0)return;
-            if(this.position==position)return;
-            this.position=position;
+        public void showLyric(int position){
             if(last!=null){
                 last.setTextColor(0xFF000000);
             }
@@ -268,7 +277,6 @@ public class SongActivity extends BaseActivity {
                 last.setTextColor(0xFF00FF00);
             }
             lyricView.scrollToPosition(position);
-            System.out.println(position);
         }
         class MyVH extends RecyclerView.ViewHolder{
             TextView Lyric;
@@ -282,7 +290,6 @@ public class SongActivity extends BaseActivity {
         int sec=msec/1000;
         return sec/60+":"+sec%60;
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -290,6 +297,8 @@ public class SongActivity extends BaseActivity {
             timeThread.interrupt();
             myAdapter=null;
             progress.setOnSeekBarChangeListener(null);
+            musicPlayer.removeOnSongBeanChangeListener(onSongBeanChangeListener);
+            onSongBeanChangeListener=null;
             System.gc();
         }
     }

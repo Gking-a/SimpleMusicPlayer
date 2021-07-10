@@ -45,9 +45,6 @@ public class MusicPlayer extends MediaPlayer {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
         this.musicBean=musicBean;
-        for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
-            listener.onSongBeanChange(this,this.musicBean);
-        }
         new Thread(){
             @Override
             public void run() {
@@ -60,6 +57,9 @@ public class MusicPlayer extends MediaPlayer {
                         prepared=true;
                         player.start();
                         handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
+                        for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
+                            listener.onSongBeanChange(player,musicBean);
+                        }
                     });
                     prepareAsync();
                     MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
@@ -110,6 +110,15 @@ public class MusicPlayer extends MediaPlayer {
     }
 
     @Override
+    public int getCurrentPosition() {
+        try {
+            return super.getCurrentPosition();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
     public void pause() throws IllegalStateException {
         try {
             if(isPlaying()){
@@ -136,13 +145,15 @@ public class MusicPlayer extends MediaPlayer {
     }
     private List<OnSongBeanChangeListener> onSongBeanChangeListenerList=new LinkedList<>();
 
-    public void setOnSongBeanChangeListener(OnSongBeanChangeListener onSongBeanChangeListener) {
+    public void addOnSongBeanChangeListener(OnSongBeanChangeListener onSongBeanChangeListener) {
         onSongBeanChangeListenerList.add(onSongBeanChangeListener);
         if (musicBean != null) {
             onSongBeanChangeListener.onSongBeanChange(this,musicBean);
         }
     }
-
+    public void removeOnSongBeanChangeListener(OnSongBeanChangeListener onSongBeanChangeListener){
+        onSongBeanChangeListenerList.remove(onSongBeanChangeListener);
+    }
     public interface OnSongBeanChangeListener{
         void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean);
     }

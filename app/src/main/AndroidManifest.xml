@@ -28,6 +28,7 @@
         <activity android:name=".activity.SongActivity" />
 
         <service
+            android:launchMode="singleInstance"
             android:name=".service.SongService"/>
 
         <activity android:name=".activity.PlaylistActivity" />

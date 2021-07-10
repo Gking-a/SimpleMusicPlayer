@@ -2,6 +2,7 @@ package com.gking.simplemusicplayer.impl;
 
 import com.gking.simplemusicplayer.util.FW;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import okhttp3.HttpUrl;
 public class MyCookieJar implements CookieJar {
     public static HashMap<HttpUrl,List<Cookie>> cookies=new HashMap<>();
     static String cookie="";
+    static String csrf=null;
     @NotNull
     @Override
     public List<Cookie> loadForRequest(@NotNull HttpUrl httpUrl) {
@@ -27,16 +29,19 @@ public class MyCookieJar implements CookieJar {
         if(httpUrl.url().toString().contains("cellphone"))storeCookie(list);
     }
     private void storeCookie(List<Cookie> list) {
-        if(list.size()==1) {
-            cookie = list.get(0).toString();
-            return;
+        cookie= StringUtils.join(list,"; ");
+        for(Cookie _csrf:list){
+            String text=_csrf.toString();
+            if(text.contains("_csrf"))csrf=StringUtils.substringBetween(text,"=",";");
         }
-        for (int i = 0; i < list.size() - 1; i++) {
-            cookie+=list.get(i).toString()+"; ";
-        }
-        cookie+=list.get(list.size()-1).toString();
     }
     public static String getLoginCookie(){
         return cookie;
+    }
+    public static String getCsrf(){
+        if (csrf == null) {
+            return "";
+        }
+        return csrf;
     }
 }

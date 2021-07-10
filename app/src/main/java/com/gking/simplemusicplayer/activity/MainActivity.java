@@ -62,6 +62,7 @@ public class MainActivity extends BaseActivity {
     NavigationView nav;
     DrawerLayout drawerLayout;
     RecyclerView playlistView;
+    private MyAdapter myAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,14 +75,18 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem save_playlist_position=menu.findItem(R.id.main_save_playlist_position);
-        MenuItem.OnMenuItemClickListener onMenuItemClickListener = item -> {
-            if(item.getItemId()==R.id.main_save_playlist_position){
-
-            }
-            return false;
-        };
+        getMenuInflater().inflate(R.menu.main,menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
+        if(item.getItemId()==R.id.main_save_playlist_position){
+            if (myAdapter != null) {
+                WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -170,7 +175,7 @@ public class MainActivity extends BaseActivity {
             switch (msg.what){
                 case UPDATE_COVER:
                     List<PlaylistBean> beans= ((List<PlaylistBean>) msg.obj);
-                    MyAdapter myAdapter=new MyAdapter(beans);
+                    myAdapter = new MyAdapter(beans);
                     playlistView.setAdapter(myAdapter);
                     myAdapter.notifyDataSetChanged();
                     break;
@@ -209,7 +214,6 @@ public class MainActivity extends BaseActivity {
                 notifyItemMoved(start,end);
                 return true;
             }
-
             @Override
             public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
 
