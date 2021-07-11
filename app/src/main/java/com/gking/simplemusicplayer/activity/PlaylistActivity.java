@@ -171,6 +171,7 @@ public class PlaylistActivity extends BaseActivity {
             this.content = content;
             this.context = context;
             SongManager.getInstance().setPointer(SongManager.getInstance().songs);
+            SongManager.getInstance().randomSort();
         }
         @NonNull
         @NotNull

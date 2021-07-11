@@ -81,18 +81,18 @@ public class SongService extends Service {
     private void loadView0() {
         Intent i=new Intent(this,BackgroundService.class);
         i.putExtra(Type,Pause);
-        smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
-        bigView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
+        smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
         i=new Intent(this,BackgroundService.class);
         i.putExtra(Type,Window);
-        smallView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
-        bigView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
+        smallView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
         i=new Intent(this,BackgroundService.class);
         i.putExtra(Type,Last);
-        bigView.setOnClickPendingIntent(R.id.notification_last,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
+        bigView.setOnClickPendingIntent(R.id.notification_last,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
         i=new Intent(this,BackgroundService.class);
         i.putExtra(Type,Next);
-        bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,0,i,PendingIntent.FLAG_NO_CREATE));
+        bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
     }
     private void loadView1() {
         Util.getCover(song.coverUrl, bitmap -> {

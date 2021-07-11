@@ -63,10 +63,10 @@ public class MySettingsActivity extends Activity {
         public static final String auto_next="auto_next";
         public static final String play_mode="play_mode";
         public static final class PLAY_MODE{
-            public static final int NONE=0;
-            public static final int LOOP=1;
-            public static final int RANDOM=2;
-            public static final int ORDER=3;
+            public static final String NONE="0";
+            public static final String LOOP="1";
+            public static final String RANDOM="2";
+            public static final String ORDER="3";
         }
     }
 }

@@ -21,6 +21,12 @@ public class SongManager {
     }
     public LinkedList<SongBean> songs =new LinkedList<>();
     public LinkedList<SongBean> randomSongs=new LinkedList<>();
+    public SongBean getRandomSong(String id){
+        for (SongBean s : randomSongs) {
+            if (s.id.equals(id))return s;
+        }
+        return null;
+    }
     public void randomSort(){
         Random random=new Random();
         for (int i = 0; i < randomSongs.size(); i++) {

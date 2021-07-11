@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.gking.simplemusicplayer.activity.MySettingsActivity;
 import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.util.Util;
 
 import java.io.IOException;
@@ -13,8 +14,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.get;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.handler;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params;
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.PLAY_MODE;
 
 public class MusicPlayer extends MediaPlayer {
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
@@ -29,8 +33,17 @@ public class MusicPlayer extends MediaPlayer {
         super();
         setOnErrorListener((mp, what, extra) -> true);
         setOnCompletionListener((mp -> {
+            //可以尝试解耦,将music player提取出来
             boolean auto=Boolean.parseBoolean(MySettingsActivity.get(MySettingsActivity.Params.auto_next));
-            if(auto)next(null);
+            if(auto){
+                String pm = get(Params.play_mode);
+                switch (pm){
+                    case PLAY_MODE.NONE:break;
+                    case PLAY_MODE.LOOP:start(musicBean,true);
+                    case PLAY_MODE.RANDOM:start(SongManager.getInstance().getRandomSong(musicBean.id),true);
+                    case PLAY_MODE.ORDER:start(musicBean.next,true);
+                }
+            }
         }));
     }
     public SongBean getMusicBean() {
@@ -40,8 +53,11 @@ public class MusicPlayer extends MediaPlayer {
     public void start(SongBean songBean,OnPreparedListener listener){
         start(songBean);
     }
-    public void start(SongBean musicBean){
-        if (this.musicBean != null) {
+    private void start(SongBean musicBean){
+        start(musicBean,false);
+    }
+    public void start(SongBean musicBean,boolean focus){
+        if (!focus&&this.musicBean != null) {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
         this.musicBean=musicBean;
