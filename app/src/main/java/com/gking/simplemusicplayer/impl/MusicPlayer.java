@@ -45,6 +45,9 @@ public class MusicPlayer extends MediaPlayer {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
         this.musicBean=musicBean;
+        for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
+            listener.onSongBeanChange(player,musicBean);
+        }
         new Thread(){
             @Override
             public void run() {
@@ -57,9 +60,6 @@ public class MusicPlayer extends MediaPlayer {
                         prepared=true;
                         player.start();
                         handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
-                        for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
-                            listener.onSongBeanChange(player,musicBean);
-                        }
                     });
                     prepareAsync();
                     MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
@@ -74,6 +74,7 @@ public class MusicPlayer extends MediaPlayer {
             }
         }.start();
     }
+    //onSongBeanChange then onAfterPrepare
     public void operateAfterPrepared(OnPreparedListener listener){
         Thread thread=new Thread(){
             @Override
@@ -91,6 +92,18 @@ public class MusicPlayer extends MediaPlayer {
         };
         thread.start();
     }
+
+    @Override
+    public int getDuration() {
+        try{
+            return super.getDuration();
+        }catch (Exception e){
+            e.printStackTrace();
+            return 1;
+        }
+        
+    }
+
     @Override
     public void reset() {
         super.reset();
