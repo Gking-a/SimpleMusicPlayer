@@ -99,7 +99,6 @@ public class SongActivity extends BaseActivity {
                         if(position<0)continue;
                         if(this.position==position)continue;
                         this.position=position;
-                        System.out.println("show msg"+position);
                         handler.sendMessage(handler.obtainMessage(MyHandler.SHOW_LYRIC,position,position));
                     }
                 }
@@ -268,7 +267,6 @@ public class SongActivity extends BaseActivity {
             }
         }
         public void showLyric(int position){
-            System.out.println("show"+position);
             if(last!=null){
                 last.setTextColor(0xFF000000);
             }
