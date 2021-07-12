@@ -35,13 +35,13 @@ public class MusicPlayer extends MediaPlayer {
         setOnCompletionListener((mp -> {
             //可以尝试解耦,将music player提取出来
             boolean auto=Boolean.parseBoolean(MySettingsActivity.get(MySettingsActivity.Params.auto_next));
-            if(auto){
+            if(auto&&musicBean!=null){
                 String pm = get(Params.play_mode);
                 switch (pm){
                     case PLAY_MODE.NONE:break;
                     case PLAY_MODE.LOOP:start(musicBean,true);
                     case PLAY_MODE.RANDOM:start(SongManager.getInstance().getRandomSong(musicBean.id),true);
-                    case PLAY_MODE.ORDER:start(musicBean.next,true);
+                    case PLAY_MODE.ORDER:next(null);
                 }
             }
         }));
@@ -167,10 +167,15 @@ public class MusicPlayer extends MediaPlayer {
     }
 
     public void next(OnPreparedListener onPreparedListener) {
-        start(musicBean.next,onPreparedListener);
+        if(musicBean!=null)
+        start(musicBean.next,true);
+    }
+    public void next(OnPreparedListener onPreparedListener,boolean focus){
+
     }
     public void last(OnPreparedListener onPreparedListener) {
-        start(musicBean.last,onPreparedListener);
+        if(musicBean!=null)
+        start(musicBean.last,true);
     }
     private List<OnSongBeanChangeListener> onSongBeanChangeListenerList=new LinkedList<>();
 

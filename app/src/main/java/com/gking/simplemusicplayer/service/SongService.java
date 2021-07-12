@@ -16,7 +16,7 @@ import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.Util;
 
-import static com.gking.simplemusicplayer.service.BackgroundService.Type.*;
+import static com.gking.simplemusicplayer.service.BackgroundService.Type;
 
 public class SongService extends Service {
     //Design as SongActivity
@@ -48,7 +48,6 @@ public class SongService extends Service {
                 .build();
         notification.contentView=smallView;
         notification.bigContentView=bigView;
-        startForeground(NOTIFICATION_ID, notification);
         musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         loadView0();
         musicPlayer.addOnSongBeanChangeListener((musicPlayer, songBean) -> {
@@ -58,6 +57,8 @@ public class SongService extends Service {
         });
         timeThread = new TimeThread();
         timeThread.start();
+        //巨坑！如果在配置之前startForeground,就会出现Pending Intent无效的现象
+        startForeground(NOTIFICATION_ID, notification);
         return super.onStartCommand(intent, flags, startId);
     }
     class TimeThread extends Thread{
@@ -80,19 +81,19 @@ public class SongService extends Service {
     }
     private void loadView0() {
         Intent i=new Intent(this,BackgroundService.class);
-        i.putExtra(Type,Pause);
-        smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
-        bigView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
-        i=new Intent(this,BackgroundService.class);
-        i.putExtra(Type,Window);
-        smallView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
-        bigView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
-        i=new Intent(this,BackgroundService.class);
-        i.putExtra(Type,Last);
-        bigView.setOnClickPendingIntent(R.id.notification_last,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
-        i=new Intent(this,BackgroundService.class);
-        i.putExtra(Type,Next);
-        bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
+        i.putExtra(Type.Type,Type.Pause);
+        smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent i2=new Intent(this,BackgroundService.class);
+        i2.putExtra(Type.Type,Type.Window);
+        smallView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,1,i2,PendingIntent.FLAG_UPDATE_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,1,i2,PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent i3=new Intent(this,BackgroundService.class);
+        i3.putExtra(Type.Type,Type.Last);
+        bigView.setOnClickPendingIntent(R.id.notification_last,PendingIntent.getService(this,2,i3,PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent i4=new Intent(this,BackgroundService.class);
+        i4.putExtra(Type.Type,Type.Next);
+        bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,3,i4,PendingIntent.FLAG_UPDATE_CURRENT));
     }
     private void loadView1() {
         Util.getCover(song.coverUrl, bitmap -> {
@@ -106,7 +107,7 @@ public class SongService extends Service {
     }
     private void loadView2() {
         bigView.setTextViewText(R.id.notification_duration,time2str(musicPlayer.getDuration()));
-        bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),0,false);
+        bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),0,true);
         NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
         manager.notify(NOTIFICATION_ID,notification);
     }

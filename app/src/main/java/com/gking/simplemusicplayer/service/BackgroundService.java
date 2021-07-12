@@ -23,16 +23,14 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int type;
-        System.out.println(intent!=null);
-        System.out.println(intent.getIntExtra(Type,-1)>=0);
-        System.out.println(intent!=null&&(type=intent.getIntExtra(Type,-1))>=0);
+        int type=-1;
         if(intent!=null&&(type=intent.getIntExtra(Type,-1))>=0){
             if(type==Pause)musicPlayer.pause();
             if(type==Next)musicPlayer.next(null);
             if(type==Last)musicPlayer.last(null);
             if(type==Window)window();
         }
+        System.out.println(type);
         return super.onStartCommand(intent, flags, startId);
     }
 
