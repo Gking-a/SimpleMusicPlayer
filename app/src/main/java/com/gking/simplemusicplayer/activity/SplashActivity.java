@@ -17,7 +17,7 @@ import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GMath;
 import android.content.Context;
-
+@Deprecated
 public class SplashActivity extends BaseActivity {
     
     @Override

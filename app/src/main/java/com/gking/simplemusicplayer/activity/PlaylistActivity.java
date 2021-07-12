@@ -90,7 +90,6 @@ public class PlaylistActivity extends BaseActivity {
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String body = response.body().string();
-                        GHolder<String, JsonObject> holder = ((MyApplicationImpl) getApplication()).getSongInfo();
                         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                         JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
                         for (int i = 0; i < songs.size(); i++) {
@@ -100,9 +99,6 @@ public class PlaylistActivity extends BaseActivity {
                             SongManager.getInstance().addSong(bean);
                             nameMap.put(JsonUtil.getAsString(song,"name"),bean);
                             music.add(bean);
-                            if (!holder.getIds().contains(id)) {
-                                holder.add(id, song);
-                            }
                         }
                         Message message = new Message();
                         message.what = MyHandler.UPDATE_UI;
@@ -183,7 +179,6 @@ public class PlaylistActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull @NotNull MyVH myVH, int position) {
             String id = content.get(position).id;
-            JsonObject json= ((MyApplicationImpl) getApplication()).getSongInfo().get(id);
             SongBean song=content.get(position);
             myVH.Name.setText(song.name);
             Util.getCover(song.coverUrl, bitmap -> {

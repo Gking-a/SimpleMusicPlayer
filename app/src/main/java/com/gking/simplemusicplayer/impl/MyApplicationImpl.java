@@ -17,8 +17,10 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,17 +42,9 @@ public class MyApplicationImpl extends Application
     public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
     }
-    public GHolder<String, Bitmap> songCover=new GHolder<>();
-    public GHolder<String, JsonObject> getSongInfo() {
-        return songInfo;
-    }
-    public GHolder<String, JsonObject> songInfo=new GHolder<>();
-    public GHolder<String, Bitmap> getSongCover() {
-        return songCover;
-    }
     public MusicPlayer mMusicPlayer=new MusicPlayer();
     public View controlPanel;
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    public View windowView;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -63,11 +57,6 @@ public class MyApplicationImpl extends Application
     }
     private void load() {
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);
-        loadControlPanel();
-    }
-    public ImageView Cover;
-    public TextView Name,Author;
-    public void loadControlPanel() {
         controlPanel.setBackgroundColor(0xFFffFFff);
         Cover = controlPanel.findViewById(R.id.c_song_cover);
         Name = controlPanel.findViewById(R.id.c_song_name);
@@ -80,47 +69,10 @@ public class MyApplicationImpl extends Application
         last.setOnClickListener(v -> getMusicPlayer().last(null));
         pause.setOnClickListener(v -> getMusicPlayer().pause());
         controlPanel.setVisibility(View.GONE);
+        windowView=LayoutInflater.from(this).inflate(R.layout.window,null);;
     }
-
-
-    class MyRunnable implements Runnable{
-        String id;
-        String name;
-        String au;
-
-        public MyRunnable(String id, String name, String au) {
-            this.id = id;
-            this.name = name;
-            this.au = au;
-        }
-
-        @Override
-        public void run() {
-            Bitmap bitmap= getSongCover().get(id);
-            Name.setText(name);
-            Author.setText(au);
-            if(bitmap!=null) Cover.setImageBitmap(bitmap);
-            else {
-                new Thread(){
-                    @Override
-                    public void run() {
-                        do {
-                            try {
-                                sleep(10);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }while (getSongCover().get(id)==null);
-                        Bitmap bitmap= getSongCover().get(id);
-                        handler.post(()-> Cover.setImageBitmap(bitmap));
-                    }
-                }.start();
-            }
-        }
-    }
-    public void setControlInfo(String id, String name, String au, Handler handler){
-        handler.post(new MyRunnable(id,name,au));
-    }
+    public ImageView Cover;
+    public TextView Name,Author;
     private void loadSettings() {
 		if(!getFilesDir().exists())
 			getFilesDir().mkdirs();
@@ -129,8 +81,6 @@ public class MyApplicationImpl extends Application
 			if(file.isFile())
 				GLibraryManager.add(new GLibrary(file,true));
 		}
-        GHolder<String, JsonObject> songs=new GHolder<>();
-		GHolder.standardInstance.add("songs",songs);
 	}
     private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
 

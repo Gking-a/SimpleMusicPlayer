@@ -4,9 +4,11 @@
 package com.gking.simplemusicplayer.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +32,7 @@ import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.service.SongService;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -63,37 +67,43 @@ public class MainActivity extends BaseActivity {
     DrawerLayout drawerLayout;
     RecyclerView playlistView;
     private MyAdapter myAdapter;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(this);
         setContentView(R.layout.activity_main);
         setLoadControlPanel(true);
-        load();
+        loadSystemSettings();
+        loadView();
+        loadUserSettings();
 //        debug();
     }
 
+    private void loadUserSettings() {
+        if(MySettingsActivity.get(account_name)!=null){
+            Intent i=new Intent(this, LoginCellphoneActivity.class);
+            i.putExtra("ph", MySettingsActivity.get(account_phone));
+            i.putExtra("pw", MySettingsActivity.get(account_pw));
+            startActivityForResult(i, LoginCellphoneActivity.RequestCode);
+        }
+    }
+
+    private void loadSystemSettings() {
+        if(!ifOps())
+            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main,menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
-        if(item.getItemId()==R.id.main_save_playlist_position){
-            if (myAdapter != null) {
-                WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
     }
-    private void load(){
+    private void loadView(){
         Toolbar toolbar=f(R.id.playlist_toolbar);
         setSupportActionBar(toolbar);
         search=f(R.id.searchEditText);
@@ -104,10 +114,6 @@ public class MainActivity extends BaseActivity {
         MenuItem login=nav.getMenu().findItem(R.id.login);
         if(MySettingsActivity.get(account_name)!=null){
             login.setTitle(MySettingsActivity.get(account_name));
-            Intent i=new Intent(this, LoginCellphoneActivity.class);
-            i.putExtra("ph", MySettingsActivity.get(account_phone));
-            i.putExtra("pw", MySettingsActivity.get(account_pw));
-            startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }else login.setTitle("登录");
         nav.setNavigationItemSelectedListener(item -> {
             if(item.getItemId()==R.id.login)startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
@@ -117,7 +123,15 @@ public class MainActivity extends BaseActivity {
     }
     private void load2(){
     }
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
+        if(item.getItemId()==R.id.main_save_playlist_position){
+            if (myAdapter != null) {
+                WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
     GTimer timer=new GTimer();
     @Override
     public void onBackPressed() {

@@ -6,17 +6,19 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.Message;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
+import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.Util;
 
 import static com.gking.simplemusicplayer.service.BackgroundService.Type;
+import static com.gking.simplemusicplayer.service.BackgroundService.isShowing;
 
 public class SongService extends Service {
     //Design as SongActivity
@@ -52,8 +54,10 @@ public class SongService extends Service {
         loadView0();
         musicPlayer.addOnSongBeanChangeListener((musicPlayer, songBean) -> {
             this.song=songBean;
+            musicPlayer.operateAfterPrepared(mp -> {
+                loadView2();
+            });
             loadView1();
-            loadView2();
         });
         timeThread = new TimeThread();
         timeThread.start();
@@ -64,9 +68,15 @@ public class SongService extends Service {
     class TimeThread extends Thread{
         @Override
         public final void run() {
+            Runnable runnable = () -> {
+                String lyric = LyricManager.Instance.getLyric(musicPlayer.getCurrentPosition());
+                if(lyric==null)return;
+                TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
+                textView.setText(lyric);
+            };
             while (!interrupted()){
                 try {
-                    sleep(100);
+                    sleep(150);
                 } catch (InterruptedException e) {
                     break;
                 }
@@ -75,6 +85,9 @@ public class SongService extends Service {
                     bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),musicPlayer.getCurrentPosition(),false);
                     NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
                     manager.notify(NOTIFICATION_ID,notification);
+                    if(isShowing){
+                        MyApplicationImpl.handler.post(runnable);
+                    }
                 }
             }
         }

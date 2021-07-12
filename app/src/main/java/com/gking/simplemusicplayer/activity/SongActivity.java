@@ -187,7 +187,6 @@ public class SongActivity extends BaseActivity {
                         return;
                     }
                     TextView time_progress = f(R.id.song_time_progress);
-                    time_progress.setText(time2str(progress.getProgress()));
                     activity.myAdapter.showLyric(msg.arg1);
             }
         }
@@ -198,6 +197,7 @@ public class SongActivity extends BaseActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
+            handler.post(thread);
         }
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {

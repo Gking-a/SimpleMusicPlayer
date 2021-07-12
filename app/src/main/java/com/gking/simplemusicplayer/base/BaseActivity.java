@@ -4,9 +4,12 @@
 package com.gking.simplemusicplayer.base;
 
 import android.app.Activity;
+import android.app.AppOpsManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Binder;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,8 @@ import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import gtools.managers.GHolder;
 
@@ -28,6 +33,9 @@ import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 public abstract class BaseActivity extends AppCompatActivity {
     public <T extends View> T f(int id) {
         return super.findViewById(id);
+    }
+    public MyApplicationImpl getMyApplication(){
+        return ((MyApplicationImpl) getApplication());
     }
     public void loadPictures(){
         GHolder<String, Bitmap> gHolder=new GHolder<>();
@@ -107,5 +115,34 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     public void makeToast(Object msg){
         Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_LONG).show();
+    }
+    public boolean ifOps(){
+        if (Build.VERSION.SDK_INT >= 19) {
+            AppOpsManager appOpsMgr = (AppOpsManager) context.getSystemService( APP_OPS_SERVICE);
+            if (appOpsMgr == null) {
+                return true;
+            } else {
+                try {
+                    Class cls = Class.forName("android.content.Context");
+                    Field declaredField = cls.getDeclaredField("APP_OPS_SERVICE");
+                    declaredField.setAccessible(true);
+                    Object obj = declaredField.get(cls);
+                    if (!(obj instanceof String)) {
+                        return false;
+                    }
+                    String str2 = (String) obj;
+                    obj = cls.getMethod("getSystemService", String.class).invoke(context, str2);
+                    cls = Class.forName("android.app.AppOpsManager");
+                    Field declaredField2 = cls.getDeclaredField("MODE_ALLOWED");
+                    declaredField2.setAccessible(true);
+                    Method checkOp = cls.getMethod("checkOp", Integer.TYPE, Integer.TYPE, String.class);
+                    int result = (Integer) checkOp.invoke(obj, 24, Binder.getCallingUid(), getPackageName());
+                    return result == declaredField2.getInt(cls);
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }
