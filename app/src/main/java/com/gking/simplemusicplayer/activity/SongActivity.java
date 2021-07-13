@@ -1,5 +1,6 @@
 package com.gking.simplemusicplayer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +22,7 @@ import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.LyricBean;
 import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.service.BackgroundService;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -42,11 +44,14 @@ public class SongActivity extends BaseActivity {
     SongBean song=null;
     private MyOnSeekBarChangeListener onSeekBarChangeListener=new MyOnSeekBarChangeListener();
     private MyAdapter myAdapter;
-    private MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
-
+    private static MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
+    MyHandler handler;
+    SeekBar progress;
+    static TimeThread timeThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("onCreate");
         init(this,false);
         setContentView(R.layout.activity_song);
         handler=new MyHandler(new WeakReference<>(this));
@@ -54,6 +59,7 @@ public class SongActivity extends BaseActivity {
         timeThread=new TimeThread();
         timeThread.start();
         onSongBeanChangeListener = (musicPlayer, songBean) -> {
+            System.out.println("onSongBeanChange");
             song = songBean;
             musicPlayer.operateAfterPrepared(mp -> {
                 Message message = new Message();
@@ -64,9 +70,12 @@ public class SongActivity extends BaseActivity {
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
     }
-    MyHandler handler;
-    SeekBar progress;
-    TimeThread timeThread;
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        musicPlayer.notify(song,onSongBeanChangeListener);
+    }
+
     private void load() {
         musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
         System.out.println(musicPlayer==null);
@@ -76,6 +85,11 @@ public class SongActivity extends BaseActivity {
         f(R.id.song_next).setOnClickListener(v -> musicPlayer.next(null));
         f(R.id.song_last).setOnClickListener(v -> musicPlayer.last(null));
         f(R.id.song_pause).setOnClickListener(v -> musicPlayer.pause());
+        f(R.id.song_window).setOnClickListener(v -> {
+            Intent intent=new Intent(getContext(),BackgroundService.class);
+            intent.putExtra(BackgroundService.Type.Type,BackgroundService.Type.Window);
+            startService(intent);
+        });
         progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
     }
     class TimeThread extends Thread{
@@ -141,35 +155,38 @@ public class SongActivity extends BaseActivity {
             SongActivity activity=activityWeakReference.get();
             if (activity == null)return;
             switch (msg.what){
-                case SET_MAX:
+                case SET_MAX: {
                     assign();
                     ((TextView) activity.f(R.id.song_toolbar_title)).setText(song.name);
                     progress.setMax(msg.arg1);
-                    TextView tv=f(R.id.song_time_duration);
+                    TextView tv = f(R.id.song_time_duration);
                     tv.setText(time2str(msg.arg1));
                     WebRequest.lyric(song.id, MyCookieJar.getLoginCookie(), new okhttp3.Callback() {
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                         }
+
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            String body=response.body().string();
-                            JsonObject jsonObject= JsonParser.parseString(body).getAsJsonObject();
-                            JsonElement noLyric=jsonObject.get("nolyric");
+                            String body = response.body().string();
+                            JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                            JsonElement noLyric = jsonObject.get("nolyric");
                             LyricBean lyricBean;
-                            if(noLyric!=null){
-                                lyricBean=new LyricBean();
-                            }else {
-                                lyricBean=new LyricBean(jsonObject);
+                            if (noLyric != null) {
+                                lyricBean = new LyricBean();
+                            } else {
+                                lyricBean = new LyricBean(jsonObject);
                             }
-                            handler.post(()->{
+                            handler.post(() -> {
                                 activity.myAdapter = activity.new MyAdapter(lyricBean);
                                 lyricView.setAdapter(activity.myAdapter);
                                 activity.myAdapter.notifyDataSetChanged();
-                                activity.onSeekBarChangeListener.lyricManager=LyricManager.getInstance(lyricBean);
+                                activity.onSeekBarChangeListener.lyricManager = LyricManager.getInstance(lyricBean);
                             });
                         }
                     });
+                    break;
+                }
                 case UPDATE_PROGRESS: {
                     if (musicPlayer == null) {
                         System.out.println("player is null!!!");
@@ -186,7 +203,6 @@ public class SongActivity extends BaseActivity {
                         System.out.println("NULL!!!!!!");
                         return;
                     }
-                    TextView time_progress = f(R.id.song_time_progress);
                     activity.myAdapter.showLyric(msg.arg1);
             }
         }
@@ -196,7 +212,7 @@ public class SongActivity extends BaseActivity {
         LyricManager lyricManager;
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+            thread.text=time2str(progress);
             handler.post(thread);
         }
         @Override
@@ -222,7 +238,7 @@ public class SongActivity extends BaseActivity {
             @Override
             public void run() {
                 TextView tv1 = f(R.id.song_time_progress);
-                tv1.setText(time2str(musicPlayer.getCurrentPosition()));
+                tv1.setText(text);
             }
         }
     }

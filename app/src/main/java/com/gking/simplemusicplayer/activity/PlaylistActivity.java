@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import gtools.managers.GHolder;
 import okhttp3.Call;
@@ -140,6 +141,14 @@ public class PlaylistActivity extends BaseActivity {
                 watcher.start(search);
                 menu.setOnClickListener(l1);
                 menu.setBackgroundResource(R.drawable.close);
+            }
+            if(item.getItemId()==R.id.playlist_random){
+                int i=new Random().nextInt(SongManager.getInstance().randomSongs.size());
+                SongBean songBean = SongManager.getInstance().randomSongs.get(i);
+                ((MyApplicationImpl) getApplication()).getMusicPlayer().start(songBean, null);
+                Intent intent = new Intent(getContext(), SongActivity.class);
+                intent.putExtra("bean",songBean);
+                startActivity(intent);
             }
             return false;
         });

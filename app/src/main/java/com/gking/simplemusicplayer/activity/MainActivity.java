@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void loadUserSettings() {
-        if(MySettingsActivity.get(account_name)!=null){
+        if(MySettingsActivity.get(account_phone)!=null&&MySettingsActivity.get(account_pw)!=null){
             Intent i=new Intent(this, LoginCellphoneActivity.class);
             i.putExtra("ph", MySettingsActivity.get(account_phone));
             i.putExtra("pw", MySettingsActivity.get(account_pw));
@@ -96,9 +96,6 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-
-
     @Override
     protected void onStart() {
         super.onStart();

@@ -37,19 +37,20 @@ public class MusicPlayer extends MediaPlayer {
             boolean auto=Boolean.parseBoolean(MySettingsActivity.get(MySettingsActivity.Params.auto_next));
             if(auto&&musicBean!=null){
                 String pm = get(Params.play_mode);
-                switch (pm){
-                    case PLAY_MODE.NONE:break;
-                    case PLAY_MODE.LOOP:start(musicBean,true);
-                    case PLAY_MODE.RANDOM:start(SongManager.getInstance().getRandomSong(musicBean.id),true);
-                    case PLAY_MODE.ORDER:next(null);
-                }
+                if(pm.equals(PLAY_MODE.NONE)){}
+                else if (pm.equals(PLAY_MODE.LOOP)){start(musicBean,true);}
+                else if (pm.equals(PLAY_MODE.RANDOM)){start(SongManager.getInstance().getRandomSong(musicBean.id).next,true);}
+                else if (pm.equals(PLAY_MODE.ORDER)){next(null);}
             }
         }));
+    }
+    public void notify(SongBean songBean,OnSongBeanChangeListener onSongBeanChangeListener){
+        if(getMusicBean()!=songBean)
+            onSongBeanChangeListener.onSongBeanChange(this,getMusicBean());
     }
     public SongBean getMusicBean() {
         return musicBean;
     }
-
     public void start(SongBean songBean,OnPreparedListener listener){
         start(songBean);
     }

@@ -5,4 +5,7 @@
     <item
         android:title="搜索"
         android:id="@+id/playlist_menu_search"/>
+    <item
+        android:title="随机播放"
+        android:id="@+id/playlist_random"/>
 </menu>

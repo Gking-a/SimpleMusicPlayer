@@ -128,4 +128,9 @@ public class SongService extends Service {
         return SongActivity.time2str(msec);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timeThread.interrupt();
+    }
 }

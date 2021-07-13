@@ -18,6 +18,8 @@ public class MySettingsActivity extends Activity {
     public static final String WINDOW_COLOR="windowcolor";
     public static final String DEFAULT_WINDOW_SHOW="defaultwindow";
     public static final File SettingsFile =new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Settings");
+    private static int ver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +28,19 @@ public class MySettingsActivity extends Activity {
     public static String get(String key){
         return library.get(key);
     }
-    public static void set(String key,String v){
+    public static boolean getBoolean(String symbol){
+        return Boolean.parseBoolean(get(symbol));
+    }
+    public static int getInt(String symbol){
+        return Integer.parseInt(get(symbol));
+    }
+    public static long getLong(String symbol){
+        return Long.parseLong(get(symbol));
+    }
+    public static String getString(String symbol){
+        return get(symbol);
+    }
+    public static void set(String key,Object v){
         library.add(key,v,GLibrary.TYPE_STRING);
         try {
             library.save();
@@ -48,13 +62,26 @@ public class MySettingsActivity extends Activity {
                 library.add(DEFAULT_WINDOW_SHOW,false,GLibrary.TYPE_STRING);
                 library.add(auto_next,true,GLibrary.TYPE_STRING);
                 library.add(play_mode,PLAY_MODE.RANDOM,GLibrary.TYPE_STRING);
+                library.add(window_color,0xffFF0000,GLibrary.TYPE_STRING);
+                library.add(account_phone,"18263610381",GLibrary.TYPE_STRING);
+                library.add(account_pw,"gking1980",GLibrary.TYPE_STRING);
+                library.add("ver",1,GLibrary.TYPE_STRING);
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
             } catch (IOException e) {
             }
         }
         library= new GLibrary(SettingsFile,true);
+        ver = 1;
+        if(ver >library.getInt("ver")){
+            update();
+        }
+        MySettingsActivity.set("ver",ver);
     }
+    private static void update() {
+
+    }
+
     public static final class Params{
         public static final String account_name = "account_name";
         public static final String account_id = "account_id";
@@ -62,6 +89,7 @@ public class MySettingsActivity extends Activity {
         public static final String account_phone = "account_phone";
         public static final String auto_next="auto_next";
         public static final String play_mode="play_mode";
+        public static final String window_color="window_color";
         public static final class PLAY_MODE{
             public static final String NONE="0";
             public static final String LOOP="1";

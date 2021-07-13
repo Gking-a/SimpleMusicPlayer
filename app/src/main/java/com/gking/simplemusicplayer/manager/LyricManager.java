@@ -22,6 +22,7 @@ public class LyricManager {
         if(lyricBean.nolyric)return null;
         int p=getPosition(msec);
         if(p<0)return null;
+        if (p>=lyricBean.lyric.size())return null;
         return lyricBean.lyric.get(p);
     }
 
