@@ -2,8 +2,4 @@
     <string name="app_name" translatable="false">SimpleMusicPlayer</string>
     <string name="author" translatable="false">Gking2665241312&amp;SwQ1916641463</string>
     <string name="loading">Now loading...</string>
-    <string name="title_activity_demo">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 </resources>
