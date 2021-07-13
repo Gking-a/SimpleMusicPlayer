@@ -7,11 +7,9 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:layout_height="40dp"
-    app:layout_constraintBottom_toBottomOf="parent"
     android:background="#ffffffff"
-    android:id="@+id/c_song_item_layout">
+    android:id="@+id/c_song_layout">
     <com.makeramen.roundedimageview.RoundedImageView
-        android:background="@drawable/next"
         android:id="@+id/c_song_cover"
         android:layout_width="40dp"
         android:layout_height="match_parent"

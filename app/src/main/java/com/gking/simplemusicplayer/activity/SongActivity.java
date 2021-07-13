@@ -1,9 +1,11 @@
 package com.gking.simplemusicplayer.activity;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +50,8 @@ public class SongActivity extends BaseActivity {
     MyHandler handler;
     SeekBar progress;
     static TimeThread timeThread;
+    private SeekBar volume;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,11 +74,6 @@ public class SongActivity extends BaseActivity {
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        musicPlayer.notify(song,onSongBeanChangeListener);
-    }
 
     private void load() {
         musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
@@ -91,6 +90,28 @@ public class SongActivity extends BaseActivity {
             startService(intent);
         });
         progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
+        volume = f(R.id.song_sound_seekbar);
+        volume.setMax(((AudioManager) getSystemService(AUDIO_SERVICE)).getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        volume.setProgress(((AudioManager) getSystemService(AUDIO_SERVICE)).getStreamVolume(AudioManager.STREAM_MUSIC));
+        volume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    AudioManager audioManager= ((AudioManager) getSystemService(AUDIO_SERVICE));
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,progress,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
     class TimeThread extends Thread{
         private int position=0;
@@ -241,6 +262,19 @@ public class SongActivity extends BaseActivity {
                 tv1.setText(text);
             }
         }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_VOLUME_UP){
+            AudioManager audioManager= ((AudioManager) getSystemService(AUDIO_SERVICE));
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            volume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+        }else if (keyCode==KeyEvent.KEYCODE_VOLUME_DOWN){
+            AudioManager audioManager= ((AudioManager) getSystemService(AUDIO_SERVICE));
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            volume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+        }
+        return super.onKeyDown(keyCode,event);
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{

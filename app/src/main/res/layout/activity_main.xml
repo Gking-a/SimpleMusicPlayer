@@ -2,59 +2,119 @@
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_drawer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/drawer">
+    android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/main_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/c_song_layout"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/main_tab"
+            android:layout_width="match_parent"
+            android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <com.google.android.material.appbar.AppBarLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/playlist_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    app:menu="@menu/main"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-            </com.google.android.material.appbar.AppBarLayout>
-            <EditText
-                android:layout_marginStart="16dp"
-                android:paddingStart="8dp"
-                android:layout_marginEnd="16dp"
-                android:paddingEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:background="@drawable/circle_edit_background"
-                android:id="@+id/searchEditText"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_playlist"
-                app:layout_constraintTop_toBottomOf="@id/searchEditText"
+            android:layout_height="40dp"
+            android:background="#ffffffff"
+            android:id="@+id/c_song_layout">
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/c_song_cover"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:paddingLeft="2dp"
+                android:paddingTop="2dp"
+                android:paddingRight="2dp"
+                android:paddingBottom="2dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:riv_corner_radius="5dp" />
+            <TextView
+                android:id="@+id/c_song_name"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"/>
-        </LinearLayout>
-        <include
-            android:visibility="gone"
-            layout="@layout/control"
-            android:id="@+id/control" />
+                app:layout_constraintRight_toLeftOf="@id/c_song_last"
+                app:layout_constraintLeft_toRightOf="@id/c_song_cover"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                app:layout_constraintBottom_toTopOf="@id/c_song_author"
+                app:layout_constraintTop_toTopOf="parent"
+                android:singleLine="true"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/c_song_author"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toLeftOf="@id/c_song_last"
+                app:layout_constraintLeft_toRightOf="@id/c_song_cover"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/c_song_name"
+                android:textSize="12sp"
+                android:singleLine="true"/>
+            <ImageButton
+                android:id="@+id/c_song_last"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/last"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/c_song_pause"
+                app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/c_song_pause"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/pause"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/c_song_next"
+                app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/c_song_next"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/next"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            app:tabTextColor="@color/black"
+            app:tabSelectedTextColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/main_tab"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:gravity="left"
         android:fitsSystemWindows="true"
-        app:menu="@menu/nav"
-        android:id="@+id/nav" />
+        android:gravity="left"
+        app:menu="@menu/nav" />
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,17 +25,19 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
-import com.gking.simplemusicplayer.service.SongService;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -77,7 +78,75 @@ public class MainActivity extends BaseActivity {
         loadUserSettings();
 //        debug();
     }
+    private void loadView() {
+        drawerLayout=f(R.id.main_drawer);
+        nav=f(R.id.nav);
+        nav.setNavigationItemSelectedListener(item -> {
+            if(item.getItemId()==R.id.login)startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
+            return true;
+        });
+        TabLayout tabLayout=f(R.id.main_tab);
+        tabLayout.addTab(tabLayout.newTab().setText("歌单"));
+        tabLayout.addTab(tabLayout.newTab().setText("t2"));
+        ViewPager viewPager=f(R.id.main_viewpager);
+        TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition(),true);
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        };
+        tabLayout.addOnTabSelectedListener(onTabSelectedListener);
+        viewPager.setAdapter(new MyViewPagerAdapter());
+    }
+    //高耦合度的ViewPager适配器
+    class MyViewPagerAdapter extends PagerAdapter{
+        @NonNull
+        @NotNull
+        @Override
+        public Object instantiateItem(@NonNull @NotNull ViewGroup container, int position) {
+            View mView=null;
+            if(position==0) {
+                mView = loadPlaylistView();
+            }else if(position==1){
+                mView=LayoutInflater.from(getContext()).inflate(R.layout.activity_splash,null);
+            }
+            container.addView(mView);
+            return mView;
+        }
+        @Override
+        public void destroyItem(@NonNull @NotNull ViewGroup container, int position, @NonNull @NotNull Object object) {
+            container.removeView(((View) object));
+        }
+        @Override
+        public int getCount() {
+            return 2;
+        }
+        @Override
+        public boolean isViewFromObject(@NonNull @NotNull View view, @NonNull @NotNull Object object) {
+            return view==object;
+        }
+    }
 
+    private View loadPlaylistView() {
+        View root=LayoutInflater.from(getContext()).inflate(R.layout.activity_main1,null);
+        Toolbar toolbar=root.findViewById(R.id.playlist_toolbar);
+        setSupportActionBar(toolbar);
+        search=root.findViewById(R.id.searchEditText);
+        playlistView=root.findViewById(R.id.main_playlist);
+        playlistView.setLayoutManager(new LinearLayoutManager(getContext()));
+        drawerLayout=root.findViewById(R.id.main_drawer);
+        MenuItem login=nav.getMenu().findItem(R.id.login);
+        if(MySettingsActivity.get(account_name)!=null){
+            login.setTitle(MySettingsActivity.get(account_name));
+        }else login.setTitle("登录");
+        return root;
+    }
     private void loadUserSettings() {
         if(MySettingsActivity.get(account_phone)!=null&&MySettingsActivity.get(account_pw)!=null){
             Intent i=new Intent(this, LoginCellphoneActivity.class);
@@ -93,32 +162,12 @@ public class MainActivity extends BaseActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
+        getMenuInflater().inflate(R.menu.menu_main,menu);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
     protected void onStart() {
         super.onStart();
-    }
-    private void loadView(){
-        Toolbar toolbar=f(R.id.playlist_toolbar);
-        setSupportActionBar(toolbar);
-        search=f(R.id.searchEditText);
-        playlistView=f(R.id.main_playlist);
-        playlistView.setLayoutManager(new LinearLayoutManager(getContext()));
-        nav=f(R.id.nav);
-        drawerLayout=f(R.id.drawer);
-        MenuItem login=nav.getMenu().findItem(R.id.login);
-        if(MySettingsActivity.get(account_name)!=null){
-            login.setTitle(MySettingsActivity.get(account_name));
-        }else login.setTitle("登录");
-        nav.setNavigationItemSelectedListener(item -> {
-            if(item.getItemId()==R.id.login)startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
-            return true;
-        });
-        load2();
-    }
-    private void load2(){
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {

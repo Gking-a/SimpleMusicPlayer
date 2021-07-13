@@ -53,6 +53,6 @@
     <include
         android:visibility="gone"
         layout="@layout/control"
-        android:id="@+id/control"
+        android:id="@+id/c_song_layout"
         app:layout_constraintTop_toBottomOf="@id/playlist_songs" />
 </androidx.constraintlayout.widget.ConstraintLayout>

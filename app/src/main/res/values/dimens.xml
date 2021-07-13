@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <dimen name="mal_action_action_item_image_height">32dp</dimen>
+    <dimen name="mal_action_action_item_image_height">32dp</dimen>
     <dimen name="mal_action_item_image_width">24dp</dimen>
     <dimen name="mal_baseline">110dp</dimen><!--16-->
     <dimen name="mal_baseline_half">55dp</dimen>
@@ -16,4 +16,7 @@
     <dimen name="sound">32dp</dimen>
     <dimen name="actionBar">48dp</dimen>
     <dimen name="button_big">48dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>
