@@ -8,7 +8,7 @@
     android:focusableInTouchMode="true"
     android:layout_height="40dp"
     android:background="#ffffffff"
-    android:id="@+id/c_song_layout">
+    android:id="@+id/control">
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/c_song_cover"
         android:layout_width="40dp"

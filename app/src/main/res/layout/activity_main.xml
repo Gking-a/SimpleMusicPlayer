@@ -16,7 +16,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/c_song_layout"/>
+            app:layout_constraintBottom_toTopOf="@id/control"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -27,7 +27,7 @@
             android:focusableInTouchMode="true"
             android:layout_height="40dp"
             android:background="#ffffffff"
-            android:id="@+id/c_song_layout">
+            android:id="@+id/control">
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/c_song_cover"
                 android:layout_width="40dp"

@@ -29,7 +29,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public RecyclerViewAdapter.VHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater=LayoutInflater.from(context);
-        View view=layoutInflater.inflate(R.layout.recyclerview1,null);
+        View view=null;
         RecyclerViewAdapter.VHolder vHolder= new RecyclerViewAdapter.VHolder(view);
         return vHolder;
     }
@@ -50,7 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public TextView title;
         public VHolder(@NonNull View itemView) {
             super(itemView);
-            title=itemView.findViewById(R.id.recycle1title);
+//            title=itemView.findViewById(R.id.recycle1title);
         }
     }
     public static GHolder<Object,String> formInfo(String ...args){

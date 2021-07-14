@@ -36,7 +36,7 @@ public class URLs {
     public static final String check_music="https://music.163.com/weapi/song/enhance/player/url";
     public static final String cloud="https://music.163.com/weapi/nos/token/alloc";
 //    public static final String cloud="https://music.163.com/api/upload/cloud/info/v2";
-    public static final String cloudsearch="https://music.163.com/api/cloudsearch/pc";
+    public static final String cloudsearch="https://music.163.com/weapi/cloudsearch/pc";
     public static final String cloud_match="https://music.163.com/api/cloud/user/song/match";
     public static final String comment="https://music.163.com/weapi/resource/comments/${query.t}";
     public static final String comment_album="https://music.163.com/weapi/v1/resource/comments/R_AL_3_${query.id}";

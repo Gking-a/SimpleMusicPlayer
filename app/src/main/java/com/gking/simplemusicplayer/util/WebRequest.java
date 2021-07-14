@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void cloudsearch(String keyword, int type, String cookie, Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("s",keyword);
+        jsonObject.addProperty("type",type);
+        jsonObject.addProperty("limit",100);
+        jsonObject.addProperty("offset",0);
+        jsonObject.addProperty("total",true);
+        post(URLs.cloudsearch,jsonObject,cookie,callback);
+    }
     public static void playlist_order_update1(List<PlaylistBean> beans, String cookie, Callback callback){
         List<String> list=new ArrayList<>(beans.size());
         for(PlaylistBean b:beans)

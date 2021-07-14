@@ -97,7 +97,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     Activity context=this;
     //when onStart(),call this
     private void loadControlPanel(){
-        View v=context.findViewById(R.id.c_song_layout);
+        View v=context.findViewById(R.id.control);
         y=v;
         View control=((MyApplicationImpl) getApplication()).controlPanel;
         ViewGroup parentViewGroup = (ViewGroup) v.getParent();

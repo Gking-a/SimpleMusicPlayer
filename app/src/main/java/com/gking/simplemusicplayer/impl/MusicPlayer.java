@@ -115,10 +115,8 @@ public class MusicPlayer extends MediaPlayer {
         try{
             return super.getDuration();
         }catch (Exception e){
-            e.printStackTrace();
             return 1;
         }
-        
     }
 
     @Override
