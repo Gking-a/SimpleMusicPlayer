@@ -269,10 +269,12 @@ public class SongActivity extends BaseActivity {
             AudioManager audioManager= ((AudioManager) getSystemService(AUDIO_SERVICE));
             audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             volume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+            return true;
         }else if (keyCode==KeyEvent.KEYCODE_VOLUME_DOWN){
             AudioManager audioManager= ((AudioManager) getSystemService(AUDIO_SERVICE));
             audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
             volume.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+            return true;
         }
         return super.onKeyDown(keyCode,event);
     }

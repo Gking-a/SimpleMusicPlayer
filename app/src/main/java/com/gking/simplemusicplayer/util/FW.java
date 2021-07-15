@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class FW {
 	static FileWriter fw;
-		public static void w(Object o){
+		public synchronized static void w(Object o){
 			try {
 				fw.write(o.toString()+"\n");
 				fw.flush();

@@ -1,5 +1,6 @@
 package com.gking.simplemusicplayer.manager;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
@@ -13,7 +14,11 @@ public class PlaylistBean implements Serializable {
     public List<String> trackIds;
     public PlaylistBean(JsonObject playlist){
         id = playlist.get("id").getAsString();
-        coverImgUrl = playlist.get("coverImgUrl").getAsString();
+        JsonElement jsonElement = playlist.get("coverImgUrl");
+        if (jsonElement == null) {
+            jsonElement=playlist.get("picUrl");
+        }
+        coverImgUrl= jsonElement.getAsString();
         name = playlist.get("name").getAsString();
     }
 }

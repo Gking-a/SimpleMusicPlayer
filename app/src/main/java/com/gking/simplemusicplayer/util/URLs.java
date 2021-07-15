@@ -148,7 +148,7 @@ public class URLs {
     public static final String program_recommend="https://music.163.com/weapi/program/recommend/v1";
     public static final String rebind="https://music.163.com/api/user/replaceCellphone";
     public static final String recommend_resource="https://music.163.com/weapi/v1/discovery/recommend/resource";
-    public static final String recommend_songs="https://music.163.com/api/v3/discovery/recommend/songs";
+    public static final String recommend_songs="https://music.163.com/weapi/v3/discovery/recommend/songs";
     public static final String register_cellphone="https://music.163.com/api/register/cellphone";
     public static final String related_allvideo="https://music.163.com/weapi/cloudvideo/v1/allvideo/rcmd";
     public static final String related_playlist="https://music.163.com/playlist?id=${query.id}";

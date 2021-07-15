@@ -36,10 +36,7 @@ public class MyApplicationImpl extends Application
 {
     public static Handler handler=new Handler();
     public static MyApplicationImpl myApplication;
-	public static final File CoverImg=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/CoverImg/");
-	public static final File Playlists=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Playlists/");
-	public static final File Cookies=new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Cookies/");
-    public MusicPlayer getMusicPlayer() {
+	public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
     }
     public MusicPlayer mMusicPlayer=new MusicPlayer();
@@ -76,7 +73,6 @@ public class MyApplicationImpl extends Application
     private void loadSettings() {
 		if(!getFilesDir().exists())
 			getFilesDir().mkdirs();
-		GFile.createDirs(CoverImg,Playlists, Cookies);
 		for (File file: Objects.requireNonNull(getFilesDir().listFiles())){
 			if(file.isFile())
 				GLibraryManager.add(new GLibrary(file,true));

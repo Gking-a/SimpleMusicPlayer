@@ -24,6 +24,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void recommend_songs(String cookie,Callback callback){
+        post(URLs.recommend_songs,new JsonObject(),cookie,callback);
+    }
+    public static void recommend_resource(String cookie,Callback callback){
+        post(URLs.recommend_resource,new JsonObject(),cookie,callback);
+    }
     public static void cloudsearch(String keyword, int type, String cookie, Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("s",keyword);
