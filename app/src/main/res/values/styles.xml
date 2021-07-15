@@ -17,7 +17,7 @@
     </style>
     <style name="MyDialog" parent="android:Theme.Dialog">
         <!-- 背景颜色及透明程度 -->
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">#ff000000</item>
         <!-- 是否半透明 -->
         <item name="android:windowIsTranslucent">false</item>
         <!-- 是否没有标题 -->

@@ -2,6 +2,7 @@ package com.gking.simplemusicplayer.fragment;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,9 +19,13 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
+import com.gking.simplemusicplayer.activity.MySettingsActivity;
 import com.gking.simplemusicplayer.activity.PlaylistActivity;
+import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
+import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.util.Util;
+import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,22 +33,52 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.Callback;
+
+import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
+
 public class PlaylistFragment {
     public TabLayout playlist_tab;
     public RecyclerView playlistView1, playlistView2;
     public MyAdapter myAdapter, myAdapter2;
     public MainActivity activity;
     private final View view;
-
     public View getView() {
         return view;
     }
-
-    public PlaylistFragment(MainActivity activity) {
+    Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.main_save_playlist_position) {
+                if (playlist_tab.getSelectedTabPosition() == 0 && myAdapter != null && myAdapter.playlists.size() > 0) {
+                    WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
+                }
+                if (playlist_tab.getSelectedTabPosition() == 1 && myAdapter2 != null && myAdapter2.playlists.size() > 0) {
+                    WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
+                }
+            }else if(itemId==R.id.main_playlist_create){
+                PlaylistCreateDialog playlistCreateDialog=new PlaylistCreateDialog(getContext());
+                playlistCreateDialog.show();
+                System.out.println("SHOW");
+                playlistCreateDialog.setSimpleInterface(arg -> {
+                    WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
+                });
+            }
+            return false;
+        }
+    };
+    public Callback getGetPlaylistCallback() {
+        return getPlaylistCallback;
+    }
+    Callback getPlaylistCallback;
+    public PlaylistFragment(MainActivity activity, Callback getPlaylistCallback) {
         this.activity = activity;
+        this.getPlaylistCallback=getPlaylistCallback;
         view = LayoutInflater.from(getContext()).inflate(R.layout.activity_main_playlist, null);
-        Toolbar toolbar = view.findViewById(R.id.main_search_toolbar_layout);
-        activity.setSupportActionBar(toolbar);
+        Toolbar toolbar = view.findViewById(R.id.main_playlist_toolbar);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
+//        activity.setSupportActionBar(toolbar);
         playlistView1 = ((RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null));
         playlistView1.setLayoutManager(new LinearLayoutManager(getContext()));
         playlistView2 = (RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null);
@@ -192,7 +227,6 @@ public class PlaylistFragment {
             myAdapter2.notifyDataSetChanged();
         });
     }
-
     public MainActivity getContext() {
         return activity;
     }

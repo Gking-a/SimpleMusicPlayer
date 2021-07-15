@@ -20,9 +20,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.SimpleInterface;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.fragment.RecommendFragment;
 import com.gking.simplemusicplayer.fragment.SearchFragment;
@@ -43,7 +41,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import gtools.util.GTimer;
 import okhttp3.Call;
@@ -61,47 +58,20 @@ public class MainActivity extends BaseActivity {
     private final List<View> fragments=new LinkedList<>();
     private PlaylistFragment playlistFragment;
     private RecommendFragment recommendFragment;
-    private Callback getPlaylistCallback = new Callback() {
-        @Override
-        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-            FW.w(e);
-            System.out.println(e);
-        }
-
-        @Override
-        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-            String body = response.body().string();
-            JsonArray jsonArray = JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
-            List<PlaylistBean> playlistBeans = new ArrayList<>();
-            List<PlaylistBean> playlistBeans2 = new ArrayList<>();
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JsonObject playlist = jsonArray.get(i).getAsJsonObject();
-                String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
-                if (uid.equals(MySettingsActivity.get(account_id))) {
-                    PlaylistBean playlistBean = new PlaylistBean(playlist);
-                    playlistBeans.add(playlistBean);
-                } else {
-                    PlaylistBean playlistBean = new PlaylistBean(playlist);
-                    playlistBeans2.add(playlistBean);
-                }
-            }
-            playlistFragment.setAdapter(playlistBeans, playlistBeans2);
-        }
-    };;
+    private Callback getPlaylistCallback;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(this);
         setContentView(R.layout.activity_main);
         setLoadControlPanel(true);
-        loadSystemSettings();
+        loadBaseSettings();
         loadView();
         loadUserSettings();
 //        debug();
     }
-
     private void loadView() {
-        playlistFragment=new PlaylistFragment(this);
+        playlistFragment=new PlaylistFragment(this,getPlaylistCallback);
         fragments.add(playlistFragment.getView());
         SearchFragment searchFragment=new SearchFragment(this);
         fragments.add(searchFragment.getView());
@@ -158,9 +128,36 @@ public class MainActivity extends BaseActivity {
             startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }
     }
-    private void loadSystemSettings() {
+    private void loadBaseSettings() {
         if (!ifOps())
             startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
+        getPlaylistCallback= new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                FW.w(e);
+                System.out.println(e);
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String body = response.body().string();
+                JsonArray jsonArray = JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
+                List<PlaylistBean> playlistBeans = new ArrayList<>();
+                List<PlaylistBean> playlistBeans2 = new ArrayList<>();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject playlist = jsonArray.get(i).getAsJsonObject();
+                    String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
+                    if (uid.equals(MySettingsActivity.get(account_id))) {
+                        PlaylistBean playlistBean = new PlaylistBean(playlist);
+                        playlistBeans.add(playlistBean);
+                    } else {
+                        PlaylistBean playlistBean = new PlaylistBean(playlist);
+                        playlistBeans2.add(playlistBean);
+                    }
+                }
+                playlistFragment.setAdapter(playlistBeans, playlistBeans2);
+            }
+        };
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -170,27 +167,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-    }
-    @Override
-    public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.main_save_playlist_position) {
-            TabLayout playlist_tab=playlistFragment.playlist_tab;
-            PlaylistFragment.MyAdapter myAdapter = playlistFragment.myAdapter, myAdapter2 = playlistFragment.myAdapter2;
-            if (playlist_tab.getSelectedTabPosition() == 0 && myAdapter != null && myAdapter.playlists.size() > 0) {
-                WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
-            }
-            if (playlist_tab.getSelectedTabPosition() == 1 && myAdapter2 != null && myAdapter2.playlists.size() > 0) {
-                WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
-            }
-        }else if(itemId==R.id.main_playlist_create){
-            PlaylistCreateDialog playlistCreateDialog=new PlaylistCreateDialog(this);
-            playlistCreateDialog.show();
-            playlistCreateDialog.setSimpleInterface(arg -> {
-                WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getPlaylistCallback);
-            });
-        }
-        return super.onOptionsItemSelected(item);
     }
     GTimer timer = new GTimer();
     @Override
