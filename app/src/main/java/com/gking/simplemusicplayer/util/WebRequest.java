@@ -6,7 +6,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +23,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void playlist_create(String name,int privacy,String type,String cookie,Callback callBack){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("name",name);
+        jsonObject.addProperty("privacy",privacy);
+        jsonObject.addProperty("type",type);
+        post(URLs.playlist_create,jsonObject,cookie,callBack);
+    }
     public static void recommend_songs(String cookie,Callback callback){
         post(URLs.recommend_songs,new JsonObject(),cookie,callback);
     }

@@ -5,4 +5,6 @@
     <item
         android:id="@+id/main_save_playlist_position"
         android:title="保存位置设定" />
+    <item android:title="新建歌单"
+        android:id="@+id/main_playlist_create"/>
 </menu>

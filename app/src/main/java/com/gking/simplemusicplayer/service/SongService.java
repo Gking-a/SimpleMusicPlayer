@@ -95,18 +95,18 @@ public class SongService extends Service {
     private void loadView0() {
         Intent i=new Intent(this,BackgroundService.class);
         i.putExtra(Type.Type,Type.Pause);
-        smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT));
-        bigView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT));
+        smallView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_pause,PendingIntent.getService(this,0,i,PendingIntent.FLAG_CANCEL_CURRENT));
         Intent i2=new Intent(this,BackgroundService.class);
         i2.putExtra(Type.Type,Type.Window);
-        smallView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,1,i2,PendingIntent.FLAG_UPDATE_CURRENT));
-        bigView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,1,i2,PendingIntent.FLAG_UPDATE_CURRENT));
+        smallView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,1,i2,PendingIntent.FLAG_CANCEL_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_window,PendingIntent.getService(this,1,i2,PendingIntent.FLAG_CANCEL_CURRENT));
         Intent i3=new Intent(this,BackgroundService.class);
         i3.putExtra(Type.Type,Type.Last);
-        bigView.setOnClickPendingIntent(R.id.notification_last,PendingIntent.getService(this,2,i3,PendingIntent.FLAG_UPDATE_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_last,PendingIntent.getService(this,2,i3,PendingIntent.FLAG_CANCEL_CURRENT));
         Intent i4=new Intent(this,BackgroundService.class);
         i4.putExtra(Type.Type,Type.Next);
-        bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,3,i4,PendingIntent.FLAG_UPDATE_CURRENT));
+        bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,3,i4,PendingIntent.FLAG_CANCEL_CURRENT));
     }
     private void loadView1() {
         Util.getCover(song.coverUrl, bitmap -> {
