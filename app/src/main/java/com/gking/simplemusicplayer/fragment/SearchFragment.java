@@ -95,7 +95,6 @@ public class SearchFragment {
             recyclerViews.add(recyclerView);
         }
     }
-
     class MyViewPagerAdapter extends PagerAdapter {
         @NonNull
         @NotNull
@@ -130,16 +129,13 @@ public class SearchFragment {
             return view == object;
         }
     }
-
     static class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.MyVH> {
         List<PlaylistBean> playlists;
         MainActivity activity;
-
         public MyPlaylistAdapter(MainActivity activity, List<PlaylistBean> playlists) {
             this.activity = activity;
             this.playlists = playlists;
         }
-
         @NonNull
         @NotNull
         @Override
@@ -179,14 +175,14 @@ public class SearchFragment {
             }
         }
     }
-
     static class MySongAdapter extends RecyclerView.Adapter<MySongAdapter.MyVH> {
         List<SongBean> content;
         MainActivity activity;
-
-        public MySongAdapter(MainActivity activity, List<SongBean> content) {
+        String playlistId;
+        public MySongAdapter(MainActivity activity, List<SongBean> content,String playlistId) {
             this.activity = activity;
             this.content = content;
+            this.playlistId=playlistId;
             SongManager.getInstance().setPointer(SongManager.getInstance().songs);
             SongManager.getInstance().randomSort();
         }
@@ -208,6 +204,7 @@ public class SearchFragment {
                 activity.handler.post(() -> myVH.Cover.setImageBitmap(bitmap));
             });
             View.OnClickListener onClickListener = v -> {
+                SongManager.getInstance().set(playlistId,content);
                 ((MyApplicationImpl) activity.getApplication()).getMusicPlayer().start(song, null);
                 Intent intent = new Intent(activity, SongActivity.class);
                 intent.putExtra("bean", song);
@@ -269,7 +266,6 @@ public class SearchFragment {
             }
         }
     }
-
     class MyOnTabSelectedListener implements TabLayout.OnTabSelectedListener {
         private Callback songCallBack = new Callback() {
             @Override
@@ -290,7 +286,7 @@ public class SearchFragment {
                 }
                 activity.handler.post(() -> {
                     RecyclerView recyclerView = recyclerViews.get(0);
-                    MySongAdapter mySongAdapter = new MySongAdapter(activity, music);
+                    MySongAdapter mySongAdapter = new MySongAdapter(activity, music,"s"+keyword);
                     recyclerView.setAdapter(mySongAdapter);
                     mySongAdapter.notifyDataSetChanged();
                 });
@@ -346,6 +342,4 @@ public class SearchFragment {
             searchImpl(tab);
         }
     }
-
-    ;
 }

@@ -15,7 +15,6 @@ import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonArray;
@@ -53,7 +52,7 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
                 }
                 Handler handler = getContext().handler;
                 handler.post(() -> {
-                    SearchFragment.MySongAdapter mySongAdapter=new SearchFragment.MySongAdapter(getContext(),songBeans);
+                    SearchFragment.MySongAdapter mySongAdapter=new SearchFragment.MySongAdapter(getContext(),songBeans,"dailySongs");
                     songsView.setAdapter(mySongAdapter);
                     mySongAdapter.notifyDataSetChanged();
                 });

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -23,32 +23,32 @@
                 app:title="搜索" />
         </com.google.android.material.appbar.AppBarLayout>
 
-            <TextView
-                android:id="@+id/main_recommend_t1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="日推歌曲"
-                android:textSize="20sp"
-                app:layout_constraintTop_toBottomOf="@id/main_toolbar_layout" />
+        <TextView
+            android:id="@+id/main_recommend_t1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日推歌曲"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/main_toolbar_layout" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_recommend_songs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/main_recommend_t1" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_recommend_songs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/main_recommend_t1" />
 
-            <TextView
-                android:id="@+id/main_recommend_t2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="日推歌单"
-                android:textSize="20sp"
-                app:layout_constraintTop_toBottomOf="@id/main_recommend_songs" />
+        <TextView
+            android:id="@+id/main_recommend_t2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日推歌单"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/main_recommend_songs" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_recommend_playlists"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/main_recommend_t2" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_recommend_playlists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/main_recommend_t2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

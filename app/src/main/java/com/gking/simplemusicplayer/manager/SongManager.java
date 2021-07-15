@@ -1,9 +1,11 @@
 package com.gking.simplemusicplayer.manager;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class SongManager {
+    public static String playlistId=null;
     public static final SongManager songManager=new SongManager();
     public static final SongManager getInstance(){
         return songManager;
@@ -18,6 +20,16 @@ public class SongManager {
         System.gc();
         songs =new LinkedList<>();
         randomSongs=new LinkedList<>();
+    }
+    public void set(String playlistId, List<SongBean> list){
+        if(!playlistId.equals(SongManager.playlistId)){
+            clear();
+            for (SongBean s :list) {
+                addSong(s);
+            }
+            SongManager.getInstance().setPointer(SongManager.getInstance().songs);
+            SongManager.getInstance().randomSort();
+        }
     }
     public LinkedList<SongBean> songs =new LinkedList<>();
     public LinkedList<SongBean> randomSongs=new LinkedList<>();

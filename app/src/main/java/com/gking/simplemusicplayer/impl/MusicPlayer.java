@@ -58,6 +58,7 @@ public class MusicPlayer extends MediaPlayer {
         start(musicBean,false);
     }
     public void start(SongBean musicBean,boolean focus){
+        if (musicBean == null)return;
         if (!focus&&this.musicBean != null) {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
