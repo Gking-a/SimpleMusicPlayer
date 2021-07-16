@@ -28,17 +28,16 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
 
-public class PlaylistDialog1 extends BaseDialog {
-
-    public PlaylistDialog1(@NonNull @NotNull Activity context, PlaylistFragment playlistFragment) {
-        super(context);
-        this.playlistFragment=playlistFragment;
-    }
+public class PlaylistDialog2 extends BaseDialog {
     PlaylistBean playlistBean;
     PlaylistFragment playlistFragment;
     public void show(PlaylistBean playlistBean) {
         this.playlistBean=playlistBean;
         super.show();
+    }
+    public PlaylistDialog2(@NonNull @NotNull Activity context, PlaylistFragment playlistFragment) {
+        super(context);
+        this.playlistFragment=playlistFragment;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +55,11 @@ public class PlaylistDialog1 extends BaseDialog {
         window.findViewById(R.id.dialog_playlist_close).setOnClickListener(v -> {
             dismiss();
         });
-        window.findViewById(R.id.dialog_playlist_delete).setOnClickListener(v -> {
-            WebRequest.playlist_delete(playlistBean.id,new Callback(){
+        window.findViewById(R.id.dialog_playlist_unsubscribe).setOnClickListener(v -> {
+            WebRequest.playlist_unsubscribe(playlistBean.id,new Callback(){
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String string = response.body().string();
-                    System.out.println(string);
                     WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),playlistFragment.getGetPlaylistCallback());
                 }
                 @Override
@@ -71,10 +69,9 @@ public class PlaylistDialog1 extends BaseDialog {
             dismiss();
         });
     }
-
     @Override
     protected View loadView() {
-        View view=View.inflate(getActivity(), R.layout.dialog_playlist1,null);
+        View view=View.inflate(getContext(),R.layout.dialog_playlist2,null);
         return view;
     }
 }

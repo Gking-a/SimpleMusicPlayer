@@ -11,20 +11,20 @@
         android:layout_height="match_parent"
         android:background="@color/white">
         <Button
-            android:id="@+id/playlist_popup_window_delete"
+            android:id="@+id/dialog_playlist_unsubscribe"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="删除"
+            android:text="取消收藏"
             android:background="#00123456"
             android:textColor="@color/black"/>
         <Button
-            app:layout_constraintTop_toBottomOf="@id/playlist_popup_window_delete"
+            app:layout_constraintTop_toBottomOf="@id/dialog_playlist_unsubscribe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="关闭"
             android:background="#00123456"
             android:textColor="@color/black"
-            android:id="@+id/playlist_popup_window_close"/>
+            android:id="@+id/dialog_playlist_close"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

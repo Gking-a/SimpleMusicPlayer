@@ -25,8 +25,10 @@ import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
+import com.gking.simplemusicplayer.dialog.PlaylistDialog2;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -50,7 +52,6 @@ public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
     Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            System.out.println("RECV");
             int itemId = item.getItemId();
             if (itemId == R.id.main_save_playlist_position) {
                 if (playlist_tab.getSelectedTabPosition() == 0 && myAdapter != null && myAdapter.playlists.size() > 0) {
@@ -60,7 +61,6 @@ public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
                     WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
                 }
             }else if(itemId==R.id.main_playlist_create){
-                System.out.println("SHOW");
                 playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {
@@ -188,12 +188,14 @@ public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
             };
             holder.icon.setOnClickListener(onClickListener);
             holder.title.setOnClickListener(onClickListener);
-            holder.more.setOnClickListener(v -> {
+            holder.more.setOnClickListener(getOnMoreClickListener(bean));
+        }
+        public View.OnClickListener getOnMoreClickListener(PlaylistBean bean){
+            return v -> {
                 playlistDialog1 = new PlaylistDialog1(getContext(),PlaylistFragment.this);
                 playlistDialog1.show(bean);
-            });
+            };
         }
-
         @Override
         public int getItemCount() {
             return playlists.size();
@@ -220,7 +222,15 @@ public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
             myAdapter = new MyAdapter(activity, data1);
             playlistView1.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
-            myAdapter2 = new MyAdapter(activity, data2);
+            myAdapter2 = new MyAdapter(activity, data2){
+                @Override
+                public View.OnClickListener getOnMoreClickListener(PlaylistBean bean) {
+                    return v -> {
+                        PlaylistDialog2 playlistDialog2=new PlaylistDialog2(getContext(),PlaylistFragment.this);
+                        playlistDialog2.show(bean);
+                    };
+                }
+            };
             playlistView2.setAdapter(myAdapter2);
             myAdapter2.notifyDataSetChanged();
         });

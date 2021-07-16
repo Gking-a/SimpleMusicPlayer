@@ -30,12 +30,12 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 public final class WebRequest {
-    public static void playlist_unsubscribe(String id,int type,Callback callback){
+    public static void playlist_unsubscribe(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("id",id);
         post(URLs.playlist_unsubscribe,jsonObject,MyCookieJar.getLoginCookie(),callback);
     }
-    public static void playlist_subscribe(String id,int type,Callback callback){
+    public static void playlist_subscribe(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("id",id);
         post(URLs.playlist_subscribe,jsonObject,MyCookieJar.getLoginCookie(),callback);

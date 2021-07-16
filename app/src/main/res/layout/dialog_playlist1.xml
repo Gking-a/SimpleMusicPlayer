@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/dialog_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+        <Button
+            android:id="@+id/dialog_playlist_delete"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="删除"
+            android:background="#00123456"
+            android:textColor="@color/black"/>
+        <Button
+            app:layout_constraintTop_toBottomOf="@id/dialog_playlist_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="关闭"
+            android:background="#00123456"
+            android:textColor="@color/black"
+            android:id="@+id/dialog_playlist_close"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
