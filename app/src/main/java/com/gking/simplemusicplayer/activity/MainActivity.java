@@ -166,6 +166,11 @@ public class MainActivity extends BaseActivity {
     GTimer timer = new GTimer();
     @Override
     public void onBackPressed() {
+        PopupWindow popupWindow=playlistFragment.popupWindow;
+        if(popupWindow.isShowing()){
+            popupWindow.dismiss();
+            return;
+        }
         if (!timer.compareBigger(1000)) super.onBackPressed();
         if (drawerLayout.isOpen()) drawerLayout.close();
         else drawerLayout.open();

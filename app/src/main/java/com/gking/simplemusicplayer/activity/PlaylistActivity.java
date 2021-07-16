@@ -60,7 +60,6 @@ import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 public class PlaylistActivity extends BaseActivity {
     Handler handler=new Handler();
     private String playlistId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +145,7 @@ public class PlaylistActivity extends BaseActivity {
                 menu.setBackgroundResource(R.drawable.close);
             }
             if(item.getItemId()==R.id.playlist_random){
+                SongManager.getInstance().set(playlistId, ((MyAdapter) songList.getAdapter()).content);
                 int i=new Random().nextInt(SongManager.getInstance().randomSongs.size());
                 SongBean songBean = SongManager.getInstance().randomSongs.get(i);
                 ((MyApplicationImpl) getApplication()).getMusicPlayer().start(songBean, null);

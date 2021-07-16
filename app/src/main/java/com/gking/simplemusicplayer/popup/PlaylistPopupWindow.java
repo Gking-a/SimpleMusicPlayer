@@ -27,6 +27,7 @@ public class PlaylistPopupWindow extends BaseBottomPopupWindow {
         super(context, R.layout.playlist_popup_window);
         this.playlistFragment=playlistFragment;
         View root=getView();
+        root.findViewById(R.id.playlist_popup_window_delete).setBackgroundColor(0xffFFffFF);
         root.findViewById(R.id.playlist_popup_window_delete).setOnClickListener(v -> {
             WebRequest.playlist_delete(playlistBean.id,new Callback(){
                 @Override
@@ -41,6 +42,7 @@ public class PlaylistPopupWindow extends BaseBottomPopupWindow {
             });
             dismiss();
         });
+        root.findViewById(R.id.playlist_popup_window_close).setBackgroundColor(0xffFFffFF);
         root.findViewById(R.id.playlist_popup_window_close).setOnClickListener(v -> dismiss());
     }
     public PlaylistBean playlistBean;
