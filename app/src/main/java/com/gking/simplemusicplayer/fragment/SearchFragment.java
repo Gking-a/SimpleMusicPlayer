@@ -23,11 +23,13 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
+import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
+import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -51,20 +53,20 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class SearchFragment {
+public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
     static final String[] title = new String[]{"歌曲", "歌单"};
     static final int num = title.length;
     static String[] keywords = new String[num];
     static String keyword;
-    List<RecyclerView> recyclerViews = new ArrayList<>();
-    MainActivity activity;
-    private final View view;
-    public View getView() {
-        return view;
-    }
+    List<RecyclerView> recyclerViews;
     public SearchFragment(MainActivity activity) {
-        this.activity = activity;
-        view = LayoutInflater.from(activity).inflate(R.layout.activity_main_search, null);
+        super(activity);
+    }
+
+    @Override
+    protected View loadView() {
+        MainActivity activity=getContext();
+        View view = LayoutInflater.from(activity).inflate(R.layout.activity_main_search, null);
         EditText search_et = view.findViewById(R.id.main_search_search);
         ConstraintLayout constraintLayout = view.findViewById(R.id.main_search_show);
         TabLayout tabLayout = view.findViewById(R.id.main_search_tab);
@@ -75,7 +77,6 @@ public class SearchFragment {
         KeyboardLayout keyboardLayout = view.findViewById(R.id.main_search_keyboard);
         keyboardLayout.setKeyboardLayoutListener(new KeyboardLayout.KeyboardLayoutListener() {
             boolean last = false;
-
             @Override
             public void onKeyboardStateChanged(boolean isActive, int keyboardHeight) {
                 if (isActive == last) return;
@@ -89,12 +90,15 @@ public class SearchFragment {
                 }
             }
         });
+        recyclerViews = new ArrayList<>();
         for (int i = 0; i < num; i++) {
             RecyclerView recyclerView = ((RecyclerView) View.inflate(activity, R.layout.recycler_view, null));
             recyclerView.setLayoutManager(new LinearLayoutManager(activity));
             recyclerViews.add(recyclerView);
         }
+        return view;
     }
+
     class MyViewPagerAdapter extends PagerAdapter {
         @NonNull
         @NotNull
@@ -140,7 +144,7 @@ public class SearchFragment {
         @NotNull
         @Override
         public MyPlaylistAdapter.MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(activity).inflate(R.layout.list_small2, parent, false);
+            View view = LayoutInflater.from(activity).inflate(R.layout.playlist_horizontal, parent, false);
             return new MyPlaylistAdapter.MyVH(view);
         }
 
@@ -284,6 +288,7 @@ public class SearchFragment {
                     SongManager.getInstance().addSong(bean);
                     music.add(bean);
                 }
+                MainActivity activity=getContext();
                 activity.handler.post(() -> {
                     RecyclerView recyclerView = recyclerViews.get(0);
                     MySongAdapter mySongAdapter = new MySongAdapter(activity, music,"s"+keyword);
@@ -306,6 +311,7 @@ public class SearchFragment {
                 for (int i = 0; i < jsonArray.size(); i++) {
                     playlistBeans.add(new PlaylistBean(jsonArray.get(i).getAsJsonObject()));
                 }
+                MainActivity activity=getContext();
                 activity.handler.post(() -> {
                     RecyclerView recyclerView = recyclerViews.get(1);
                     MyPlaylistAdapter myPlaylistAdapter = new MyPlaylistAdapter(activity, playlistBeans);

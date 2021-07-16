@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,9 +23,11 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.activity.MySettingsActivity;
 import com.gking.simplemusicplayer.activity.PlaylistActivity;
+import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.popup.PlaylistPopupWindow;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.tabs.TabLayout;
@@ -37,15 +41,10 @@ import okhttp3.Callback;
 
 import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
 
-public class PlaylistFragment {
+public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
     public TabLayout playlist_tab;
     public RecyclerView playlistView1, playlistView2;
     public MyAdapter myAdapter, myAdapter2;
-    public MainActivity activity;
-    private final View view;
-    public View getView() {
-        return view;
-    }
     Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -60,7 +59,6 @@ public class PlaylistFragment {
             }else if(itemId==R.id.main_playlist_create){
                 PlaylistCreateDialog playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
-                System.out.println("SHOW");
                 playlistCreateDialog.setSimpleInterface(arg -> {
                     WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
                 });
@@ -68,25 +66,15 @@ public class PlaylistFragment {
             return false;
         }
     };
+    public PlaylistPopupWindow popupWindow;
+
     public Callback getGetPlaylistCallback() {
         return getPlaylistCallback;
     }
     Callback getPlaylistCallback;
     public PlaylistFragment(MainActivity activity, Callback getPlaylistCallback) {
-        this.activity = activity;
+        super(activity);
         this.getPlaylistCallback=getPlaylistCallback;
-        view = LayoutInflater.from(getContext()).inflate(R.layout.activity_main_playlist, null);
-        Toolbar toolbar = view.findViewById(R.id.main_playlist_toolbar);
-        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
-//        activity.setSupportActionBar(toolbar);
-        playlistView1 = ((RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null));
-        playlistView1.setLayoutManager(new LinearLayoutManager(getContext()));
-        playlistView2 = (RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null);
-        playlistView2.setLayoutManager(new LinearLayoutManager(getContext()));
-        playlist_tab = view.findViewById(R.id.main_playlist_type);
-        ViewPager viewPager = view.findViewById(R.id.main_playlist_viewpager);
-        viewPager.setAdapter(new MyViewPagerAdapter(activity));
-        playlist_tab.setupWithViewPager(viewPager);
     }
 
     class MyViewPagerAdapter extends PagerAdapter {
@@ -181,7 +169,7 @@ public class PlaylistFragment {
         @NotNull
         @Override
         public MyAdapter.MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(activity.getContext()).inflate(R.layout.list_small2, parent, false);
+            View view = LayoutInflater.from(activity.getContext()).inflate(R.layout.playlist_horizontal, parent, false);
             return new MyAdapter.MyVH(view);
         }
 
@@ -197,6 +185,9 @@ public class PlaylistFragment {
             };
             holder.icon.setOnClickListener(onClickListener);
             holder.title.setOnClickListener(onClickListener);
+            holder.more.setOnClickListener(v -> {
+                popupWindow.showAtBottom(activity.f(R.id.main_viewpager),bean);
+            });
         }
 
         @Override
@@ -208,16 +199,19 @@ public class PlaylistFragment {
 
             public final TextView title;
             public final ImageView icon;
+            private final ImageButton more;
 
             public MyVH(@NonNull @NotNull View itemView) {
                 super(itemView);
                 icon = itemView.findViewById(R.id.list_small_icon);
                 title = itemView.findViewById(R.id.list_small_title);
+                more = itemView.findViewById(R.id.playlist_more);
             }
         }
     }
 
     public void setAdapter(List<PlaylistBean> data1, List<PlaylistBean> data2) {
+        MainActivity activity=getContext();
         activity.handler.post(() -> {
             myAdapter = new MyAdapter(activity, data1);
             playlistView1.setAdapter(myAdapter);
@@ -227,7 +221,21 @@ public class PlaylistFragment {
             myAdapter2.notifyDataSetChanged();
         });
     }
-    public MainActivity getContext() {
-        return activity;
+    @Override
+    protected View loadView() {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.activity_main_playlist, null);
+        Toolbar toolbar = view.findViewById(R.id.main_playlist_toolbar);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
+//        activity.setSupportActionBar(toolbar);
+        playlistView1 = ((RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null));
+        playlistView1.setLayoutManager(new LinearLayoutManager(getContext()));
+        playlistView2 = (RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null);
+        playlistView2.setLayoutManager(new LinearLayoutManager(getContext()));
+        playlist_tab = view.findViewById(R.id.main_playlist_type);
+        ViewPager viewPager = view.findViewById(R.id.main_playlist_viewpager);
+        viewPager.setAdapter(new MyViewPagerAdapter(getContext()));
+        playlist_tab.setupWithViewPager(viewPager);
+        popupWindow = new PlaylistPopupWindow(getContext(),this);
+        return view;
     }
 }

@@ -74,7 +74,6 @@ public class SongActivity extends BaseActivity {
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
     }
-
     private void load() {
         musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
         System.out.println(musicPlayer==null);

@@ -129,7 +129,7 @@ public class URLs {
     public static final String personal_fm="https://music.163.com/weapi/v1/radio/get";
     public static final String playlist_catlist="https://music.163.com/weapi/playlist/catalogue";
     public static final String playlist_cover_update="https://music.163.com/weapi/playlist/cover/update";
-    public static final String playlist_create="https://music.163.com/api/playlist/create";
+    public static final String playlist_create="https://music.163.com/weapi/playlist/create";
     public static final String playlist_delete="https://music.163.com/weapi/playlist/remove";
     public static final String playlist_detail="https://music.163.com/weapi/v6/playlist/detail";
     public static final String playlist_detail_dynamic="https://music.163.com/api/playlist/detail/dynamic";

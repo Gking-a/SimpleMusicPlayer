@@ -6,7 +6,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -19,14 +22,24 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+import okio.BufferedSink;
 
 public final class WebRequest {
+    public static void playlist_delete(String id,Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("ids","["+id+"]");
+        post(URLs.playlist_delete,jsonObject,MyCookieJar.getLoginCookie(),callback);
+    }
     public static void playlist_create(String name,int privacy,String type,String cookie,Callback callBack){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("name",name);
-        jsonObject.addProperty("privacy",privacy);
+        if(privacy!=0)
+            jsonObject.addProperty("privacy",privacy+"");
         jsonObject.addProperty("type",type);
         post(URLs.playlist_create,jsonObject,cookie,callBack);
     }

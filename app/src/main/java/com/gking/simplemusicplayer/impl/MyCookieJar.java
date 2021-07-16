@@ -30,6 +30,7 @@ public class MyCookieJar implements CookieJar {
     }
     private void storeCookie(List<Cookie> list) {
         cookie= StringUtils.join(list,"; ");
+        cookie+="; os=pc";
         for(Cookie _csrf:list){
             String text=_csrf.toString();
             if(text.contains("_csrf"))csrf=StringUtils.substringBetween(text,"=",";");

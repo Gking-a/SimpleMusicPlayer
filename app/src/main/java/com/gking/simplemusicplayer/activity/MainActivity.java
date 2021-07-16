@@ -10,8 +10,10 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,7 +61,6 @@ public class MainActivity extends BaseActivity {
     private PlaylistFragment playlistFragment;
     private RecommendFragment recommendFragment;
     private Callback getPlaylistCallback;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(this);
@@ -137,7 +138,6 @@ public class MainActivity extends BaseActivity {
                 FW.w(e);
                 System.out.println(e);
             }
-
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String body = response.body().string();
@@ -158,11 +158,6 @@ public class MainActivity extends BaseActivity {
                 playlistFragment.setAdapter(playlistBeans, playlistBeans2);
             }
         };
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
     }
     @Override
     protected void onStart() {
@@ -194,5 +189,15 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        PopupWindow popupWindow=playlistFragment.popupWindow;
+        if(popupWindow.isShowing()){
+            popupWindow.dismiss();
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 }

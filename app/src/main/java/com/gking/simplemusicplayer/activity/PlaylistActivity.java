@@ -58,8 +58,9 @@ import okhttp3.Response;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.l;
 
 public class PlaylistActivity extends BaseActivity {
-    MyHandler myHandler = new MyHandler();
     Handler handler=new Handler();
+    private String playlistId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +69,9 @@ public class PlaylistActivity extends BaseActivity {
         setLoadControlPanel(true);
         SongManager.getInstance().clear();
         PlaylistBean playlistBean = ((PlaylistBean) getIntent().getSerializableExtra("bean"));
+        playlistId = playlistBean.id;
         load(playlistBean);
-        WebRequest.playlist_detail(playlistBean.id, MyCookieJar.getLoginCookie(), new Callback() {
+        WebRequest.playlist_detail(playlistId, MyCookieJar.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }
@@ -97,14 +99,15 @@ public class PlaylistActivity extends BaseActivity {
                             JsonObject song = songs.get(i).getAsJsonObject();
                             String id = song.get("id").getAsString();
                             SongBean bean= new SongBean(song);
-                            SongManager.getInstance().addSong(bean);
                             nameMap.put(JsonUtil.getAsString(song,"name"),bean);
                             music.add(bean);
                         }
-                        Message message = new Message();
-                        message.what = MyHandler.UPDATE_UI;
-                        message.obj=music;
-                        myHandler.sendMessage(message);
+                        handler.post(() -> {
+                            RecyclerView recyclerView = f(R.id.playlist_songs);
+                            MyAdapter adapter=new MyAdapter(getContext(), music, playlistId);
+                            recyclerView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+                        });
                     }
                 });
             }
@@ -154,29 +157,14 @@ public class PlaylistActivity extends BaseActivity {
         });
         menu.setOnClickListener(l2);
     }
-
-    class MyHandler extends Handler {
-        public static final int UPDATE_UI = 0;
-        @Override
-        public void handleMessage(@NonNull @NotNull Message msg) {
-            switch (msg.what) {
-                case UPDATE_UI:
-                    RecyclerView recyclerView = f(R.id.playlist_songs);
-                    MyAdapter adapter=new MyAdapter(getContext(), (List<SongBean>) msg.obj);
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-    }
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
         List<SongBean> content;
         Context context;
-        public MyAdapter(Context context, List<SongBean> content) {
+        String playlistId;
+        public MyAdapter(Context context, List<SongBean> content,String playlistId) {
             this.content = content;
             this.context = context;
-            SongManager.getInstance().setPointer(SongManager.getInstance().songs);
-            SongManager.getInstance().randomSort();
+            this.playlistId=playlistId;
         }
         @NonNull
         @NotNull
@@ -194,6 +182,7 @@ public class PlaylistActivity extends BaseActivity {
                 handler.post(()->myVH.Cover.setImageBitmap(bitmap));
             });
             View.OnClickListener onClickListener= v -> {
+                SongManager.getInstance().set(playlistId,content);
                 ((MyApplicationImpl) getApplication()).getMusicPlayer().start(song,null);
                 Intent intent = new Intent(getContext(), SongActivity.class);
                 intent.putExtra("bean",song);
@@ -268,13 +257,13 @@ public class PlaylistActivity extends BaseActivity {
             for(String name:nameMap.keySet()){
                 if(name.contains(text))beans.add(nameMap.get(name));
             }
-            MyAdapter myAdapter=new MyAdapter(getContext(),beans);
+            MyAdapter myAdapter=new MyAdapter(getContext(),beans,playlistId);
             songList.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
         public void cancel(){
             isSearching=false;
-            MyAdapter myAdapter=new MyAdapter(getContext(),SongManager.getInstance().songs);
+            MyAdapter myAdapter=new MyAdapter(getContext(),SongManager.getInstance().songs,playlistId);
             songList.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
