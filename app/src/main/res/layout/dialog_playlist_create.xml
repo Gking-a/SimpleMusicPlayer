@@ -5,57 +5,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="240dp">
-
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="新建歌单"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:background="@color/white">
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="新建歌单"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/playlist_create_name"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="24dp"
-        android:hint="歌单名"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        <EditText
+            android:id="@+id/playlist_create_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="24dp"
+            android:hint="歌单名"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <CheckBox
-        android:id="@+id/playlist_create_privacy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="隐私歌单"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playlist_create_name" />
+        <CheckBox
+            android:id="@+id/playlist_create_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="隐私歌单"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_create_name" />
 
-    <CheckBox
-        android:id="@+id/playlist_create_type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="视频歌单"
-        app:layout_constraintTop_toBottomOf="@+id/playlist_create_privacy"
-        tools:layout_editor_absoluteX="116dp" />
-    <com.google.android.material.button.MaterialButton
-        android:text="确定"
-        android:id="@+id/playlist_create_sure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/playlist_create_type"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
-    <com.google.android.material.button.MaterialButton
-        android:text="取消"
-        android:id="@+id/playlist_create_cencel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/playlist_create_type"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/playlist_create_sure"/>
+        <CheckBox
+            android:id="@+id/playlist_create_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频歌单"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_create_privacy"
+            tools:layout_editor_absoluteX="116dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <com.google.android.material.button.MaterialButton
+                android:text="确定"
+                android:id="@+id/playlist_create_sure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/playlist_create_type"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+            <com.google.android.material.button.MaterialButton
+                android:text="取消"
+                android:id="@+id/playlist_create_cencel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/playlist_create_type"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/playlist_create_sure"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
