@@ -27,17 +27,18 @@ public class SongDialog1 extends BaseBottomDialog<PlaylistActivity>{
     public SongDialog1(@NonNull @NotNull PlaylistActivity context) {
         super(context);
     }
-    String pid,sid;
+    String pid;
+    SongBean songBean;
     public void show(String pid, SongBean bean){
         this.pid=pid;
-        this.sid=bean.id;
+        this.songBean=bean;
         show();
     }
     @Override
     protected View loadView() {
         View view=View.inflate(getContext(), R.layout.dialog_song1,null);
         view.findViewById(R.id.dialog_song_close).setOnClickListener(v -> dismiss());
-        view.findViewById(R.id.dialog_song_delete).setOnClickListener(v -> WebRequest.playlist_tracks_delete(pid, new String[]{sid}, new Callback() {
+        view.findViewById(R.id.dialog_song_delete).setOnClickListener(v -> WebRequest.playlist_tracks_delete(pid, new String[]{songBean.id}, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }
@@ -45,11 +46,13 @@ public class SongDialog1 extends BaseBottomDialog<PlaylistActivity>{
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 System.out.println(response.body().string());
                 WebRequest.playlist_detail(pid, MyCookieJar.getLoginCookie(),getActivity().refreshPlaylistCallback);
+                dismiss();
             }
         }));
         view.findViewById(R.id.dialog_song_add).setOnClickListener(v -> {
             dismiss();
             Intent intent = new Intent(getActivity(), ChoosePlaylistActivity.class);
+            intent.putExtra("song",songBean);
             getActivity().startActivityForResult(intent,ChoosePlaylistActivity.RequestCode);
         });
         return view;

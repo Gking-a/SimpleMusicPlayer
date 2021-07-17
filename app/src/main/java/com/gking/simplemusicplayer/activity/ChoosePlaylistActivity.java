@@ -1,11 +1,5 @@
 package com.gking.simplemusicplayer.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,13 +10,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
-import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -45,10 +45,14 @@ import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.acc
 
 public class ChoosePlaylistActivity extends BaseActivity {
     public static final int RequestCode=1001;
+    SongBean songBean;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_playlist);
+        if (getIntent() != null&&getIntent().getSerializableExtra("song")!=null) {
+            songBean= ((SongBean) getIntent().getSerializableExtra("song"));
+        }
         loadView();
         setResult(RequestCode,new Intent());
         WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
@@ -72,16 +76,14 @@ public class ChoosePlaylistActivity extends BaseActivity {
     Callback getPlaylistCallback;
     private RecyclerView recyclerView;
     private MyAdapter myAdapter;
-
     public Callback getGetPlaylistCallback() {
         return getPlaylistCallback;
     }
-
-
     private void loadView() {
         Toolbar toolbar = findViewById(R.id.activity_choose_playlist_toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
         recyclerView = findViewById(R.id.activity_choose_playlist_rec);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         getPlaylistCallback= new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -97,6 +99,7 @@ public class ChoosePlaylistActivity extends BaseActivity {
                     JsonObject playlist = jsonArray.get(i).getAsJsonObject();
                     String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
                     if (uid.equals(MySettingsActivity.get(account_id))) {
+                        System.out.println("ONADD");
                         PlaylistBean playlistBean = new PlaylistBean(playlist);
                         playlistBeans.add(playlistBean);
                     }
@@ -104,7 +107,9 @@ public class ChoosePlaylistActivity extends BaseActivity {
                 getContext().handler.post(()->{
                     myAdapter = new MyAdapter(ChoosePlaylistActivity.this, playlistBeans);
                     recyclerView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
                 });
+                System.out.println("FINISH");
             }
         };
     }
@@ -167,18 +172,20 @@ public class ChoosePlaylistActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(@NonNull @NotNull MyAdapter.MyVH holder, int position) {
-            PlaylistBean bean = playlists.get(position);
-            holder.title.setText(bean.name);
-            Util.getCover(bean.coverImgUrl, bitmap -> activity.handler.post(() -> holder.icon.setImageBitmap(bitmap)));
+            PlaylistBean playlistBean = playlists.get(position);
+            holder.title.setText(playlistBean.name);
+            Util.getCover(playlistBean.coverImgUrl, bitmap -> activity.handler.post(() -> holder.icon.setImageBitmap(bitmap)));
             View.OnClickListener onClickListener = v -> {
                 Intent intent = new Intent(activity.getContext(), PlaylistActivity.class);
-                intent.putExtra("bean", bean);
+                intent.putExtra("playlistBean", playlistBean);
+                intent.putExtra("success",true);
+                intent.putExtra("songBean",songBean);
                 setResult(RequestCode,intent);
                 finish();
             };
             holder.icon.setOnClickListener(onClickListener);
             holder.title.setOnClickListener(onClickListener);
-            holder.more.setOnClickListener(getOnMoreClickListener(bean));
+            holder.more.setOnClickListener(getOnMoreClickListener(playlistBean));
         }
         public View.OnClickListener getOnMoreClickListener(PlaylistBean bean){
             return v -> {

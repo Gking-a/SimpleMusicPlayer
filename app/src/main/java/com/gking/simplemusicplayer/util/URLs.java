@@ -140,7 +140,7 @@ public class URLs {
     public static final String playlist_subscribe="https://music.163.com/weapi/playlist/subscribe";
     public static final String playlist_unsubscribe="https://music.163.com/weapi/playlist/unsubscribe";
     public static final String playlist_subscribers="https://music.163.com/weapi/playlist/subscribers";
-    public static final String playlist_tracks="https://music.163.com/api/playlist/manipulate/tracks";
+    public static final String playlist_tracks="https://music.163.com/weapi/playlist/manipulate/tracks";
     public static final String playlist_track_add="https://music.163.com/api/playlist/track/add";
     public static final String playlist_track_delete="https://music.163.com/api/playlist/track/delete";
     public static final String playlist_update="https://music.163.com/weapi/batch";

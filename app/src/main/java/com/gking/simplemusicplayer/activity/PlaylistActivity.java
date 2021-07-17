@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,6 +50,7 @@ public class PlaylistActivity extends BaseActivity {
     Handler handler=new Handler();
     private String playlistId;
     public Callback refreshPlaylistCallback;
+    private MySongAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +96,7 @@ public class PlaylistActivity extends BaseActivity {
                             music.add(bean);
                         }
                         handler.post(() -> {
-                            RecyclerView recyclerView = f(R.id.playlist_songs);
-                            MySongAdapter adapter = new MyAdapter(getContext(), music, playlistId);
-                            recyclerView.setAdapter(adapter);
+                            adapter.setData(music);
                             adapter.notifyDataSetChanged();
                         });
                     }
@@ -107,11 +107,12 @@ public class PlaylistActivity extends BaseActivity {
     }
     List<SongBean> music=new LinkedList<>();
     boolean isSearching=false;
-    RecyclerView songList;
+    public RecyclerView songList;
     private void load(PlaylistBean playlist) {
         songList=f(R.id.playlist_songs);
         songList.setLayoutManager(new LinearLayoutManager(getContext()));
         songList.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        adapter = new MyAdapter(getContext(), new ArrayList<>(), playlistId);
         Button back=f(R.id.playlist_toolbar_back);
         back.setOnClickListener(v->finish());
         TextView title=f(R.id.playlist_toolbar_title);
@@ -190,6 +191,24 @@ public class PlaylistActivity extends BaseActivity {
         @Override
         public View.OnClickListener getOnMoreClickListener(SongBean songBean,String playlistId) {
             return v -> new SongDialog1(PlaylistActivity.this).show(playlistId,songBean);
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ChoosePlaylistActivity.RequestCode && data.getBooleanExtra("success", false)) {
+            SongBean songBean= (SongBean) data.getSerializableExtra("songBean");
+            PlaylistBean playlistBean=(PlaylistBean)data.getSerializableExtra("playlistBean");
+            WebRequest.playlist_tracks_add(playlistBean.id, new String[]{songBean.id}, new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                }
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    System.out.println(response.body().string());
+                }
+            });
         }
     }
 }

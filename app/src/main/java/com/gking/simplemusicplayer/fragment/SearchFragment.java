@@ -190,6 +190,9 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
         public List<SongBean> content;
         BaseActivity activity;
         String playlistId;
+        public void setData(List<SongBean> data){
+            content=data;
+        }
         public MySongAdapter(BaseActivity activity, List<SongBean> content, String playlistId) {
             this.activity = activity;
             this.content = content;
