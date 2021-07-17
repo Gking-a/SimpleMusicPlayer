@@ -60,7 +60,7 @@ public class SplashActivity extends BaseActivity {
         FW.w("r"+result.getWidth()+" "+result.getHeight()+" "+GMath.getDec(result.getWidth(),result.getHeight()));
         return result;
     }
-    public Activity getContext(){
+    public BaseActivity getContext(){
         return this;
     }
 }

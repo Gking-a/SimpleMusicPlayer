@@ -1,5 +1,6 @@
 package com.gking.simplemusicplayer.fragment;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -24,14 +25,13 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
+import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
-import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -68,15 +68,15 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
     @Override
     protected View loadView() {
         MainActivity activity=getContext();
-        View view = LayoutInflater.from(activity).inflate(R.layout.activity_main_search, null);
-        EditText search_et = view.findViewById(R.id.main_search_search);
-        ConstraintLayout constraintLayout = view.findViewById(R.id.main_search_show);
-        TabLayout tabLayout = view.findViewById(R.id.main_search_tab);
-        ViewPager viewPager = view.findViewById(R.id.main_search_viewpager);
+        View view = LayoutInflater.from(activity).inflate(R.layout.fragment_search, null);
+        EditText search_et = view.findViewById(R.id.fragment_search_search);
+        ConstraintLayout constraintLayout = view.findViewById(R.id.fragment_search_show);
+        TabLayout tabLayout = view.findViewById(R.id.fragment_search_tab);
+        ViewPager viewPager = view.findViewById(R.id.fragment_search_viewpager);
         viewPager.setAdapter(new MyViewPagerAdapter());
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.addOnTabSelectedListener(new MyOnTabSelectedListener());
-        KeyboardLayout keyboardLayout = view.findViewById(R.id.main_search_keyboard);
+        KeyboardLayout keyboardLayout = view.findViewById(R.id.fragment_search_keyboard);
         keyboardLayout.setKeyboardLayoutListener(new KeyboardLayout.KeyboardLayoutListener() {
             boolean last = false;
             @Override
@@ -186,11 +186,11 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
             }
         }
     }
-    static class MySongAdapter extends RecyclerView.Adapter<MySongAdapter.MyVH> {
-        List<SongBean> content;
-        MainActivity activity;
+    public static class MySongAdapter extends RecyclerView.Adapter<MySongAdapter.MyVH> {
+        public List<SongBean> content;
+        BaseActivity activity;
         String playlistId;
-        public MySongAdapter(MainActivity activity, List<SongBean> content,String playlistId) {
+        public MySongAdapter(BaseActivity activity, List<SongBean> content, String playlistId) {
             this.activity = activity;
             this.content = content;
             this.playlistId=playlistId;
@@ -202,7 +202,7 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
         @NotNull
         @Override
         public MySongAdapter.MyVH onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(activity).inflate(R.layout.song_item, parent, false);
+            View v = LayoutInflater.from(activity).inflate(R.layout.song_horizontal, parent, false);
             return new MySongAdapter.MyVH(v);
         }
 
@@ -227,35 +227,11 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
             myVH.Name.setOnClickListener(onClickListener);
             myVH.Author.setOnClickListener(onClickListener);
             myVH.Cover.setOnClickListener(onClickListener);
-            myVH.More.setOnClickListener(v -> {
-                String[] items = new String[]{"分享", "查看统计"};
-                BottomMenu.show(items)
-                        .setOnIconChangeCallBack(new OnIconChangeCallBack(true) {
-                            @Override
-                            public int getIcon(BottomMenu bottomMenu, int index, String s) {
-                                switch (index) {
-                                    case 0:
-                                        return android.R.mipmap.sym_def_app_icon;
-                                    case 1:
-                                        return android.R.mipmap.sym_def_app_icon;
-                                }
-                                return 0;
-                            }
-                        })
-                        .setOnMenuItemClickListener((bottomMenu, text, index) -> {
-                            switch (index) {
-                                case 0:
-                                    ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-                                    cm.setPrimaryClip(ClipData.newPlainText("Label", "https://music.163.com/#/song?id=" + id));
-                                    activity.makeToast("链接已经复制到剪切板");
-                                case 1:
-                                    activity.makeToast("尚未开始研发");
-                            }
-                            return false;
-                        });
-            });
+            myVH.More.setOnClickListener(getOnMoreClickListener(song,playlistId));
         }
-
+        public View.OnClickListener getOnMoreClickListener(SongBean songBean,String playlistId){
+            return null;
+        }
         @Override
         public int getItemCount() {
             return content.size();

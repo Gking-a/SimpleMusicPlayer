@@ -6,14 +6,14 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/main_playlist_toolbar_layout"
+        android:id="@+id/fragment_playlist_toolbar_layout"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_playlist_toolbar"
+            android:id="@+id/fragment_playlist_toolbar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             app:menu="@menu/menu_main"
@@ -22,14 +22,14 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.tabs.TabLayout
-        app:layout_constraintTop_toBottomOf="@id/main_playlist_toolbar_layout"
-        android:id="@+id/main_playlist_type"
+        app:layout_constraintTop_toBottomOf="@id/fragment_playlist_toolbar_layout"
+        android:id="@+id/fragment_playlist_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <androidx.viewpager.widget.ViewPager
-        app:layout_constraintTop_toBottomOf="@id/main_playlist_type"
-        android:id="@+id/main_playlist_viewpager"
+        app:layout_constraintTop_toBottomOf="@id/fragment_playlist_type"
+        android:id="@+id/fragment_playlist_viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp" />
 

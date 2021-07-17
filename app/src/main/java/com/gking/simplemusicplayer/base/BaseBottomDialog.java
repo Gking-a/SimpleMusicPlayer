@@ -20,6 +20,8 @@ public abstract class BaseBottomDialog<T extends Activity> extends BaseDialog<T>
     }
 
     @Override
+    @NonNull
+    @NotNull
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window=getWindow();

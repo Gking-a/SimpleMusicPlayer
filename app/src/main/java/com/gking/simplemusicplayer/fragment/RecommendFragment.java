@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -86,15 +85,15 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
     }
     @Override
     protected View loadView() {
-        View view= LayoutInflater.from(getContext()).inflate(R.layout.activity_main_recommend,null);
-        songsView = view.findViewById(R.id.main_recommend_songs);
+        View view= LayoutInflater.from(getContext()).inflate(R.layout.fragment_recommend,null);
+        songsView = view.findViewById(R.id.fragment_recommend_songs);
         songsView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false){
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
         });
-        playlistsView = view.findViewById(R.id.main_recommend_playlists);
+        playlistsView = view.findViewById(R.id.fragment_recommend_playlists);
         playlistsView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false){
             @Override
             public boolean canScrollVertically() {

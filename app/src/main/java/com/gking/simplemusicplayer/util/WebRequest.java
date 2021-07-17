@@ -30,6 +30,20 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 public final class WebRequest {
+    public static void playlist_tracks_add(String pid,String[] trackIds,Callback callback){
+        playlist_tracks("add",pid,trackIds,callback);
+    }
+    public static void playlist_tracks_delete(String pid,String[] trackIds,Callback callback){
+        playlist_tracks("delete",pid,trackIds,callback);
+    }
+    public static void playlist_tracks(String op,String pid,String[] trackIds,Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("op",op);
+        jsonObject.addProperty("pid",pid);
+        jsonObject.addProperty("trackIds","[\""+StringUtils.join(trackIds,"\",\"")+"\"]");
+        jsonObject.addProperty("imme",true);
+        post(URLs.playlist_tracks,jsonObject,MyCookieJar.getLoginCookie(),callback);
+    }
     public static void playlist_unsubscribe(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("id",id);

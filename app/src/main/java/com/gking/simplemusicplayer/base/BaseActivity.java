@@ -8,6 +8,7 @@ import android.app.AppOpsManager;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -30,10 +31,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     public MyApplicationImpl getMyApplication(){
         return ((MyApplicationImpl) getApplication());
     }
-    public Activity getContext() {
+    public BaseActivity getContext() {
         return context;
     }
     boolean loadControlPanel=false;
+    public Handler handler=new Handler();
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
 
     public void setLoadControlPanel(boolean loadControlPanel) {
         this.loadControlPanel = loadControlPanel;
@@ -59,15 +65,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         super.onPause();
     }
-    protected final void init(Activity activity,boolean loadControlPanel){
+    protected final void init(BaseActivity activity,boolean loadControlPanel){
         this.context=activity;
         this.loadControlPanel=loadControlPanel;
     }
-    public void setContext(Activity context) {
+    public void setContext(BaseActivity context) {
         this.context = context;
     }
     View y;
-    Activity context=this;
+    BaseActivity context=this;
     //when onStart(),call this
     private void loadControlPanel(){
         View v=context.findViewById(R.id.control);

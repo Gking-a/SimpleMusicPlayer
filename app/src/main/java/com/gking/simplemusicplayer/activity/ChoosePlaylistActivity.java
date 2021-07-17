@@ -1,6 +1,13 @@
-package com.gking.simplemusicplayer.fragment;
+package com.gking.simplemusicplayer.activity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,58 +16,51 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.MainActivity;
-import com.gking.simplemusicplayer.activity.MySettingsActivity;
-import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
-import com.gking.simplemusicplayer.dialog.PlaylistDialog2;
+import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
-import com.google.android.material.tabs.TabLayout;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
 
-public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
-    public TabLayout playlist_tab;
-    public RecyclerView playlistView1, playlistView2;
-    public MyAdapter myAdapter, myAdapter2;
-    PlaylistCreateDialog playlistCreateDialog;
-    private PlaylistDialog1 playlistDialog1;
+public class ChoosePlaylistActivity extends BaseActivity {
+    public static final int RequestCode=1001;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_choose_playlist);
+        loadView();
+        setResult(RequestCode,new Intent());
+        WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
+    }
     Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             int itemId = item.getItemId();
             if (itemId == R.id.main_save_playlist_position) {
-                if (playlist_tab.getSelectedTabPosition() == 0 && myAdapter != null && myAdapter.playlists.size() > 0) {
-                    WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
-                }
-                if (playlist_tab.getSelectedTabPosition() == 1 && myAdapter2 != null && myAdapter2.playlists.size() > 0) {
-                    WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
-                }
+                WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
             }else if(itemId==R.id.main_playlist_create){
-                playlistCreateDialog=new PlaylistCreateDialog(getContext());
+                PlaylistCreateDialog playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {
                     WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
@@ -69,62 +69,48 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
             return false;
         }
     };
+    Callback getPlaylistCallback;
+    private RecyclerView recyclerView;
+    private MyAdapter myAdapter;
 
     public Callback getGetPlaylistCallback() {
         return getPlaylistCallback;
     }
-    Callback getPlaylistCallback;
-    public PlaylistFragment(MainActivity activity, Callback getPlaylistCallback) {
-        super(activity);
-        this.getPlaylistCallback=getPlaylistCallback;
-    }
 
-    class MyViewPagerAdapter extends PagerAdapter {
-        private final BaseActivity activity;
 
-        public MyViewPagerAdapter(BaseActivity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        public Object instantiateItem(@NonNull @NotNull ViewGroup container, int position) {
-            View mView = null;
-            if (position == 0) {
-                mView = playlistView1;
-            } else if (position == 1) {
-                mView = playlistView2;
+    private void loadView() {
+        Toolbar toolbar = findViewById(R.id.activity_choose_playlist_toolbar);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
+        recyclerView = findViewById(R.id.activity_choose_playlist_rec);
+        getPlaylistCallback= new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                FW.w(e);
+                System.out.println(e);
             }
-            container.addView(mView);
-            return mView;
-        }
-
-        @Override
-        public void destroyItem(@NonNull @NotNull ViewGroup container, int position, @NonNull @NotNull Object object) {
-            container.removeView(((View) object));
-        }
-
-        @Nullable
-        @org.jetbrains.annotations.Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (position == 0) return "我创建的";
-            if (position == 1) return "我收藏的";
-            return null;
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull @NotNull View view, @NonNull @NotNull Object object) {
-            return view == object;
-        }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String body = response.body().string();
+                JsonArray jsonArray = JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
+                List<PlaylistBean> playlistBeans = new ArrayList<>();
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject playlist = jsonArray.get(i).getAsJsonObject();
+                    String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
+                    if (uid.equals(MySettingsActivity.get(account_id))) {
+                        PlaylistBean playlistBean = new PlaylistBean(playlist);
+                        playlistBeans.add(playlistBean);
+                    }
+                }
+                getContext().handler.post(()->{
+                    myAdapter = new MyAdapter(ChoosePlaylistActivity.this, playlistBeans);
+                    recyclerView.setAdapter(myAdapter);
+                });
+            }
+        };
     }
-
-    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
+    class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH> {
         public List<PlaylistBean> playlists;
-        MyAdapter.MyItemTouchHelperCallback callback = new MyAdapter.MyItemTouchHelperCallback();
+        MyItemTouchHelperCallback callback = new MyItemTouchHelperCallback();
         ItemTouchHelper itemTouchHelper;
         private BaseActivity activity;
         int res_layout=R.layout.playlist_horizontal;
@@ -135,7 +121,7 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
         public MyAdapter(BaseActivity activity, List<PlaylistBean> playlists) {
             this.playlists = playlists;
             itemTouchHelper = new ItemTouchHelper(callback);
-            itemTouchHelper.attachToRecyclerView(playlistView1);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
             this.activity = activity;
         }
 
@@ -187,7 +173,8 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
             View.OnClickListener onClickListener = v -> {
                 Intent intent = new Intent(activity.getContext(), PlaylistActivity.class);
                 intent.putExtra("bean", bean);
-                activity.startActivity(intent);
+                setResult(RequestCode,intent);
+                finish();
             };
             holder.icon.setOnClickListener(onClickListener);
             holder.title.setOnClickListener(onClickListener);
@@ -195,7 +182,7 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
         }
         public View.OnClickListener getOnMoreClickListener(PlaylistBean bean){
             return v -> {
-                playlistDialog1 = new PlaylistDialog1(getContext(),getPlaylistCallback);
+                PlaylistDialog1 playlistDialog1 = new PlaylistDialog1(getContext(),getPlaylistCallback);
                 playlistDialog1.show(bean);
             };
         }
@@ -217,40 +204,5 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
                 more = itemView.findViewById(R.id.playlist_more);
             }
         }
-    }
-
-    public void setAdapter(List<PlaylistBean> data1, List<PlaylistBean> data2) {
-        BaseActivity activity=getContext();
-        activity.handler.post(() -> {
-            myAdapter = new MyAdapter(activity, data1);
-            playlistView1.setAdapter(myAdapter);
-            myAdapter.notifyDataSetChanged();
-            myAdapter2 = new MyAdapter(activity, data2){
-                @Override
-                public View.OnClickListener getOnMoreClickListener(PlaylistBean bean) {
-                    return v -> {
-                        PlaylistDialog2 playlistDialog2=new PlaylistDialog2(getContext(),PlaylistFragment.this);
-                        playlistDialog2.show(bean);
-                    };
-                }
-            };
-            playlistView2.setAdapter(myAdapter2);
-            myAdapter2.notifyDataSetChanged();
-        });
-    }
-    @Override
-    protected View loadView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_playlist, null);
-        Toolbar toolbar = view.findViewById(R.id.fragment_playlist_toolbar);
-        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
-        playlistView1 = ((RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null));
-        playlistView1.setLayoutManager(new LinearLayoutManager(getContext()));
-        playlistView2 = (RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null);
-        playlistView2.setLayoutManager(new LinearLayoutManager(getContext()));
-        playlist_tab = view.findViewById(R.id.fragment_playlist_type);
-        ViewPager viewPager = view.findViewById(R.id.fragment_playlist_viewpager);
-        viewPager.setAdapter(new MyViewPagerAdapter(getContext()));
-        playlist_tab.setupWithViewPager(viewPager);
-        return view;
     }
 }

@@ -13,12 +13,14 @@
     <application
         android:name=".impl.MyApplicationImpl"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.ChoosePlaylistActivity"></activity>
+
         <service
             android:name=".service.BackgroundService"
             android:enabled="true"

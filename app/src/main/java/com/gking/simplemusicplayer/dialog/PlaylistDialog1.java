@@ -31,12 +31,12 @@ import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.acc
 
 public class PlaylistDialog1 extends BaseBottomDialog {
 
-    public PlaylistDialog1(@NonNull @NotNull Activity context, PlaylistFragment playlistFragment) {
+    public PlaylistDialog1(@NonNull @NotNull Activity context,Callback getPlaylistCallback) {
         super(context);
-        this.playlistFragment=playlistFragment;
+        this.getPlaylistCallback=getPlaylistCallback;
     }
     PlaylistBean playlistBean;
-    PlaylistFragment playlistFragment;
+    Callback getPlaylistCallback;
     public void show(PlaylistBean playlistBean) {
         this.playlistBean=playlistBean;
         super.show();
@@ -53,7 +53,7 @@ public class PlaylistDialog1 extends BaseBottomDialog {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String string = response.body().string();
                     System.out.println(string);
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),playlistFragment.getGetPlaylistCallback());
+                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),getPlaylistCallback);
                 }
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
