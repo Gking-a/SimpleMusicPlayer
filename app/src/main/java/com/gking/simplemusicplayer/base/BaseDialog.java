@@ -10,11 +10,11 @@ import com.gking.simplemusicplayer.R;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseDialog extends Dialog {
-    public Activity activity;
+public abstract class BaseDialog<T extends Activity> extends Dialog {
+    public T activity;
     View view;
 
-    public Activity getActivity() {
+    public T getActivity() {
         return activity;
     }
 
@@ -22,7 +22,7 @@ public abstract class BaseDialog extends Dialog {
         return view;
     }
 
-    public BaseDialog(@NonNull @NotNull Activity context) {
+    public BaseDialog(@NonNull @NotNull T context) {
         super(context, R.style.MyDialog);
         this.activity = context;
         view=loadView();

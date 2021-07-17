@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
+import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
@@ -160,8 +162,11 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
             };
             holder.icon.setOnClickListener(onClickListener);
             holder.title.setOnClickListener(onClickListener);
+            holder.more.setOnClickListener(getOnMoreClickListener(bean));
         }
-
+        public View.OnClickListener getOnMoreClickListener(PlaylistBean bean){
+            return null;
+        }
         @Override
         public int getItemCount() {
             return playlists.size();
@@ -171,11 +176,13 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
 
             public final TextView title;
             public final ImageView icon;
+            private final ImageButton more;
 
             public MyVH(@NonNull @NotNull View itemView) {
                 super(itemView);
                 icon = itemView.findViewById(R.id.list_small_icon);
                 title = itemView.findViewById(R.id.list_small_title);
+                more = itemView.findViewById(R.id.playlist_more);
             }
         }
     }

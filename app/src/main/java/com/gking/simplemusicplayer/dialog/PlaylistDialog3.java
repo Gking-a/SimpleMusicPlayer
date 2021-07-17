@@ -11,7 +11,9 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.base.BaseBottomDialog;
 import com.gking.simplemusicplayer.base.BaseDialog;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
@@ -28,39 +30,29 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
 
-public class PlaylistDialog3 extends BaseDialog {
+public class PlaylistDialog3 extends BaseBottomDialog<MainActivity> {
     PlaylistBean playlistBean;
-    PlaylistFragment playlistFragment;
+
+    public PlaylistDialog3(@NonNull @NotNull MainActivity context) {
+        super(context);
+    }
+
     public void show(PlaylistBean playlistBean) {
         this.playlistBean=playlistBean;
         super.show();
     }
-    public PlaylistDialog3(@NonNull @NotNull Activity context, PlaylistFragment playlistFragment) {
-        super(context);
-        this.playlistFragment=playlistFragment;
-    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Window window=getWindow();
-        window.setGravity(Gravity.BOTTOM);
-        setContentView(R.layout.dialog_playlist1);
-        WindowManager windowManager = getActivity().getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.width = display.getWidth();// 设置dialog宽度为屏幕的4/5
-        getWindow().setAttributes(lp);
-        setCanceledOnTouchOutside(true);//点击外部Dialog消失
-        View root=getView();
-        window.findViewById(R.id.dialog_playlist_close).setOnClickListener(v -> {
+    protected View loadView() {
+        View view=View.inflate(getContext(),R.layout.dialog_playlist3,null);
+        view.findViewById(R.id.dialog_playlist_close).setOnClickListener(v -> {
             dismiss();
         });
-        window.findViewById(R.id.dialog_playlist_subscribe).setOnClickListener(v -> {
+        view.findViewById(R.id.dialog_playlist_subscribe).setOnClickListener(v -> {
             WebRequest.playlist_subscribe(playlistBean.id,new Callback(){
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String string = response.body().string();
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),playlistFragment.getGetPlaylistCallback());
+                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),getActivity().getPlaylistCallback);
                 }
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -68,10 +60,6 @@ public class PlaylistDialog3 extends BaseDialog {
             });
             dismiss();
         });
-    }
-    @Override
-    protected View loadView() {
-        View view=View.inflate(getContext(),R.layout.dialog_playlist3,null);
         return view;
     }
 }

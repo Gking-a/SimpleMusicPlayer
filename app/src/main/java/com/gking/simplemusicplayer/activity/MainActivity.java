@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity {
     private final List<View> fragments=new LinkedList<>();
     private PlaylistFragment playlistFragment;
     private RecommendFragment recommendFragment;
-    private Callback getPlaylistCallback;
+    public Callback getPlaylistCallback;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(this);

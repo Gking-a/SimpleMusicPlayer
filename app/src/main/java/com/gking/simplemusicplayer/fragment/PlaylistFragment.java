@@ -128,7 +128,11 @@ public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
         MyAdapter.MyItemTouchHelperCallback callback = new MyAdapter.MyItemTouchHelperCallback();
         ItemTouchHelper itemTouchHelper;
         private MainActivity activity;
-
+        int res_layout=R.layout.playlist_horizontal;
+        public MyAdapter(MainActivity activity, List<PlaylistBean> playlists,int res_layout){
+            this(activity,playlists);
+            this.res_layout=res_layout;
+        }
         public MyAdapter(MainActivity activity, List<PlaylistBean> playlists) {
             this.playlists = playlists;
             itemTouchHelper = new ItemTouchHelper(callback);
@@ -239,25 +243,7 @@ public class PlaylistFragment extends BaseViewPagerFragment<MainActivity> {
     protected View loadView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.activity_main_playlist, null);
         Toolbar toolbar = view.findViewById(R.id.main_playlist_toolbar);
-        toolbar.setOnMenuItemClickListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.main_save_playlist_position) {
-                if (playlist_tab.getSelectedTabPosition() == 0 && myAdapter != null && myAdapter.playlists.size() > 0) {
-                    WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
-                }
-                if (playlist_tab.getSelectedTabPosition() == 1 && myAdapter2 != null && myAdapter2.playlists.size() > 0) {
-                    WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
-                }
-            }else if(itemId==R.id.main_playlist_create){
-                System.out.println("SHOW");
-                playlistCreateDialog=new PlaylistCreateDialog(getContext());
-                playlistCreateDialog.show();
-                playlistCreateDialog.setSimpleInterface(arg -> {
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
-                });
-            }
-            return true;
-        });
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
         playlistView1 = ((RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null));
         playlistView1.setLayoutManager(new LinearLayoutManager(getContext()));
         playlistView2 = (RecyclerView) View.inflate(getContext(), R.layout.recycler_view, null);

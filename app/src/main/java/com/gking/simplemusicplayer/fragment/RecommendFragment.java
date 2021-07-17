@@ -12,6 +12,7 @@ import com.gking.simplemusicplayer.Async;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
+import com.gking.simplemusicplayer.dialog.PlaylistDialog3;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
@@ -71,7 +72,12 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
                 }
                 Handler handler = getContext().handler;
                 handler.post(() -> {
-                   SearchFragment.MyPlaylistAdapter myPlaylistAdapter=new SearchFragment.MyPlaylistAdapter(getContext(),playlistBeans);
+                   SearchFragment.MyPlaylistAdapter myPlaylistAdapter=new SearchFragment.MyPlaylistAdapter(getContext(),playlistBeans){
+                       @Override
+                       public View.OnClickListener getOnMoreClickListener(PlaylistBean bean) {
+                           return v -> new PlaylistDialog3(getContext()).show(bean);
+                       }
+                   };
                    playlistsView.setAdapter(myPlaylistAdapter);
                    myPlaylistAdapter.notifyDataSetChanged();
                 });
@@ -89,13 +95,12 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
             }
         });
         playlistsView = view.findViewById(R.id.main_recommend_playlists);
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(getContext(),3){
+        playlistsView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false){
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
-        };
-        playlistsView.setLayoutManager(gridLayoutManager);
+        });
         return view;
     }
 }

@@ -15,7 +15,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="删除"
+            android:text="wocaonimabi"
             android:background="#00123456"
             android:textColor="@color/black"/>
         <Button

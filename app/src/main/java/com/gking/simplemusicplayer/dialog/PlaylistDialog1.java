@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.base.BaseBottomDialog;
 import com.gking.simplemusicplayer.base.BaseDialog;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
@@ -28,7 +29,7 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
 
-public class PlaylistDialog1 extends BaseDialog {
+public class PlaylistDialog1 extends BaseBottomDialog {
 
     public PlaylistDialog1(@NonNull @NotNull Activity context, PlaylistFragment playlistFragment) {
         super(context);
@@ -41,22 +42,12 @@ public class PlaylistDialog1 extends BaseDialog {
         super.show();
     }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Window window=getWindow();
-        window.setGravity(Gravity.BOTTOM);
-        setContentView(R.layout.dialog_playlist1);
-        WindowManager windowManager = getActivity().getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.width = display.getWidth();// 设置dialog宽度为屏幕的4/5
-        getWindow().setAttributes(lp);
-        setCanceledOnTouchOutside(true);//点击外部Dialog消失
-        View root=getView();
-        window.findViewById(R.id.dialog_playlist_close).setOnClickListener(v -> {
+    protected View loadView() {
+        View view=View.inflate(getActivity(), R.layout.dialog_playlist1,null);
+        view.findViewById(R.id.dialog_playlist_close).setOnClickListener(v -> {
             dismiss();
         });
-        window.findViewById(R.id.dialog_playlist_delete).setOnClickListener(v -> {
+        view.findViewById(R.id.dialog_playlist_delete).setOnClickListener(v -> {
             WebRequest.playlist_delete(playlistBean.id,new Callback(){
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -70,11 +61,6 @@ public class PlaylistDialog1 extends BaseDialog {
             });
             dismiss();
         });
-    }
-
-    @Override
-    protected View loadView() {
-        View view=View.inflate(getActivity(), R.layout.dialog_playlist1,null);
         return view;
     }
 }
