@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.SongActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.manager.LyricManager;
@@ -19,6 +20,7 @@ import com.gking.simplemusicplayer.util.Util;
 
 import static com.gking.simplemusicplayer.service.BackgroundService.Type;
 import static com.gking.simplemusicplayer.service.BackgroundService.isShowing;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
 
 public class SongService extends Service {
     //Design as SongActivity
@@ -129,6 +131,7 @@ public class SongService extends Service {
         bigView.setTextViewText(R.id.notification_author,song.author);
     }
     private void loadView2() {
+        
         bigView.setTextViewText(R.id.notification_duration,time2str(musicPlayer.getDuration()));
         bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),0,true);
         NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
@@ -137,7 +140,18 @@ public class SongService extends Service {
     public static String time2str(int msec){
         return SongActivity.time2str(msec);
     }
-
+    public static void changeMode(){
+        int mode=SettingsActivity.getInt(SettingsActivity.Params.auto_next);
+        if(mode==SettingsActivity.Params.PLAY_MODE.ORDER)SettingsActivity.set(SettingsActivity.Params.auto_next,0);
+        else SettingsActivity.set(SettingsActivity.Params.auto_next,mode+1);
+        mode=SettingsActivity.getInt(SettingsActivity.Params.auto_next);
+        int bitmap_res;
+        if(mode==PLAY_MODE.NONE)bitmap_res=
+        if(mode==PLAY_MODE.LOOP)bitmap_res=
+        if(mode==PLAY_MODE.RANDOM)bitmap_res=
+        if(mode==PLAY_MODE.ORDER)bitmap_res=
+        bigView.setImageViewBitmap(
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();

@@ -77,6 +77,7 @@ public class SongActivity extends BaseActivity {
         progress=f(R.id.song_progress);
         lyricView=f(R.id.song_lyric);
         lyricView.setLayoutManager(new LinearLayoutManager(getContext()));
+        f(R.id.song_mode).setOnClickListener(v -> changeMode());
         f(R.id.song_next).setOnClickListener(v -> musicPlayer.next(null));
         f(R.id.song_last).setOnClickListener(v -> musicPlayer.last(null));
         f(R.id.song_pause).setOnClickListener(v -> musicPlayer.pause());
@@ -108,6 +109,11 @@ public class SongActivity extends BaseActivity {
 
             }
         });
+    }
+    public static void changeMode(){
+        int mode=SettingsActivity.getInt(SettingsActivity.Params.auto_next);
+        if(mode==SettingsActivity.Params.PLAY_MODE.ORDER)SettingsActivity.set(SettingsActivity.Params.auto_next,0);
+        else SettingsActivity.set(SettingsActivity.Params.auto_next,mode+1);
     }
     class TimeThread extends Thread{
         private int position=0;

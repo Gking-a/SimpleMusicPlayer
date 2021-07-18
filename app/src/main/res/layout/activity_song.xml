@@ -82,6 +82,14 @@
         <com.google.android.material.button.MaterialButton
             android:layout_width="@dimen/button_big"
             android:layout_height="@dimen/button_big"
+            app:layout_constraintTop_toBottomOf="@id/song_progress"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/song_last"
+            android:background="@drawable/last"
+            android:id="@+id/song_mode"/>
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="@dimen/button_big"
+            android:layout_height="@dimen/button_big"
             app:layout_constraintRight_toLeftOf="@id/song_last"
             app:layout_constraintLeft_toRightOf="@id/song_next"
             app:layout_constraintTop_toBottomOf="@id/song_progress"
@@ -91,7 +99,7 @@
             android:layout_width="@dimen/button_big"
             android:layout_height="@dimen/button_big"
             app:layout_constraintTop_toBottomOf="@id/song_progress"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/song_mode"
             app:layout_constraintRight_toLeftOf="@id/song_pause"
             android:background="@drawable/last"
             android:id="@+id/song_last"/>
