@@ -27,6 +27,9 @@ import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
+import com.gking.simplemusicplayer.dialog.PlaylistDialog3;
+import com.gking.simplemusicplayer.dialog.SongDialog1;
+import com.gking.simplemusicplayer.dialog.SongDialog2;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
@@ -277,7 +280,12 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
                 MainActivity activity=getContext();
                 activity.handler.post(() -> {
                     RecyclerView recyclerView = recyclerViews.get(0);
-                    MySongAdapter mySongAdapter = new MySongAdapter(activity, music,"s"+keyword);
+                    MySongAdapter mySongAdapter = new MySongAdapter(activity, music,"s"+keyword){
+                        @Override
+                        public View.OnClickListener getOnMoreClickListener(SongBean songBean, String playlistId) {
+                            return v -> new SongDialog2(getContext()).show(songBean);
+                        }
+                    };
                     recyclerView.setAdapter(mySongAdapter);
                     mySongAdapter.notifyDataSetChanged();
                 });
@@ -300,7 +308,12 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
                 MainActivity activity=getContext();
                 activity.handler.post(() -> {
                     RecyclerView recyclerView = recyclerViews.get(1);
-                    MyPlaylistAdapter myPlaylistAdapter = new MyPlaylistAdapter(activity, playlistBeans);
+                    MyPlaylistAdapter myPlaylistAdapter = new MyPlaylistAdapter(activity, playlistBeans){
+                        @Override
+                        public View.OnClickListener getOnMoreClickListener(PlaylistBean bean) {
+                            return v -> new PlaylistDialog3(getContext(),getContext().getPlaylistCallback).show(bean);
+                        }
+                    };
                     recyclerView.setAdapter(myPlaylistAdapter);
                     myPlaylistAdapter.notifyDataSetChanged();
                 });

@@ -13,14 +13,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
+import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.util.WebRequest;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 
@@ -123,5 +135,24 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ChoosePlaylistActivity.RequestCode && data.getBooleanExtra("success", false)) {
+            SongBean songBean = (SongBean) data.getSerializableExtra("songBean");
+            PlaylistBean playlistBean = (PlaylistBean) data.getSerializableExtra("playlistBean");
+            WebRequest.playlist_tracks_add(playlistBean.id, new String[]{songBean.id}, new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    System.out.println(response.body().string());
+                }
+            });
+        }
     }
 }

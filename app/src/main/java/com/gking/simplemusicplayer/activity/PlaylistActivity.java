@@ -46,11 +46,51 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.fragment.SearchFragment.MySongAdapter;
+
 public class PlaylistActivity extends BaseActivity {
-    Handler handler=new Handler();
+    public Handler handler = new Handler();
     private String playlistId;
-    public Callback refreshPlaylistCallback;
-    private MySongAdapter adapter;
+    public Callback refreshPlaylistCallback = new Callback() {
+        @Override
+        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+        }
+
+        @Override
+        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+            String body = response.body().string();
+            JsonObject object = JsonParser.parseString(body).getAsJsonObject();
+            JsonArray trackIds = JsonUtil.getAsJsonArray(object, "playlist", "trackIds");
+            List<String> ids = new ArrayList<>();
+            for (int i = 0; i < trackIds.size(); i++) {
+                String id = JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(), "id");
+                ids.add(id);
+            }
+            WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String body = response.body().string();
+                    JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                    JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
+                    for (int i = 0; i < songs.size(); i++) {
+                        JsonObject song = songs.get(i).getAsJsonObject();
+                        String id = song.get("id").getAsString();
+                        SongBean bean = new SongBean(song);
+                        nameMap.put(JsonUtil.getAsString(song, "name"), bean);
+                        music.add(bean);
+                    }
+                    handler.post(() -> {
+                        MyAdapter myAdapter = new MyAdapter(getContext(), music, playlistId);
+                        songList.setAdapter(myAdapter);
+                        myAdapter.notifyDataSetChanged();
+                    });
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,157 +98,114 @@ public class PlaylistActivity extends BaseActivity {
         setContentView(R.layout.activity_playlist);
         setContext(this);
         setLoadControlPanel(true);
-        SongManager.getInstance().clear();
         PlaylistBean playlistBean = ((PlaylistBean) getIntent().getSerializableExtra("bean"));
         playlistId = playlistBean.id;
         load(playlistBean);
-        refreshPlaylistCallback = new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                String body = response.body().string();
-                JsonObject object = JsonParser.parseString(body).getAsJsonObject();
-                JsonArray trackIds = JsonUtil.getAsJsonArray(object, "playlist", "trackIds");
-                List<String> ids = new ArrayList<>();
-                for (int i = 0; i < trackIds.size(); i++) {
-                    String id = JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(), "id");
-                    ids.add(id);
-                }
-                playlistBean.trackIds = ids;
-                WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    }
-
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        String body = response.body().string();
-                        JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-                        JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
-                        for (int i = 0; i < songs.size(); i++) {
-                            JsonObject song = songs.get(i).getAsJsonObject();
-                            String id = song.get("id").getAsString();
-                            SongBean bean = new SongBean(song);
-                            nameMap.put(JsonUtil.getAsString(song, "name"), bean);
-                            music.add(bean);
-                        }
-                        handler.post(() -> {
-                            adapter.setData(music);
-                            adapter.notifyDataSetChanged();
-                        });
-                    }
-                });
-            }
-        };
         WebRequest.playlist_detail(playlistId, MyCookieJar.getLoginCookie(), refreshPlaylistCallback);
     }
-    List<SongBean> music=new LinkedList<>();
-    boolean isSearching=false;
+
+    List<SongBean> music = new LinkedList<>();
+    boolean isSearching = false;
     public RecyclerView songList;
+
     private void load(PlaylistBean playlist) {
-        songList=f(R.id.playlist_songs);
+        songList = f(R.id.playlist_songs);
         songList.setLayoutManager(new LinearLayoutManager(getContext()));
-        songList.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
-        adapter = new MyAdapter(getContext(), new ArrayList<>(), playlistId);
-        Button back=f(R.id.playlist_toolbar_back);
-        back.setOnClickListener(v->finish());
-        TextView title=f(R.id.playlist_toolbar_title);
+        songList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        Button back = f(R.id.playlist_toolbar_back);
+        back.setOnClickListener(v -> finish());
+        TextView title = f(R.id.playlist_toolbar_title);
         title.setText(playlist.name);
-        EditText search=f(R.id.playlist_toolbar_search);
-        MyTextWatcher watcher=new MyTextWatcher();
+        EditText search = f(R.id.playlist_toolbar_search);
+        MyTextWatcher watcher = new MyTextWatcher();
         search.addTextChangedListener(watcher);
-        Button menu=f(R.id.playlist_toolbar_menu);
-        PopupMenu popupMenu=new PopupMenu(getContext(),menu);
-        View.OnClickListener l2=v-> popupMenu.show();
-        View.OnClickListener l1= v -> {
+        Button menu = f(R.id.playlist_toolbar_menu);
+        PopupMenu popupMenu = new PopupMenu(getContext(), menu);
+        View.OnClickListener l2 = v -> popupMenu.show();
+        View.OnClickListener l1 = v -> {
             menu.setBackgroundResource(R.drawable.dots);
             search.setVisibility(View.GONE);
             watcher.cancel();
             menu.setOnClickListener(l2);
         };
-        MenuInflater inflater=popupMenu.getMenuInflater();
-        inflater.inflate(R.menu.playlist,popupMenu.getMenu());
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.playlist, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
-            if(item.getItemId()==R.id.playlist_menu_search){
+            if (item.getItemId() == R.id.playlist_menu_search) {
                 search.setVisibility(View.VISIBLE);
                 watcher.start(search);
                 menu.setOnClickListener(l1);
                 menu.setBackgroundResource(R.drawable.close);
             }
-            if(item.getItemId()==R.id.playlist_random){
+            if (item.getItemId() == R.id.playlist_random) {
                 SongManager.getInstance().set(playlistId, ((MySongAdapter) songList.getAdapter()).content);
-                int i=new Random().nextInt(SongManager.getInstance().randomSongs.size());
+                int i = new Random().nextInt(SongManager.getInstance().randomSongs.size());
                 SongBean songBean = SongManager.getInstance().randomSongs.get(i);
                 ((MyApplicationImpl) getApplication()).getMusicPlayer().start(songBean, null);
                 Intent intent = new Intent(getContext(), SongActivity.class);
-                intent.putExtra("bean",songBean);
+                intent.putExtra("bean", songBean);
                 startActivity(intent);
             }
             return false;
         });
         menu.setOnClickListener(l2);
     }
-    LinkedHashMap<String, SongBean> nameMap=new LinkedHashMap<>();
-    public class MyTextWatcher implements TextWatcher{
+
+    LinkedHashMap<String, SongBean> nameMap = new LinkedHashMap<>();
+
+    public class MyTextWatcher implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
+
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
         }
+
         @Override
         public void afterTextChanged(Editable s) {
-            if(!isSearching)return;
-            String text=s.toString();
-            LinkedList<SongBean> beans=new LinkedList<>();
-            for(String name:nameMap.keySet()){
-                if(name.contains(text))beans.add(nameMap.get(name));
+            if (!isSearching) return;
+            String text = s.toString();
+            LinkedList<SongBean> beans = new LinkedList<>();
+            for (String name : nameMap.keySet()) {
+                if (name.contains(text)) beans.add(nameMap.get(name));
             }
-            SearchFragment.MySongAdapter myAdapter=new MyAdapter(getContext(),beans,playlistId);
+            MyAdapter myAdapter = new MyAdapter(getContext(), beans, playlistId);
             songList.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
-        public void cancel(){
-            isSearching=false;
-            SearchFragment.MySongAdapter myAdapter=new MyAdapter(getContext(),SongManager.getInstance().songs,playlistId);
+
+        public void cancel() {
+            isSearching = false;
+            MyAdapter myAdapter = new MyAdapter(getContext(), SongManager.getInstance().songs, playlistId);
             songList.setAdapter(myAdapter);
             myAdapter.notifyDataSetChanged();
         }
-        public void start(EditText et){
-            isSearching=true;
+
+        public void start(EditText et) {
+            isSearching = true;
             et.setText(et.getText());
         }
     }
-    class MyAdapter extends MySongAdapter{
+
+    public class MyAdapter extends MySongAdapter {
         public MyAdapter(BaseActivity activity, List<SongBean> content, String playlistId) {
             super(activity, content, playlistId);
         }
-        @Override
-        public View.OnClickListener getOnMoreClickListener(SongBean songBean,String playlistId) {
-            return v -> new SongDialog1(PlaylistActivity.this).show(playlistId,songBean);
+        public void notifyItemRemoved(SongBean songBean){
+            for (int i = 0; i < super.content.size(); i++) {
+                if(songBean.id.equals(super.content.get(i).id)){
+                    super.content.remove(i);
+                    notifyItemRemoved(i);
+                    break;
+                }
+            }
         }
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ChoosePlaylistActivity.RequestCode && data.getBooleanExtra("success", false)) {
-            SongBean songBean= (SongBean) data.getSerializableExtra("songBean");
-            PlaylistBean playlistBean=(PlaylistBean)data.getSerializableExtra("playlistBean");
-            WebRequest.playlist_tracks_add(playlistBean.id, new String[]{songBean.id}, new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
-                }
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    System.out.println(response.body().string());
-                }
-            });
+        @Override
+        public View.OnClickListener getOnMoreClickListener(SongBean songBean, String playlistId) {
+            return v -> new SongDialog1(PlaylistActivity.this).show(playlistId, songBean);
         }
     }
 }

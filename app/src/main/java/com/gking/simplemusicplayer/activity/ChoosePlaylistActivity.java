@@ -99,7 +99,6 @@ public class ChoosePlaylistActivity extends BaseActivity {
                     JsonObject playlist = jsonArray.get(i).getAsJsonObject();
                     String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
                     if (uid.equals(MySettingsActivity.get(account_id))) {
-                        System.out.println("ONADD");
                         PlaylistBean playlistBean = new PlaylistBean(playlist);
                         playlistBeans.add(playlistBean);
                     }
@@ -109,7 +108,6 @@ public class ChoosePlaylistActivity extends BaseActivity {
                     recyclerView.setAdapter(myAdapter);
                     myAdapter.notifyDataSetChanged();
                 });
-                System.out.println("FINISH");
             }
         };
     }

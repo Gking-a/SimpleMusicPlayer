@@ -1,10 +1,10 @@
 package com.gking.simplemusicplayer.dialog;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
@@ -44,8 +44,19 @@ public class SongDialog1 extends BaseBottomDialog<PlaylistActivity>{
             }
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                System.out.println(response.body().string());
-                WebRequest.playlist_detail(pid, MyCookieJar.getLoginCookie(),getActivity().refreshPlaylistCallback);
+                WebRequest.playlist_detail(pid, MyCookieJar.getLoginCookie(), new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    }
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        getActivity().handler.post(()->{
+                            RecyclerView songList = getActivity().songList;
+                            PlaylistActivity.MyAdapter adapter = (PlaylistActivity.MyAdapter) songList.getAdapter();
+                            adapter.notifyItemRemoved(songBean);
+                        });
+                    }
+                });
                 dismiss();
             }
         }));

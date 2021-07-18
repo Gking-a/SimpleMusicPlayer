@@ -12,6 +12,7 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog3;
+import com.gking.simplemusicplayer.dialog.SongDialog2;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
@@ -52,7 +53,12 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
                 }
                 Handler handler = getContext().handler;
                 handler.post(() -> {
-                    SearchFragment.MySongAdapter mySongAdapter=new SearchFragment.MySongAdapter(getContext(),songBeans,"dailySongs");
+                    SearchFragment.MySongAdapter mySongAdapter=new SearchFragment.MySongAdapter(getContext(),songBeans,"dailySongs"){
+                        @Override
+                        public View.OnClickListener getOnMoreClickListener(SongBean songBean, String playlistId) {
+                            return v -> new SongDialog2(getContext()).show(songBean);
+                        }
+                    };
                     songsView.setAdapter(mySongAdapter);
                     mySongAdapter.notifyDataSetChanged();
                 });
@@ -74,7 +80,7 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
                    SearchFragment.MyPlaylistAdapter myPlaylistAdapter=new SearchFragment.MyPlaylistAdapter(getContext(),playlistBeans){
                        @Override
                        public View.OnClickListener getOnMoreClickListener(PlaylistBean bean) {
-                           return v -> new PlaylistDialog3(getContext()).show(bean);
+                           return v -> new PlaylistDialog3(getContext(),getContext().getPlaylistCallback).show(bean);
                        }
                    };
                    playlistsView.setAdapter(myPlaylistAdapter);

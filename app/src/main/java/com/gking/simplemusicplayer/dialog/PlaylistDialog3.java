@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
 import com.gking.simplemusicplayer.base.BaseDialog;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
@@ -30,13 +31,14 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
 
-public class PlaylistDialog3 extends BaseBottomDialog<MainActivity> {
+public class PlaylistDialog3 extends BaseBottomDialog<BaseActivity> {
     PlaylistBean playlistBean;
 
-    public PlaylistDialog3(@NonNull @NotNull MainActivity context) {
+    public PlaylistDialog3(@NonNull @NotNull BaseActivity context,Callback getPlaylistCallback) {
         super(context);
+        this.getPlaylistCallback=getPlaylistCallback;
     }
-
+    Callback getPlaylistCallback;
     public void show(PlaylistBean playlistBean) {
         this.playlistBean=playlistBean;
         super.show();
@@ -52,7 +54,7 @@ public class PlaylistDialog3 extends BaseBottomDialog<MainActivity> {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String string = response.body().string();
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),getActivity().getPlaylistCallback);
+                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),getPlaylistCallback);
                 }
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
