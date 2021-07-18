@@ -1,19 +1,13 @@
 package com.gking.simplemusicplayer.dialog;
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
-import com.gking.simplemusicplayer.base.BaseDialog;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
@@ -27,7 +21,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_id;
 
 public class PlaylistDialog2 extends BaseBottomDialog {
     PlaylistBean playlistBean;
@@ -51,7 +45,7 @@ public class PlaylistDialog2 extends BaseBottomDialog {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String string = response.body().string();
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),playlistFragment.getGetPlaylistCallback());
+                    WebRequest.user_playlist(SettingsActivity.get(account_id), MyCookieJar.getLoginCookie(),playlistFragment.getGetPlaylistCallback());
                 }
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {

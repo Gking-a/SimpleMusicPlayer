@@ -1,24 +1,22 @@
 package com.gking.simplemusicplayer.impl;
 
 import android.media.MediaPlayer;
-import android.util.Log;
 import android.view.View;
 
-import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.util.Util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.get;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.get;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.handler;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params;
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.PLAY_MODE;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
 
 public class MusicPlayer extends MediaPlayer {
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
@@ -34,7 +32,7 @@ public class MusicPlayer extends MediaPlayer {
         setOnErrorListener((mp, what, extra) -> true);
         setOnCompletionListener((mp -> {
             //可以尝试解耦,将music player提取出来
-            boolean auto=Boolean.parseBoolean(MySettingsActivity.get(MySettingsActivity.Params.auto_next));
+            boolean auto=Boolean.parseBoolean(SettingsActivity.get(SettingsActivity.Params.auto_next));
             if(auto&&musicBean!=null){
                 String pm = get(Params.play_mode);
                 if(pm.equals(PLAY_MODE.NONE)){}

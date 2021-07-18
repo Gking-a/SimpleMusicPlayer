@@ -20,7 +20,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.MainActivity;
-import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.activity.PlaylistActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
@@ -40,7 +40,7 @@ import java.util.List;
 
 import okhttp3.Callback;
 
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_id;
 
 public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
     public TabLayout playlist_tab;
@@ -63,7 +63,7 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
                 playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
+                    WebRequest.user_playlist(SettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
                 });
             }
             return false;

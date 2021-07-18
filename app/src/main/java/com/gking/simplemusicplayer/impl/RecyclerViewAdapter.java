@@ -1,7 +1,6 @@
 package com.gking.simplemusicplayer.impl;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.LoginCellphoneActivity;
-import com.gking.simplemusicplayer.activity.MySettingsActivity;
 
 import java.util.List;
 
@@ -38,7 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         GHolder<Object,String> info=content.get(position);
         holder.title.setText(info.get(1));
         switch (info.get(0)){
-//            case MySettingsActivity.login:holder.title.setOnClickListener(view->context.startActivity(new Intent(context, LoginCellphoneActivity.class)));
+//            case SettingsActivity.login:holder.title.setOnClickListener(view->context.startActivity(new Intent(context, LoginCellphoneActivity.class)));
         }
     }
     @Override

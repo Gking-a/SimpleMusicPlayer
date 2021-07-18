@@ -41,7 +41,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_id;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_id;
 
 public class ChoosePlaylistActivity extends BaseActivity {
     public static final int RequestCode=1001;
@@ -55,7 +55,7 @@ public class ChoosePlaylistActivity extends BaseActivity {
         }
         loadView();
         setResult(RequestCode,new Intent());
-        WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
+        WebRequest.user_playlist(SettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
     }
     Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -67,7 +67,7 @@ public class ChoosePlaylistActivity extends BaseActivity {
                 PlaylistCreateDialog playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {
-                    WebRequest.user_playlist(MySettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
+                    WebRequest.user_playlist(SettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
                 });
             }
             return false;
@@ -98,7 +98,7 @@ public class ChoosePlaylistActivity extends BaseActivity {
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject playlist = jsonArray.get(i).getAsJsonObject();
                     String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
-                    if (uid.equals(MySettingsActivity.get(account_id))) {
+                    if (uid.equals(SettingsActivity.get(account_id))) {
                         PlaylistBean playlistBean = new PlaylistBean(playlist);
                         playlistBeans.add(playlistBean);
                     }

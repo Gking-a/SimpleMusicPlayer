@@ -8,12 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,7 +46,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.*;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = "MainActivity";
@@ -69,7 +66,6 @@ public class MainActivity extends BaseActivity {
         loadBaseSettings();
         loadView();
         loadUserSettings();
-//        debug();
     }
     private void loadView() {
         playlistFragment=new PlaylistFragment(this,getPlaylistCallback);
@@ -122,10 +118,10 @@ public class MainActivity extends BaseActivity {
         }
     }
     private void loadUserSettings() {
-        if (MySettingsActivity.get(account_phone) != null && MySettingsActivity.get(account_pw) != null) {
+        if (SettingsActivity.get(account_phone) != null && SettingsActivity.get(account_pw) != null) {
             Intent i = new Intent(this, LoginCellphoneActivity.class);
-            i.putExtra("ph", MySettingsActivity.get(account_phone));
-            i.putExtra("pw", MySettingsActivity.get(account_pw));
+            i.putExtra("ph", SettingsActivity.get(account_phone));
+            i.putExtra("pw", SettingsActivity.get(account_pw));
             startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }
     }
@@ -147,7 +143,7 @@ public class MainActivity extends BaseActivity {
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject playlist = jsonArray.get(i).getAsJsonObject();
                     String uid = playlist.getAsJsonObject("creator").get("userId").getAsString();
-                    if (uid.equals(MySettingsActivity.get(account_id))) {
+                    if (uid.equals(SettingsActivity.get(account_id))) {
                         PlaylistBean playlistBean = new PlaylistBean(playlist);
                         playlistBeans.add(playlistBean);
                     } else {
@@ -179,10 +175,10 @@ public class MainActivity extends BaseActivity {
                 MenuItem login = nav.getMenu().findItem(R.id.login);
                 LoginBean loginBean = LoginCellphoneActivity.loginBean;
                 login.setTitle(loginBean.name);
-                MySettingsActivity.set(account_phone, loginBean.ph);
-                MySettingsActivity.set(account_pw, loginBean.pw);
-                MySettingsActivity.set(account_id, loginBean.id);
-                MySettingsActivity.set(account_name, loginBean.name);
+                SettingsActivity.set(account_phone, loginBean.ph);
+                SettingsActivity.set(account_pw, loginBean.pw);
+                SettingsActivity.set(account_id, loginBean.id);
+                SettingsActivity.set(account_name, loginBean.name);
                 {
                     recommendFragment.update();
                     WebRequest.user_playlist(loginBean.id, MyCookieJar.getLoginCookie(), getPlaylistCallback);

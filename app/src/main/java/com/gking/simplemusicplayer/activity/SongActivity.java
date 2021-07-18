@@ -51,11 +51,9 @@ public class SongActivity extends BaseActivity {
     SeekBar progress;
     static TimeThread timeThread;
     private SeekBar volume;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("onCreate");
         init(this,false);
         setContentView(R.layout.activity_song);
         handler=new MyHandler(new WeakReference<>(this));
@@ -63,7 +61,6 @@ public class SongActivity extends BaseActivity {
         timeThread=new TimeThread();
         timeThread.start();
         onSongBeanChangeListener = (musicPlayer, songBean) -> {
-            System.out.println("onSongBeanChange");
             song = songBean;
             musicPlayer.operateAfterPrepared(mp -> {
                 Message message = new Message();
@@ -137,10 +134,8 @@ public class SongActivity extends BaseActivity {
                     }
                 }
             }
-            System.out.println("death");
         }
     }
-
     RecyclerView lyricView;
     static class MyHandler extends Handler{
         WeakReference<SongActivity> activityWeakReference;
@@ -152,16 +147,13 @@ public class SongActivity extends BaseActivity {
         public static final int SHOW_LYRIC=20;
         SeekBar progress;
         SongBean song;
-        MyHandler handler;
         RecyclerView lyricView;
         MusicPlayer musicPlayer;
         public void assign(){
-            System.out.println("assign");
             if(activityWeakReference.get()==null)return;
             SongActivity activity=activityWeakReference.get();
             progress = activity.progress;
             song = activity.song;
-            handler = activity.handler;
             lyricView = activity.lyricView;
             musicPlayer = ((MyApplicationImpl) activity.getApplication()).mMusicPlayer;
         }
@@ -197,7 +189,7 @@ public class SongActivity extends BaseActivity {
                             } else {
                                 lyricBean = new LyricBean(jsonObject);
                             }
-                            handler.post(() -> {
+                            post(() -> {
                                 activity.myAdapter = activity.new MyAdapter(lyricBean);
                                 lyricView.setAdapter(activity.myAdapter);
                                 activity.myAdapter.notifyDataSetChanged();

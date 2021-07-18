@@ -7,9 +7,7 @@ import android.widget.EditText;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.LoginBean;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,13 +16,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import gtools.managers.GHolder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_phone;
-import static com.gking.simplemusicplayer.activity.MySettingsActivity.Params.account_pw;
 public class LoginCellphoneActivity extends BaseActivity {
     public static final String TAG="login_cellphone";
     public static final int RequestCode=1000;

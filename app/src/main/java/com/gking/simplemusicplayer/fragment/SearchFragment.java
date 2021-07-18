@@ -1,9 +1,5 @@
 package com.gking.simplemusicplayer.fragment;
 
-import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +24,6 @@ import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog3;
-import com.gking.simplemusicplayer.dialog.SongDialog1;
 import com.gking.simplemusicplayer.dialog.SongDialog2;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
@@ -44,8 +39,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.hz.android.keyboardlayout.KeyboardLayout;
-import com.kongzue.dialogx.dialogs.BottomMenu;
-import com.kongzue.dialogx.interfaces.OnIconChangeCallBack;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.jetbrains.annotations.NotNull;

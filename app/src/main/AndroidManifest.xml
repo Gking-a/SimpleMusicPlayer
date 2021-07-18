@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.ChoosePlaylistActivity"></activity>
+        <activity android:name=".activity.ChoosePlaylistActivity" />
 
         <service
             android:name=".service.BackgroundService"
@@ -44,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MySettingsActivity">
+        <activity android:name=".activity.SettingsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
 
@@ -56,14 +56,6 @@
             android:name=".MyBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="com.gkingswq.simplemusicplayer.loop" />
-                <action android:name="com.gkingswq.simplemusicplayer.stopservice" />
-                <action android:name="com.gking.simplemusicplayer.pause" />
-                <action android:name="com.gking.simplemusicplayer.next" />
-                <action android:name="com.gking.simplemusicplayer.last" />
-                <action android:name="com.gkingswq.simplemusicplayer.window" />
-            </intent-filter>
         </receiver>
 
         <meta-data

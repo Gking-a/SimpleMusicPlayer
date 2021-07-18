@@ -1,42 +1,38 @@
 package com.gking.simplemusicplayer.impl;
 
-import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.service.SongService;
-import com.kongzue.dialogx.DialogX;
-import gtools.GLibrary;
-import gtools.managers.GHolder;
-import gtools.managers.GLibraryManager;
-
-import java.io.File;
-import java.util.Objects;
 import android.app.Application;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Build;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
+import com.gking.simplemusicplayer.MyBroadcastReceiver;
+import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.service.SongService;
 import com.gking.simplemusicplayer.util.FW;
-import com.gking.simplemusicplayer.util.GFile;
-import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.util.Date;
+import java.util.Objects;
+
+import gtools.GLibrary;
+import gtools.managers.GLibraryManager;
 
 public class MyApplicationImpl extends Application
 {
     public static Handler handler=new Handler();
     public static MyApplicationImpl myApplication;
-	public MusicPlayer getMusicPlayer() {
+    public MyBroadcastReceiver myBroadcastReceiver;
+    public IntentFilter intentFilter;
+
+    public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
     }
     public MusicPlayer mMusicPlayer=new MusicPlayer();
@@ -46,13 +42,13 @@ public class MyApplicationImpl extends Application
     public void onCreate() {
         super.onCreate();
         myApplication=this;
-        DialogX.init(this);
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
-        load();
+        loadView();
         loadSettings();
         startService(new Intent(this, SongService.class));
+
     }
-    private void load() {
+    private void loadView() {
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);
         controlPanel.setBackgroundColor(0xFFffFFff);
         Cover = controlPanel.findViewById(R.id.c_song_cover);
@@ -77,6 +73,9 @@ public class MyApplicationImpl extends Application
 			if(file.isFile())
 				GLibraryManager.add(new GLibrary(file,true));
 		}
+        myBroadcastReceiver = new MyBroadcastReceiver();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
 	}
     private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
 

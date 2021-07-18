@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.MainActivity;
-import com.gking.simplemusicplayer.activity.MySettingsActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 
@@ -58,7 +56,7 @@ public class BackgroundService extends Service {
     public static boolean isShowing=false;
     private void window() {
         WindowManager windowManager= (WindowManager) getSystemService(WINDOW_SERVICE);
-        ((TextView) application.windowView.findViewById(R.id.window_lyric)).setTextColor(MySettingsActivity.getInt(MySettingsActivity.Params.window_color));
+        ((TextView) application.windowView.findViewById(R.id.window_lyric)).setTextColor(SettingsActivity.getInt(SettingsActivity.Params.window_color));
         if(isShowing){
             isShowing=false;
             windowManager.removeViewImmediate(windowView);

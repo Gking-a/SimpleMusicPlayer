@@ -30,16 +30,13 @@ public class SongService extends Service {
     private Notification notification;
     private RemoteViews bigView;
     private Thread timeThread;
+    private MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-//        PowerManager.WakeLock wakeLock= ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG);
-//        wakeLock.acquire();
-//        String id=intent.getStringExtra("id");
+    public void onCreate() {
+        super.onCreate();
+        MyApplicationImpl application = (MyApplicationImpl) getApplication();
+        registerReceiver(application.myBroadcastReceiver,application.intentFilter);
         smallView =new RemoteViews(getPackageName(), R.layout.notification_small);
         bigView = new RemoteViews(getPackageName(), R.layout.notification_big);
         notification = new Notification.Builder(this)
@@ -52,17 +49,30 @@ public class SongService extends Service {
         notification.bigContentView=bigView;
         musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         loadView0();
-        musicPlayer.addOnSongBeanChangeListener((musicPlayer, songBean) -> {
-            this.song=songBean;
+        onSongBeanChangeListener = (musicPlayer, songBean) -> {
+            this.song = songBean;
             musicPlayer.operateAfterPrepared(mp -> {
                 loadView2();
             });
             loadView1();
-        });
+        };
+        musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
         timeThread = new TimeThread();
         timeThread.start();
         //巨坑！如果在配置之前startForeground,就会出现Pending Intent无效的现象
         startForeground(NOTIFICATION_ID, notification);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+//        PowerManager.WakeLock wakeLock= ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG);
+//        wakeLock.acquire();
+//        String id=intent.getStringExtra("id");
+        musicPlayer.notify(null,onSongBeanChangeListener);
         return super.onStartCommand(intent, flags, startId);
     }
     class TimeThread extends Thread{
@@ -131,6 +141,7 @@ public class SongService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(((MyApplicationImpl) getApplication()).myBroadcastReceiver);
         timeThread.interrupt();
     }
 }
