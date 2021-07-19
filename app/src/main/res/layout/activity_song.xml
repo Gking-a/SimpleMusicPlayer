@@ -85,7 +85,6 @@
             app:layout_constraintTop_toBottomOf="@id/song_progress"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/song_last"
-            android:background="@drawable/last"
             android:id="@+id/song_mode"/>
         <com.google.android.material.button.MaterialButton
             android:layout_width="@dimen/button_big"
@@ -117,6 +116,7 @@
             app:layout_constraintTop_toBottomOf="@id/song_progress"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toRightOf="@id/song_next"
+            android:background="@drawable/window"
             android:id="@+id/song_window"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

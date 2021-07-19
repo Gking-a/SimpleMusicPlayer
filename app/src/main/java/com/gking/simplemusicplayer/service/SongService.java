@@ -14,6 +14,7 @@ import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
+import com.gking.simplemusicplayer.manager.LyricBean;
 import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.Util;
@@ -31,7 +32,7 @@ public class SongService extends Service {
     SongBean song;
     private Notification notification;
     private RemoteViews bigView;
-    private Thread timeThread;
+    private TimeThread timeThread;
     private MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
 
     @Override
@@ -51,12 +52,20 @@ public class SongService extends Service {
         notification.bigContentView=bigView;
         musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         loadView0();
-        onSongBeanChangeListener = (musicPlayer, songBean) -> {
-            this.song = songBean;
-            musicPlayer.operateAfterPrepared(mp -> {
+        onSongBeanChangeListener=new MusicPlayer.OnSongBeanChangeListener() {
+            @Override
+            public void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean) {
+                song=songBean;
+            }
+            @Override
+            public void onPrepared(MusicPlayer musicPlayer) {
+                loadView1();
                 loadView2();
-            });
-            loadView1();
+            }
+            @Override
+            public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager) {
+
+            }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
         timeThread = new TimeThread();
@@ -74,7 +83,10 @@ public class SongService extends Service {
 //        PowerManager.WakeLock wakeLock= ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG);
 //        wakeLock.acquire();
 //        String id=intent.getStringExtra("id");
-        musicPlayer.notify(null,onSongBeanChangeListener);
+        musicPlayer.notify(song,onSongBeanChangeListener);
+        if(intent.getStringExtra("changeMode")!=null){
+            changeMode();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
     class TimeThread extends Thread{
@@ -95,6 +107,7 @@ public class SongService extends Service {
                 if (song != null) {
                     bigView.setTextViewText(R.id.notification_time,time2str(musicPlayer.getCurrentPosition()));
                     bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),musicPlayer.getCurrentPosition(),false);
+                    changeModeView();
                     NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
                     manager.notify(NOTIFICATION_ID,notification);
                     if(isShowing){
@@ -119,6 +132,9 @@ public class SongService extends Service {
         Intent i4=new Intent(this,BackgroundService.class);
         i4.putExtra(Type.Type,Type.Next);
         bigView.setOnClickPendingIntent(R.id.notification_next,PendingIntent.getService(this,3,i4,PendingIntent.FLAG_CANCEL_CURRENT));
+        i=new Intent(this,SongService.class);
+        i.putExtra("chageMode"," ");
+        bigView.setOnClickPendingIntent(R.id.notification_mode,PendingIntent.getService(this,4,i,PendingIntent.FLAG_CANCEL_CURRENT));
     }
     private void loadView1() {
         Util.getCover(song.coverUrl, bitmap -> {
@@ -131,7 +147,7 @@ public class SongService extends Service {
         bigView.setTextViewText(R.id.notification_author,song.author);
     }
     private void loadView2() {
-        
+        changeModeView();
         bigView.setTextViewText(R.id.notification_duration,time2str(musicPlayer.getDuration()));
         bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),0,true);
         NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
@@ -140,22 +156,26 @@ public class SongService extends Service {
     public static String time2str(int msec){
         return SongActivity.time2str(msec);
     }
-    public static void changeMode(){
-        int mode=SettingsActivity.getInt(SettingsActivity.Params.auto_next);
-        if(mode==SettingsActivity.Params.PLAY_MODE.ORDER)SettingsActivity.set(SettingsActivity.Params.auto_next,0);
-        else SettingsActivity.set(SettingsActivity.Params.auto_next,mode+1);
-        mode=SettingsActivity.getInt(SettingsActivity.Params.auto_next);
-        int bitmap_res;
-        if(mode==PLAY_MODE.NONE)bitmap_res=
-        if(mode==PLAY_MODE.LOOP)bitmap_res=
-        if(mode==PLAY_MODE.RANDOM)bitmap_res=
-        if(mode==PLAY_MODE.ORDER)bitmap_res=
-        bigView.setImageViewBitmap(
+    public void changeMode(){
+        String mode=SettingsActivity.get(SettingsActivity.Params.play_mode);
+        if(mode.equals(PLAY_MODE.ORDER))SettingsActivity.set(SettingsActivity.Params.play_mode,0);
+        else SettingsActivity.set(SettingsActivity.Params.play_mode,Integer.parseInt(mode)+1);
+        changeModeView();
+    }
+    public void changeModeView(){
+        String mode=SettingsActivity.get(SettingsActivity.Params.play_mode);
+        int bitmap_res = R.drawable.close;
+        if(mode.equals(PLAY_MODE.NONE))bitmap_res=R.drawable.close;
+        if(mode.equals(PLAY_MODE.LOOP))bitmap_res=R.drawable.loop;
+        if(mode.equals(PLAY_MODE.RANDOM))bitmap_res=R.drawable.random;
+        if(mode.equals(PLAY_MODE.ORDER))bitmap_res=R.drawable.order;
+        bigView.setImageViewResource(R.id.notification_mode,bitmap_res);
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(((MyApplicationImpl) getApplication()).myBroadcastReceiver);
         timeThread.interrupt();
+        stopForeground(true);
     }
 }

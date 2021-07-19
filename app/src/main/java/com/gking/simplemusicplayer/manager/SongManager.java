@@ -1,5 +1,6 @@
 package com.gking.simplemusicplayer.manager;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -59,7 +60,7 @@ public class SongManager {
             }
             bean.last=list.get(i-1);
             bean.next=list.get((i+1)%list.size());
+            System.out.println(bean.last.id+":"+bean.id+":"+bean.next.id);
         }
     }
-
 }

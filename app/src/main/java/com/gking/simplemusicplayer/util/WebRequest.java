@@ -30,6 +30,12 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 public final class WebRequest {
+    public static void check_music(String id,Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("ids","["+id+"]");
+        jsonObject.addProperty("br",320000);
+        post(URLs.check_music,jsonObject,MyCookieJar.getLoginCookie(),callback);
+    }
     public static void playlist_tracks_add(String pid,String[] trackIds,Callback callback){
         playlist_tracks("add",pid,trackIds,callback);
     }

@@ -9,6 +9,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -47,37 +49,70 @@ public class SongActivity extends BaseActivity {
     private MyOnSeekBarChangeListener onSeekBarChangeListener=new MyOnSeekBarChangeListener();
     private MyAdapter myAdapter;
     private static MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
-    MyHandler handler;
+    Handler handler;
     SeekBar progress;
     static TimeThread timeThread;
     private SeekBar volume;
+    private Button mode_view;
+    private Runnable loadLyric;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(this,false);
         setContentView(R.layout.activity_song);
-        handler=new MyHandler(new WeakReference<>(this));
+        handler=new Handler();
+        musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         load();
         timeThread=new TimeThread();
         timeThread.start();
-        onSongBeanChangeListener = (musicPlayer, songBean) -> {
-            song = songBean;
-            musicPlayer.operateAfterPrepared(mp -> {
-                Message message = new Message();
-                message.what = MyHandler.SET_MAX;
-                message.arg1 = musicPlayer.getDuration();
-                handler.sendMessage(message);
-            });
+        onSongBeanChangeListener =new MusicPlayer.OnSongBeanChangeListener() {
+            @Override
+            public void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean) {
+                song=songBean;
+            }
+            @Override
+            public void onPrepared(MusicPlayer musicPlayer) {
+                handler.post(reset);
+            }
+            @Override
+            public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager) {
+                loadLyric = () -> {
+                    myAdapter = new MyAdapter(lyricBean);
+                    lyricView.setAdapter(myAdapter);
+                    myAdapter.notifyDataSetChanged();
+                    onSeekBarChangeListener.lyricManager = lyricManager;
+                };
+                handler.post(loadLyric);
+            }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
     }
+    Runnable reset = () -> {
+        ((TextView) f(R.id.song_toolbar_title)).setText(song.name);
+        progress.setMax(musicPlayer.getDuration());
+        TextView tv = f(R.id.song_time_duration);
+        tv.setText(time2str(musicPlayer.getDuration()));
+    };
+    Runnable updata_progress = new Runnable() {
+        @Override
+        public void run() {
+            int currentPosition = musicPlayer.getCurrentPosition();
+            if (!progress.isPressed()) {
+                progress.setProgress(currentPosition);
+            }
+        }
+    };
+    Runnable set_lyric=() -> {myAdapter.showLyric(LyricManager.Instance.getPosition(musicPlayer.getCurrentPosition()));};
+    Runnable changeModeView=() -> changeModeView();
     private void load() {
         musicPlayer=((MyApplicationImpl) getApplication()).mMusicPlayer;
         System.out.println(musicPlayer==null);
         progress=f(R.id.song_progress);
         lyricView=f(R.id.song_lyric);
         lyricView.setLayoutManager(new LinearLayoutManager(getContext()));
-        f(R.id.song_mode).setOnClickListener(v -> changeMode());
+        mode_view = f(R.id.song_mode);
+        changeModeView();
+        mode_view.setOnClickListener(v -> changeMode());
         f(R.id.song_next).setOnClickListener(v -> musicPlayer.next(null));
         f(R.id.song_last).setOnClickListener(v -> musicPlayer.last(null));
         f(R.id.song_pause).setOnClickListener(v -> musicPlayer.pause());
@@ -110,11 +145,6 @@ public class SongActivity extends BaseActivity {
             }
         });
     }
-    public static void changeMode(){
-        int mode=SettingsActivity.getInt(SettingsActivity.Params.auto_next);
-        if(mode==SettingsActivity.Params.PLAY_MODE.ORDER)SettingsActivity.set(SettingsActivity.Params.auto_next,0);
-        else SettingsActivity.set(SettingsActivity.Params.auto_next,mode+1);
-    }
     class TimeThread extends Thread{
         private int position=0;
         @Override
@@ -127,8 +157,8 @@ public class SongActivity extends BaseActivity {
                     break;
                 }
                 if (song != null) {
-                    Message message=handler.obtainMessage(MyHandler.UPDATE_PROGRESS);
-                    handler.sendMessage(message);
+                    handler.post(updata_progress);
+                    handler.post(changeModeView);
                     {
                         LyricManager manager=onSeekBarChangeListener.lyricManager;
                         if (manager == null)continue;
@@ -136,95 +166,13 @@ public class SongActivity extends BaseActivity {
                         if(position<0)continue;
                         if(this.position==position)continue;
                         this.position=position;
-                        handler.sendMessage(handler.obtainMessage(MyHandler.SHOW_LYRIC,position,position));
+                        handler.post(set_lyric);
                     }
                 }
             }
         }
     }
     RecyclerView lyricView;
-    static class MyHandler extends Handler{
-        WeakReference<SongActivity> activityWeakReference;
-        public MyHandler(WeakReference<SongActivity> activityWeakReference) {
-            this.activityWeakReference=activityWeakReference;
-        }
-        public static final int SET_MAX=0;
-        public static final int UPDATE_PROGRESS =1;
-        public static final int SHOW_LYRIC=20;
-        SeekBar progress;
-        SongBean song;
-        RecyclerView lyricView;
-        MusicPlayer musicPlayer;
-        public void assign(){
-            if(activityWeakReference.get()==null)return;
-            SongActivity activity=activityWeakReference.get();
-            progress = activity.progress;
-            song = activity.song;
-            lyricView = activity.lyricView;
-            musicPlayer = ((MyApplicationImpl) activity.getApplication()).mMusicPlayer;
-        }
-        public <T extends View> T f(int id){
-            SongActivity activity=activityWeakReference.get();
-            if (activity == null)return null;
-            return activity.f(id);
-        }
-        @Override
-        public void handleMessage(@NonNull @NotNull Message msg) {
-            SongActivity activity=activityWeakReference.get();
-            if (activity == null)return;
-            switch (msg.what){
-                case SET_MAX: {
-                    assign();
-                    ((TextView) activity.f(R.id.song_toolbar_title)).setText(song.name);
-                    progress.setMax(msg.arg1);
-                    TextView tv = f(R.id.song_time_duration);
-                    tv.setText(time2str(msg.arg1));
-                    WebRequest.lyric(song.id, MyCookieJar.getLoginCookie(), new okhttp3.Callback() {
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        }
-
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            String body = response.body().string();
-                            JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-                            JsonElement noLyric = jsonObject.get("nolyric");
-                            LyricBean lyricBean;
-                            if (noLyric != null) {
-                                lyricBean = new LyricBean();
-                            } else {
-                                lyricBean = new LyricBean(jsonObject);
-                            }
-                            post(() -> {
-                                activity.myAdapter = activity.new MyAdapter(lyricBean);
-                                lyricView.setAdapter(activity.myAdapter);
-                                activity.myAdapter.notifyDataSetChanged();
-                                activity.onSeekBarChangeListener.lyricManager = LyricManager.getInstance(lyricBean);
-                            });
-                        }
-                    });
-                    break;
-                }
-                case UPDATE_PROGRESS: {
-                    if (musicPlayer == null) {
-                        System.out.println("player is null!!!");
-                        return;
-                    }
-                    int currentPosition = musicPlayer.getCurrentPosition();
-                    if (!progress.isPressed()) {
-                        progress.setProgress(currentPosition);
-                    }
-                    break;
-                }
-                case SHOW_LYRIC:
-                    if(activity.myAdapter==null){
-                        System.out.println("NULL!!!!!!");
-                        return;
-                    }
-                    activity.myAdapter.showLyric(msg.arg1);
-            }
-        }
-    }
     class MyOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener{
         final MyThread thread = new MyThread();
         LyricManager lyricManager;
@@ -245,14 +193,11 @@ public class SongActivity extends BaseActivity {
             thread.setText(time2str(seekBar.getProgress()));
             handler.post(thread);
         }
-
         class MyThread extends Thread {
             String text;
-
             public void setText(String text) {
                 this.text = text;
             }
-
             @Override
             public void run() {
                 TextView tv1 = f(R.id.song_time_progress);
@@ -275,7 +220,6 @@ public class SongActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode,event);
     }
-
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
         List<String> content;
         LyricBean lyricBean;
@@ -336,7 +280,12 @@ public class SongActivity extends BaseActivity {
     }
     public static String time2str(int msec){
         int sec=msec/1000;
-        return sec/60+":"+sec%60;
+        String s = sec / 60 + ":";
+        int i=sec%60;
+        String s2="0";
+        if(i<10)s2+=i;
+        else s2=i+"";
+        return s+s2;
     }
     @Override
     protected void onPause() {
@@ -349,5 +298,20 @@ public class SongActivity extends BaseActivity {
             onSongBeanChangeListener=null;
             System.gc();
         }
+    }
+    public void changeMode(){
+        String mode=SettingsActivity.get(SettingsActivity.Params.play_mode);
+        if(mode.equals(SettingsActivity.Params.PLAY_MODE.ORDER))SettingsActivity.set(SettingsActivity.Params.play_mode,0);
+        else SettingsActivity.set(SettingsActivity.Params.play_mode,Integer.parseInt(mode)+1);
+        changeModeView();
+    }
+    public void changeModeView(){
+        String mode=SettingsActivity.get(SettingsActivity.Params.play_mode);
+        int bitmap_res = R.drawable.close;
+        if(mode.equals(SettingsActivity.Params.PLAY_MODE.NONE))bitmap_res=R.drawable.close;
+        if(mode.equals(SettingsActivity.Params.PLAY_MODE.LOOP))bitmap_res=R.drawable.loop;
+        if(mode.equals(SettingsActivity.Params.PLAY_MODE.RANDOM))bitmap_res=R.drawable.random;
+        if(mode.equals(SettingsActivity.Params.PLAY_MODE.ORDER))bitmap_res=R.drawable.order;
+        mode_view.setBackgroundResource(bitmap_res);
     }
 }

@@ -57,6 +57,10 @@
 		android:layout_width="match_parent"
 		android:layout_height="56dp">
 		<ImageButton
+			android:id="@+id/notification_mode"
+			android:layout_height="56dp"
+			android:layout_width="56dp"/>
+		<ImageButton
             android:id="@+id/notification_last"
             android:layout_height="56dp"
             android:layout_width="56dp"
@@ -76,7 +80,7 @@
             android:id="@+id/notification_window"
             android:layout_height="56dp"
             android:layout_width="56dp"
-            android:src="@drawable/w"/>
+            android:src="@drawable/window"/>
 
 	</LinearLayout>
 
