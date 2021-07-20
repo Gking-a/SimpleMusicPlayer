@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -15,12 +16,23 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="搜索" />
+            app:title="设置" />
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_settings_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/activity_settings_toolbar_layout"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/activity_settings_toolbar_layout" />
+    <TextView
+        android:id="@+id/about"
+        app:layout_constraintTop_toBottomOf="@id/activity_settings_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="还没有什么可以设置的\n写在最后\n关于SimpleMusicPlayer，因为学业繁忙，只把把基础功能做好了，有些没做好的功能（悬浮窗，歌词滚动）等半成品就没有放出来，希望大家谅解。SimpleMusicPlayer初衷为简化臃肿的功能，做一个纯粹的听歌者，如果你有什么建议或者发现了什么bug，请加群联系我\nQQ群975408820，作者QQ2665241312S，如果你觉得好的话，可以考虑捐赠（狗头）"/>
+    <ImageView
+        app:layout_constraintTop_toBottomOf="@id/about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/money"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

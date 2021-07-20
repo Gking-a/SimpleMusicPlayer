@@ -33,12 +33,12 @@ import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_
 public class MusicPlayer extends MediaPlayer {
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
     public MusicPlayer player=this;
-    private boolean prepared=false;
     private boolean lockProgress=false;
     public void setLockProgress(boolean lockProgress) {
         this.lockProgress = lockProgress;
     }
     private SongBean musicBean=null;
+    private boolean prepared=false,lyricLoaded=false;
     MusicPlayer(){
         super();
         setOnErrorListener((mp, what, extra) -> true);
@@ -57,12 +57,14 @@ public class MusicPlayer extends MediaPlayer {
             if(pm.equals(PLAY_MODE.NONE)){}
             else if (pm.equals(PLAY_MODE.LOOP)){start(musicBean,true);}
             else if (pm.equals(PLAY_MODE.RANDOM)){start(SongManager.getInstance().getRandomSong(musicBean.id).next,true);}
-            else if (pm.equals(PLAY_MODE.ORDER)){next(null);}
+            else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getOrderSong(musicBean.id).next,true);}
         }
     }
     public void notify(SongBean songBean,OnSongBeanChangeListener onSongBeanChangeListener){
         if(getMusicBean()!=songBean)
             onSongBeanChangeListener.onSongBeanChange(this,getMusicBean());
+        if(prepared)onSongBeanChangeListener.onPrepared(this);
+        if(lyricLoaded)onSongBeanChangeListener.onLyricLoaded(this,LyricManager.Instance.getLyricBean(),LyricManager.Instance);
     }
     public SongBean getMusicBean() {
         return musicBean;
@@ -107,7 +109,6 @@ public class MusicPlayer extends MediaPlayer {
                         System.out.println(musicBean.id);
                         System.out.println(musicBean.next.id);
                         if (jsonElement.isJsonNull()) {
-                            System.out.println("is null");
                             autoNext();
                         } else {
                                 setDataSource(jsonElement.getAsString());
@@ -116,7 +117,6 @@ public class MusicPlayer extends MediaPlayer {
                                 @Override
                                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                 }
-
                                 @Override
                                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                                     String body = response.body().string();
@@ -132,6 +132,7 @@ public class MusicPlayer extends MediaPlayer {
                                     for (OnSongBeanChangeListener listener : onSongBeanChangeListenerList) {
                                         if(listener!=null)listener.onLyricLoaded(player, lyricBean, instance);
                                     }
+                                    lyricLoaded=true;
                                 }
                             });
                         }
@@ -141,6 +142,7 @@ public class MusicPlayer extends MediaPlayer {
                     for (OnSongBeanChangeListener listener : onSongBeanChangeListenerList) {
                         if(listener!=null)listener.onPrepared(player);
                     }
+                    prepared=true;
                     player.start();
                     handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
                 });
@@ -166,8 +168,9 @@ public class MusicPlayer extends MediaPlayer {
     }
     @Override
     public void reset() {
-        super.reset();
         prepared=false;
+        lyricLoaded=false;
+        super.reset();
         MyApplicationImpl.handler.post(()->{
             MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
             myApplication.controlPanel.setVisibility(View.GONE);

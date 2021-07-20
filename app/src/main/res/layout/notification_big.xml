@@ -30,28 +30,6 @@
                 android:id="@+id/notification_author"/>
         </LinearLayout>
 	</LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="16dp">
-        <TextView
-            android:id="@+id/notification_time"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"/>
-        <ProgressBar
-			style="?android:attr/progressBarStyleHorizontal"
-            android:id="@+id/notification_progress"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"/>
-        <TextView
-            android:id="@+id/notification_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"/>
-    </LinearLayout>
 	<LinearLayout
 		android:orientation="horizontal"
 		android:layout_width="match_parent"
@@ -85,4 +63,26 @@
 	</LinearLayout>
 
 </LinearLayout>
+<!--<LinearLayout-->
+<!--android:orientation="horizontal"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="16dp">-->
+<!--<TextView-->
+<!--	android:id="@+id/notification_time"-->
+<!--	android:layout_width="wrap_content"-->
+<!--	android:layout_height="match_parent"-->
+<!--	android:gravity="center"/>-->
+<!--<ProgressBar-->
+<!--	style="?android:attr/progressBarStyleHorizontal"-->
+<!--	android:id="@+id/notification_progress"-->
+<!--	android:layout_weight="1"-->
+<!--	android:layout_width="wrap_content"-->
+<!--	android:layout_height="match_parent"-->
+<!--	android:gravity="center"/>-->
+<!--<TextView-->
+<!--	android:id="@+id/notification_duration"-->
+<!--	android:layout_width="wrap_content"-->
+<!--	android:layout_height="match_parent"-->
+<!--	android:gravity="center"/>-->
+<!--</LinearLayout>-->
 

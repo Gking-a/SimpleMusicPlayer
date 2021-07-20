@@ -99,11 +99,13 @@ public class SettingsActivity extends BaseActivity {
             Item item=data.get(position);
             holder.textView.setText(item.text);
             if(item instanceof ItemEdit){
+                ItemEdit itemEdit=(ItemEdit)item;
+                holder.editText.setText(itemEdit.value);
                 holder.editText.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count){}
                     @Override
                     public void afterTextChanged(Editable s) {
                         SettingsActivity.library.add(item.sign,s.toString().trim(),GLibrary.TYPE_STRING);
@@ -142,7 +144,6 @@ public class SettingsActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
-
     public static final String DEFAULT_LIST ="defaultlist";
     public static final String LOCKEDNOTIFICATIONSHOW="lockednotificationshow";
     public static final String WINDOW_COLOR="windowcolor";

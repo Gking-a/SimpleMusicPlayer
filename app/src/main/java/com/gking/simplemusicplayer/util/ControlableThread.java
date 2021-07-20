@@ -4,7 +4,6 @@ public class ControlableThread extends Thread{
     private final Object lock=new Object();
     private boolean suspend=false;
     Runnable runnable;
-    boolean locked=false;
     public ControlableThread(Runnable runnable) {
         super();
         this.runnable = runnable;
@@ -21,7 +20,11 @@ public class ControlableThread extends Thread{
                     }
                 }
             }
-            runnable.run();
+            try{
+                runnable.run();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
     public void setSuspend(boolean suspend) {
