@@ -77,8 +77,10 @@ public class MainActivity extends BaseActivity {
         drawerLayout = f(R.id.main_drawer);
         nav = f(R.id.nav);
         nav.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.login)
+            if (item.getItemId() == R.id.nav_login)
                 startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
+            if(item.getItemId()==R.id.nav_settings)
+                startActivity(new Intent(getContext(),SettingsActivity.class));
             return true;
         });
         TabLayout tabLayout = f(R.id.main_tab);
@@ -172,7 +174,7 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LoginCellphoneActivity.RequestCode) {
             if (data.getBooleanExtra("success", false)) {
-                MenuItem login = nav.getMenu().findItem(R.id.login);
+                MenuItem login = nav.getMenu().findItem(R.id.nav_login);
                 LoginBean loginBean = LoginCellphoneActivity.loginBean;
                 login.setTitle(loginBean.name);
                 SettingsActivity.set(account_phone, loginBean.ph);

@@ -44,6 +44,9 @@ public class MusicPlayer extends MediaPlayer {
         setOnErrorListener((mp, what, extra) -> true);
         setOnCompletionListener((mp -> {
             //可以尝试解耦,将music player提取出来
+            for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
+                if(listener!=null) listener.onFinish(player);
+            }
             autoNext();
         }));
     }
@@ -228,5 +231,6 @@ public class MusicPlayer extends MediaPlayer {
         void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean);
         void onPrepared(MusicPlayer musicPlayer);
         void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager);
+        void onFinish(MusicPlayer musicPlayer);
     }
 }

@@ -42,32 +42,39 @@ public class SettingsActivity extends BaseActivity {
         RecyclerView recyclerView=findViewById(R.id.activity_settings_items);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ArrayList<Item> data= new ArrayList<>();
-        data.add(new ItemEdit("选中的歌词的颜色",window_color));
+        data.add(new ItemEdit("选中的歌词的颜色",window_color,SettingsActivity.get(window_color)));
         MyAdapter myAdapter = new MyAdapter(this, data);
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
     }
-    public static class Item{
+    public static class Item<V>{
         public static final int TYPE_SWITCH=0;
         public static final int TYPE_EDIT=1;
         public int type;
         public String text;
         public String sign;
-
-        public Item(String text, String sign) {
+        public V getValue() {
+            return value;
+        }
+        public void setValue(V value) {
+            this.value = value;
+        }
+        public V value;
+        public Item(String text, String sign,V value) {
             this.text = text;
             this.sign = sign;
+            setValue(value);
         }
-
         private Item(int type, String text, String sign) {
             this.type = type;
             this.text = text;
             this.sign = sign;
         }
     }
-    public static class ItemEdit extends Item{
-        public ItemEdit(String text, String sign) {
-            super(text, sign);
+    public static class ItemEdit extends Item<String>{
+        public ItemEdit(String text, String sign,String v) {
+            super(TYPE_EDIT,text, sign);
+            setValue(v);
         }
     }
     static class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
@@ -126,7 +133,6 @@ public class SettingsActivity extends BaseActivity {
             }
         }
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -177,8 +183,6 @@ public class SettingsActivity extends BaseActivity {
                 library.add(auto_next,true,GLibrary.TYPE_STRING);
                 library.add(play_mode,PLAY_MODE.RANDOM,GLibrary.TYPE_STRING);
                 library.add(window_color,0xffFF0000,GLibrary.TYPE_STRING);
-                library.add(account_phone,"18263610381",GLibrary.TYPE_STRING);
-                library.add(account_pw,"gking1980",GLibrary.TYPE_STRING);
                 library.add("ver",1,GLibrary.TYPE_STRING);
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);

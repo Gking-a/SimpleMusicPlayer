@@ -17,11 +17,13 @@ import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.manager.LyricBean;
 import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.util.ControlableThread;
 import com.gking.simplemusicplayer.util.Util;
 
 import static com.gking.simplemusicplayer.service.BackgroundService.Type;
 import static com.gking.simplemusicplayer.service.BackgroundService.isShowing;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
+import static java.lang.Thread.sleep;
 
 public class SongService extends Service {
     //Design as SongActivity
@@ -32,8 +34,9 @@ public class SongService extends Service {
     SongBean song;
     private Notification notification;
     private RemoteViews bigView;
-    private TimeThread timeThread;
+    private TimeRunnable timeRunnable;
     private MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
+    private ControlableThread controlableThread;
 
     @Override
     public void onCreate() {
@@ -52,7 +55,12 @@ public class SongService extends Service {
         notification.bigContentView=bigView;
         musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         loadView0();
+        timeRunnable = new TimeRunnable();
+        controlableThread = new ControlableThread(timeRunnable);
+        controlableThread.setSuspend(true);
+        controlableThread.start();
         onSongBeanChangeListener=new MusicPlayer.OnSongBeanChangeListener() {
+            boolean p=false,l=false;
             @Override
             public void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean) {
                 song=songBean;
@@ -61,15 +69,22 @@ public class SongService extends Service {
             public void onPrepared(MusicPlayer musicPlayer) {
                 loadView1();
                 loadView2();
+                p=true;
+                controlableThread.setSuspend(p&&l);
             }
             @Override
             public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager) {
-
+                l=true;
+                controlableThread.setSuspend(p&&l);
+            }
+            @Override
+            public void onFinish(MusicPlayer musicPlayer) {
+                p=false;
+                l=false;
+                controlableThread.setSuspend(p&&l);
             }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
-        timeThread = new TimeThread();
-        timeThread.start();
         //巨坑！如果在配置之前startForeground,就会出现Pending Intent无效的现象
         startForeground(NOTIFICATION_ID, notification);
     }
@@ -89,30 +104,27 @@ public class SongService extends Service {
         }
         return super.onStartCommand(intent, flags, startId);
     }
-    class TimeThread extends Thread{
+    class TimeRunnable implements Runnable{
+        Runnable lyricRunnable = () -> {
+            String lyric = LyricManager.Instance.getLyric(musicPlayer.getCurrentPosition());
+            if(lyric==null)return;
+            TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
+            textView.setText(lyric);
+        };
         @Override
         public final void run() {
-            Runnable runnable = () -> {
-                String lyric = LyricManager.Instance.getLyric(musicPlayer.getCurrentPosition());
-                if(lyric==null)return;
-                TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
-                textView.setText(lyric);
-            };
-            while (!interrupted()){
-                try {
-                    sleep(150);
-                } catch (InterruptedException e) {
-                    break;
-                }
-                if (song != null) {
-                    bigView.setTextViewText(R.id.notification_time,time2str(musicPlayer.getCurrentPosition()));
-                    bigView.setProgressBar(R.id.notification_progress,musicPlayer.getDuration(),musicPlayer.getCurrentPosition(),false);
-                    changeModeView();
-                    NotificationManager manager= ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
-                    manager.notify(NOTIFICATION_ID,notification);
-                    if(isShowing){
-                        MyApplicationImpl.handler.post(runnable);
-                    }
+            try {
+                sleep(150);
+            } catch (InterruptedException e) {
+            }
+            if (song != null) {
+                bigView.setTextViewText(R.id.notification_time, time2str(musicPlayer.getCurrentPosition()));
+                bigView.setProgressBar(R.id.notification_progress, musicPlayer.getDuration(), musicPlayer.getCurrentPosition(), false);
+                changeModeView();
+                NotificationManager manager = ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
+                manager.notify(NOTIFICATION_ID, notification);
+                if (isShowing) {
+                    MyApplicationImpl.handler.post(lyricRunnable);
                 }
             }
         }
@@ -175,7 +187,8 @@ public class SongService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(((MyApplicationImpl) getApplication()).myBroadcastReceiver);
-        timeThread.interrupt();
+        controlableThread.interrupt();
+        musicPlayer.removeOnSongBeanChangeListener(onSongBeanChangeListener);
         stopForeground(true);
     }
 }
