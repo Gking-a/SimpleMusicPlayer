@@ -1,14 +1,11 @@
 package com.gking.simplemusicplayer.impl;
 
-import com.gking.simplemusicplayer.util.FW;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Cookie;
 import okhttp3.CookieJar;

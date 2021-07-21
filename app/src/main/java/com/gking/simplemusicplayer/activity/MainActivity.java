@@ -26,7 +26,6 @@ import com.gking.simplemusicplayer.fragment.SearchFragment;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -128,12 +127,11 @@ public class MainActivity extends BaseActivity {
         }
     }
     private void loadBaseSettings() {
-        if (!ifOps())
-            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
+//        if (!ifOps())
+//            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
         getPlaylistCallback= new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                FW.w(e);
                 System.out.println(e);
             }
             @Override
@@ -175,7 +173,7 @@ public class MainActivity extends BaseActivity {
         if (requestCode == LoginCellphoneActivity.RequestCode) {
             if (data.getBooleanExtra("success", false)) {
                 MenuItem login = nav.getMenu().findItem(R.id.nav_login);
-                LoginBean loginBean = LoginCellphoneActivity.loginBean;
+                LoginBean loginBean = (LoginBean) data.getSerializableExtra("loginBean");
                 login.setTitle(loginBean.name);
                 SettingsActivity.set(account_phone, loginBean.ph);
                 SettingsActivity.set(account_pw, loginBean.pw);

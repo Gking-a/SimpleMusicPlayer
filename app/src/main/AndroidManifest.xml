@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.gking.simplemusicplayer">
-    <!-- 修改或删除您的 SD 卡中的内容 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 完全的网络访问权限 -->
+    package="com.gking.simplemusicplayer"><!-- 完全的网络访问权限 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 防止手机休眠 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 读取您的 SD 卡中的内容 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application

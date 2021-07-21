@@ -23,7 +23,6 @@ import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonArray;
@@ -87,7 +86,6 @@ public class ChoosePlaylistActivity extends BaseActivity {
         getPlaylistCallback= new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                FW.w(e);
                 System.out.println(e);
             }
             @Override

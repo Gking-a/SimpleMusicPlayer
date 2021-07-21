@@ -4,26 +4,29 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import com.gking.simplemusicplayer.MyBroadcastReceiver;
 import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.service.SongService;
-import com.gking.simplemusicplayer.util.FW;
 
 import java.io.File;
-import java.util.Date;
+import java.io.IOException;
 import java.util.Objects;
 
 import gtools.GLibrary;
 import gtools.managers.GLibraryManager;
+
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
 
 public class MyApplicationImpl extends Application
 {
@@ -42,11 +45,10 @@ public class MyApplicationImpl extends Application
     public void onCreate() {
         super.onCreate();
         myApplication=this;
-        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
+//        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadView();
         loadSettings();
         startService(new Intent(this, SongService.class));
-
     }
     private void loadView() {
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);
@@ -77,22 +79,16 @@ public class MyApplicationImpl extends Application
         intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
 	}
-    private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
-
-        @Override
-        public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-            e.printStackTrace();
-            FW.w(new Date()+"\n");
-            FW.w(t+"\n");
-            FW.w(e);
-//            Process.killProcess(Process.myPid());
-        }
-	}
-	public static void l(Object o){
-        Log.e("app",o.toString());
-        System.out.println(o.toString());
-        FW.w(o.toString());
-
-    }
+//    private class MyExceptionCatcher implements Thread.UncaughtExceptionHandler{
+//
+//        @Override
+//        public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+//            e.printStackTrace();
+//            FW.w(new Date()+"\n");
+//            FW.w(t+"\n");
+//            FW.w(e);
+////            Process.killProcess(Process.myPid());
+//        }
+//	}
 }
 

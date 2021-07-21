@@ -3,7 +3,6 @@
 
 package com.gking.simplemusicplayer.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,9 +13,18 @@ import android.util.DisplayMetrics;
 import com.gking.simplemusicplayer.MyResources;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.util.FW;
 import com.gking.simplemusicplayer.util.GMath;
-import android.content.Context;
+
+import java.io.IOException;
+
+import gtools.GLibrary;
+
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
+
 @Deprecated
 public class SplashActivity extends BaseActivity {
     
@@ -26,7 +34,8 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         new Thread(() -> {
 //            loadResources();
-            Intent intent=new Intent(getContext(),MainActivity.class);
+
+            Intent intent = new Intent(getContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }).start();
@@ -43,8 +52,6 @@ public class SplashActivity extends BaseActivity {
             width=(int)(280*dm.density);
         double whW=GMath.getDec(width,height),
             whB=GMath.getDec(source.getWidth(),source.getHeight());
-        FW.w("w"+width+" "+height+" "+whW);
-        FW.w("sw"+source.getWidth()+" "+source.getHeight()+" "+whB);
         Bitmap result;
         if(whW==whB)return Bitmap.createScaledBitmap(source,width,height,true);
         if(whW<whB){
@@ -57,7 +64,6 @@ public class SplashActivity extends BaseActivity {
             int cutStart=(source.getHeight()-height)/2;
             result=Bitmap.createBitmap(source,0,cutStart,width,height);
         }
-        FW.w("r"+result.getWidth()+" "+result.getHeight()+" "+GMath.getDec(result.getWidth(),result.getHeight()));
         return result;
     }
     public BaseActivity getContext(){

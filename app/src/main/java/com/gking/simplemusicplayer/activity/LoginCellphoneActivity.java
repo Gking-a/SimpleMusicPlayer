@@ -23,7 +23,6 @@ import okhttp3.Response;
 public class LoginCellphoneActivity extends BaseActivity {
     public static final String TAG="login_cellphone";
     public static final int RequestCode=1000;
-    static LoginBean loginBean=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +30,6 @@ public class LoginCellphoneActivity extends BaseActivity {
         setContext(this);
         Intent result=new Intent();
         setResult(RequestCode,result);
-        if(loginBean!=null){
-            result.putExtra("success",true);
-            finish();
-            return;
-        }
         EditText phone=f(R.id.loginPhone);
         EditText password=f(R.id.loginPassword);
         Intent intent=getIntent();
@@ -71,10 +65,11 @@ public class LoginCellphoneActivity extends BaseActivity {
             JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
             String code=jsonObject.get("code").getAsString();
             if(code.equals("200")){
-                loginBean=new LoginBean(jsonObject,ph,pw);
+                LoginBean loginBean=new LoginBean(jsonObject,ph,pw);
                 makeToast("登录成功");
                 Intent intent=new Intent();
                 intent.putExtra("success",true);
+                intent.putExtra("loginBean",loginBean);
                 setResult(RequestCode,intent);
                 finish();
             }else {

@@ -34,7 +34,6 @@ import gtools.GLibrary;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
 
 public class SettingsActivity extends BaseActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,9 +147,9 @@ public class SettingsActivity extends BaseActivity {
     public static final String LOCKEDNOTIFICATIONSHOW="lockednotificationshow";
     public static final String WINDOW_COLOR="windowcolor";
     public static final String DEFAULT_WINDOW_SHOW="defaultwindow";
-    public static final File SettingsFile =new File("/data/user/0/com.gkingswq.simplemusicplayer/files/Settings");
+    public static final File SettingsFile =new File("/data/user/0/com.gking.simplemusicplayer/files/Settings");
     private static int ver;
-    static GLibrary library;
+    public static GLibrary library;
     public static String get(String key){
         return library.get(key);
     }
@@ -174,33 +173,24 @@ public class SettingsActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
-    static {
-        if(!SettingsFile.exists()){
+    static{
+        if (!SettingsFile.exists()) {
             try {
                 SettingsFile.createNewFile();
-                library= new GLibrary(SettingsFile.getName(), SettingsFile);
+                library = new GLibrary(SettingsFile.getName(), SettingsFile);
 //				lib.create(true);
                 library.connect();
-                library.add(auto_next,true,GLibrary.TYPE_STRING);
-                library.add(play_mode,PLAY_MODE.RANDOM,GLibrary.TYPE_STRING);
-                library.add(window_color,0xffFF0000,GLibrary.TYPE_STRING);
-                library.add("ver",1,GLibrary.TYPE_STRING);
+                library.add(auto_next, true, GLibrary.TYPE_STRING);
+                library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM, GLibrary.TYPE_STRING);
+                library.add(window_color, 0xffFF0000, GLibrary.TYPE_STRING);
+                library.add("ver", 1, GLibrary.TYPE_STRING);
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
             } catch (IOException e) {
             }
         }
-        library= new GLibrary(SettingsFile,true);
-        ver = 1;
-        if(ver >library.getInt("ver")){
-            update();
-        }
-        SettingsActivity.set("ver",ver);
+        library = new GLibrary(SettingsFile, true);
     }
-    private static void update() {
-
-    }
-
     public static final class Params{
         public static final String account_name = "account_name";
         public static final String account_id = "account_id";

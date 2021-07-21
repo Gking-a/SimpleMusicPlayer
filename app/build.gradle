@@ -7,7 +7,7 @@ android {
     buildToolsVersion "29.0.2"
     android { compileOptions.encoding = "UTF-8" }//解决build output输出乱码的问题
     defaultConfig {
-        applicationId "com.gkingswq.simplemusicplayer"
+        applicationId "com.gking.simplemusicplayer"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
