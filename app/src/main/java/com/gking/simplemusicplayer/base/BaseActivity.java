@@ -105,7 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         myApplication.Author.setOnClickListener(onClickListener);
     }
     public void makeToast(Object msg){
-        Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_LONG).show();
+        handler.post(() -> Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_SHORT).show());
     }
     public boolean ifOps(){
         if (Build.VERSION.SDK_INT >= 19) {
@@ -150,7 +150,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    System.out.println(response.body().string());
+
                 }
             });
         }

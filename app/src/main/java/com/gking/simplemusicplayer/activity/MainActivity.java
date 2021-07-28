@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity {
         loadUserSettings();
     }
     private void loadView() {
-        f(R.id.login_first_please).setOnClickListener(v -> startActivity(new Intent(this,LoginCellphoneActivity.class)));
+        f(R.id.login_first_please).setOnClickListener(v -> startActivityForResult(new Intent(this,LoginCellphoneActivity.class),LoginCellphoneActivity.RequestCode));
         playlistFragment=new PlaylistFragment(this,getPlaylistCallback);
         fragments.add(playlistFragment.getView());
         SearchFragment searchFragment=new SearchFragment(this);
@@ -176,6 +176,7 @@ public class MainActivity extends BaseActivity {
                 MenuItem login = nav.getMenu().findItem(R.id.nav_login);
                 LoginBean loginBean = (LoginBean) data.getSerializableExtra("loginBean");
                 login.setTitle(loginBean.name);
+                makeToast("登录成功");
                 f(R.id.login_first_please).setVisibility(View.GONE);
                 SettingsActivity.set(account_phone, loginBean.ph);
                 SettingsActivity.set(account_pw, loginBean.pw);
@@ -187,6 +188,8 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
+
+
     }
 
 }

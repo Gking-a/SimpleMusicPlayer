@@ -10,13 +10,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.gking.simplemusicplayer.MyBroadcastReceiver;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.service.SongService;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Objects;
 
 import gtools.GLibrary;
@@ -41,14 +48,36 @@ public class MyApplicationImpl extends Application
     public MusicPlayer mMusicPlayer=new MusicPlayer();
     public View controlPanel;
     public View windowView;
+    File exceptionFile;
     @Override
     public void onCreate() {
         super.onCreate();
         myApplication=this;
-//        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadView();
         loadSettings();
         startService(new Intent(this, SongService.class));
+    }
+    class MyExceptionCatcher implements Thread.UncaughtExceptionHandler {
+        @Override
+        public void uncaughtException(@NonNull @NotNull Thread t, @NonNull @NotNull Throwable e) {
+            e.printStackTrace();
+            exceptionFile=new File(getFilesDir(),"e");
+            if(!exceptionFile.exists()) {
+                try {
+                    exceptionFile.createNewFile();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+            try {
+                PrintWriter printWriter=new PrintWriter(new FileWriter(exceptionFile));
+                e.printStackTrace(printWriter);
+                printWriter.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
     }
     private void loadView() {
         controlPanel =LayoutInflater.from(this).inflate(R.layout.control,null);

@@ -39,6 +39,7 @@ public class LoginCellphoneActivity extends BaseActivity {
         String dph=intent.getStringExtra("ph");
         String dpw=intent.getStringExtra("pw");
         if(dph!=null&&dpw!=null){
+            makeToast("登录中");
             WebRequest.login_cellphone(dph,dpw,new MyCallBack(dph,dpw));
         }
         Button button=f(R.id.loginLogin);
@@ -51,6 +52,7 @@ public class LoginCellphoneActivity extends BaseActivity {
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();
             if(!(ph==null||pw==null||ph.equals("")||pw.equals("")||ph.length()!=11)){
+                makeToast("登录中");
                 WebRequest.login_cellphone(ph, pw, new MyCallBack(ph,pw));
             }else {
                 makeToast("账号密码格式错误");
@@ -71,28 +73,24 @@ public class LoginCellphoneActivity extends BaseActivity {
         }
         @Override
         public void onFailure(@NotNull Call call, @NotNull IOException e) {
-            makeToast("登陆失败");
+            makeToast("登录失败");
         }
         @Override
         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
             String body=response.body().string();
+            System.out.println(body);
             JsonObject jsonObject=JsonParser.parseString(body).getAsJsonObject();
             String code=jsonObject.get("code").getAsString();
             if(code.equals("200")){
                 LoginBean loginBean=new LoginBean(jsonObject,ph,pw);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        makeToast("登录成功");
-                    }
-                });
                 Intent intent=new Intent();
                 intent.putExtra("success",true);
                 intent.putExtra("loginBean",loginBean);
                 setResult(RequestCode,intent);
                 finish();
             }else {
-                makeToast("登录失败 "+jsonObject.get("msg").getAsString());
+                String msg=jsonObject.get("msg").getAsString()!=null?jsonObject.get("msg").getAsString():jsonObject.get("message").getAsString();
+                makeToast("登录失败 "+msg);
             }
         }
     }
