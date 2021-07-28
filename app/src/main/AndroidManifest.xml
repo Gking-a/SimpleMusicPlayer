@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.gking.simplemusicplayer"><!-- 完全的网络访问权限 -->
+    package="com.gking.simplemusicplayer">
+    <!-- 完全的网络访问权限 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 防止手机休眠 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 读取您的 SD 卡中的内容 -->
@@ -16,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.EmptyActivity"></activity>
         <activity android:name=".activity.ChoosePlaylistActivity" />
 
         <service
@@ -52,8 +54,7 @@
         <receiver
             android:name=".MyBroadcastReceiver"
             android:enabled="true"
-            android:exported="true">
-        </receiver>
+            android:exported="true"></receiver>
 
         <meta-data
             android:name="android.max_aspect"

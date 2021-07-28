@@ -267,6 +267,7 @@ public class SongActivity extends BaseActivity {
         }
         @Override
         public void onViewAttachedToWindow(@NonNull @NotNull MyVH holder) {
+            if(true)return;
             LyricManager manager = onSeekBarChangeListener.lyricManager;
             if (manager == null) return;
             int position = manager.getPosition(musicPlayer.getCurrentPosition());

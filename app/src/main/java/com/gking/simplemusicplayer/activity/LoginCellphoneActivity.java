@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
@@ -40,6 +43,11 @@ public class LoginCellphoneActivity extends BaseActivity {
         }
         Button button=f(R.id.loginLogin);
         button.setOnClickListener(v -> {
+            RadioButton radioButton=f(R.id.agree_deal);
+            if(!radioButton.isChecked()){
+                makeToast("请先同意用户协议和隐私政策");
+                return;
+            }
             String ph=phone.getText().toString(),
                     pw=password.getText().toString();
             if(!(ph==null||pw==null||ph.equals("")||pw.equals("")||ph.length()!=11)){
@@ -48,6 +56,12 @@ public class LoginCellphoneActivity extends BaseActivity {
                 makeToast("账号密码格式错误");
             }
         });
+        Intent i1=new Intent(this,EmptyActivity.class);
+        i1.putExtra("text",R.string.user_agreement);
+        f(R.id.user_agreement_tv).setOnClickListener(v -> startActivity(i1));
+        Intent i2=new Intent(this,EmptyActivity.class);
+        i2.putExtra("text",R.string.privacy_policy);
+        f(R.id.privacy_policy_tv).setOnClickListener(v -> startActivity(i2));
     }
     class MyCallBack implements Callback{
         String ph,pw;
@@ -66,7 +80,12 @@ public class LoginCellphoneActivity extends BaseActivity {
             String code=jsonObject.get("code").getAsString();
             if(code.equals("200")){
                 LoginBean loginBean=new LoginBean(jsonObject,ph,pw);
-                makeToast("登录成功");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        makeToast("登录成功");
+                    }
+                });
                 Intent intent=new Intent();
                 intent.putExtra("success",true);
                 intent.putExtra("loginBean",loginBean);

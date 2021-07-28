@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="重要信息：\n\t请使用网易云音乐账号登录，本应用不会收集任何个人信息"
+        android:textColor="#ff0000"
+        android:textSize="20sp"/>
     <EditText
         android:id="@+id/loginPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="11"
-        android:hint="phone"
+        android:hint="手机号"
         android:inputType="phone" />
 
     <EditText
@@ -16,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="password"
+        android:hint="密码"
         android:inputType="textPassword" />
 
     <Button
@@ -24,5 +30,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#ffff0000"
-        android:text="Login" />
+        android:text="登录" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/agree_deal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="勾选表示您同意"/>
+        <TextView
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="《用户协议》"
+            android:id="@+id/user_agreement_tv"
+            android:textColor="#0000ff"
+            android:autoLink="all"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="和"/>
+        <TextView
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="《隐私政策》"
+            android:id="@+id/privacy_policy_tv"
+            android:textColor="#0000ff"
+            android:autoLink="all"/>
+    </LinearLayout>
 </LinearLayout>
