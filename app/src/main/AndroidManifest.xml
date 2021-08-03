@@ -16,9 +16,13 @@
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
+        android:screenOrientation="portrait"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.EmptyActivity"></activity>
-        <activity android:name=".activity.ChoosePlaylistActivity" />
+        <activity
+            android:name=".activity.EmptyActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.ChoosePlaylistActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".service.BackgroundService"
@@ -31,9 +35,11 @@
             android:name=".service.SongService"
             android:launchMode="singleInstance" />
 
-        <activity android:name=".activity.PlaylistActivity" />
+        <activity android:name=".activity.PlaylistActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activity.LoginCellphoneActivity" />
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name">

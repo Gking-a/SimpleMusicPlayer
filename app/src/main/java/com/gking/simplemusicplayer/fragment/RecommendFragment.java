@@ -48,7 +48,7 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
                 String body = response.body().string();
                 JsonArray jsonArray=JsonUtil.getAsJsonArray(JsonParser.parseString(body).getAsJsonObject(),"data","dailySongs");
                 ArrayList<SongBean> songBeans = new ArrayList<>(10);
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < jsonArray.size(); i++) {
                     songBeans.add(new SongBean(jsonArray.get(i).getAsJsonObject()));
                 }
                 Handler handler = getContext().handler;

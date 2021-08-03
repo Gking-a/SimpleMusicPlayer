@@ -3,6 +3,7 @@ package com.gking.simplemusicplayer.impl;
 import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,26 +15,20 @@ import androidx.annotation.NonNull;
 
 import com.gking.simplemusicplayer.MyBroadcastReceiver;
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.SettingsActivity;
+import com.gking.simplemusicplayer.activity.EmptyActivity;
 import com.gking.simplemusicplayer.service.SongService;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Objects;
 
-import gtools.GLibrary;
-import gtools.managers.GLibraryManager;
-
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
+import cn.gking.gtools.GLibrary;
+import cn.gking.gtools.managers.GLibraryManager;
 
 public class MyApplicationImpl extends Application
 {
@@ -56,12 +51,19 @@ public class MyApplicationImpl extends Application
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadView();
         loadSettings();
-        startService(new Intent(this, SongService.class));
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, SongService.class));
+        }else {
+            startService(new Intent(this, SongService.class));
+        }
     }
     class MyExceptionCatcher implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(@NonNull @NotNull Thread t, @NonNull @NotNull Throwable e) {
             e.printStackTrace();
+            Intent i=new Intent(getApplicationContext(), EmptyActivity.class);
+            i.putExtra("text_str",e.getCause()+e.getMessage()+ Arrays.toString(e.getStackTrace()));
+            startActivity(i);
             exceptionFile=new File(getFilesDir(),"e");
             if(!exceptionFile.exists()) {
                 try {

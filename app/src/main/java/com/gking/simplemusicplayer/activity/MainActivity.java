@@ -4,10 +4,8 @@
 package com.gking.simplemusicplayer.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +38,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import gtools.util.GTimer;
+import cn.gking.gtools.util.GTimer;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;

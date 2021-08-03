@@ -15,16 +15,6 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.util.GMath;
 
-import java.io.IOException;
-
-import gtools.GLibrary;
-
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
-
 @Deprecated
 public class SplashActivity extends BaseActivity {
     

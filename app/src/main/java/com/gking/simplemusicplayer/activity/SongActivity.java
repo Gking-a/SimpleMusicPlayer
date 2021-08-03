@@ -130,11 +130,11 @@ public class SongActivity extends BaseActivity {
         f(R.id.song_next).setOnClickListener(v -> musicPlayer.next(null));
         f(R.id.song_last).setOnClickListener(v -> musicPlayer.last(null));
         f(R.id.song_pause).setOnClickListener(v -> musicPlayer.pause());
-        f(R.id.song_window).setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), BackgroundService.class);
-            intent.putExtra(BackgroundService.Type.Type, BackgroundService.Type.Window);
-            startService(intent);
-        });
+//        f(R.id.song_window).setOnClickListener(v -> {
+//            Intent intent = new Intent(getContext(), BackgroundService.class);
+//            intent.putExtra(BackgroundService.Type.Type, BackgroundService.Type.Window);
+//            startService(intent);
+//        });
         f(R.id.song_toolbar_back).setOnClickListener(v -> finish());
         progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
         volume = f(R.id.song_sound_seekbar);

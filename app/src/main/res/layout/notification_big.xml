@@ -54,12 +54,6 @@
             android:layout_height="56dp"
             android:layout_width="56dp"
 			android:background="@drawable/next"/>
-        <ImageButton
-            android:id="@+id/notification_window"
-            android:layout_height="56dp"
-            android:layout_width="56dp"
-            android:src="@drawable/window"/>
-
 	</LinearLayout>
 
 </LinearLayout>

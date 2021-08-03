@@ -6,8 +6,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.manager.LoginBean;
@@ -29,7 +27,7 @@ public class LoginCellphoneActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_cellphone);
+        setContentView(R.layout.activity_login_cellphone);
         setContext(this);
         Intent result=new Intent();
         setResult(RequestCode,result);

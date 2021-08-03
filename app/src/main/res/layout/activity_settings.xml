@@ -34,5 +34,5 @@
         app:layout_constraintTop_toBottomOf="@id/about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/money"/>
+        android:background="@drawable/ztzsfewcei6kj"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,8 @@
  */
 
 package com.gking.simplemusicplayer.util;
-import gtools.managers.GHolder;
+
+import cn.gking.gtools.managers.GHolder;
 
 public class GCounting {
     private static GHolder<String,Integer> h=new GHolder<>();

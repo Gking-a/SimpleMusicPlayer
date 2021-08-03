@@ -1,4 +1,4 @@
 rootProject.name='SimpleMusicPlayer'
 include ':app'
-include ':gtools'
+include ':com.gking.gtools'
 include ':GTools'

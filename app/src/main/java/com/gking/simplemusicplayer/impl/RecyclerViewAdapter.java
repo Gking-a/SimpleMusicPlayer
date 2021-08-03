@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import gtools.managers.GHolder;
-
+import cn.gking.gtools.managers.GHolder;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.VHolder> {
     List<GHolder<Object,String>> content;
     Context context;

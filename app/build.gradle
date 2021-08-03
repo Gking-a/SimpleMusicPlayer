@@ -17,10 +17,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
-        }
-        debug {
-            signingConfig signingConfigs.debug
         }
     }
     buildFeatures {
@@ -53,5 +49,4 @@ dependencies {
     implementation 'com.hz.android.keyboardlayout:library:1.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation 'androidx.preference:preference:1.1.1'
 }

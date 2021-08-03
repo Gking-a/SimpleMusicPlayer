@@ -1,14 +1,18 @@
 package com.gking.simplemusicplayer.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+
+import androidx.core.app.NotificationCompat;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.SongActivity;
@@ -45,14 +49,33 @@ public class SongService extends Service {
         registerReceiver(application.myBroadcastReceiver,application.intentFilter);
         smallView =new RemoteViews(getPackageName(), R.layout.notification_small);
         bigView = new RemoteViews(getPackageName(), R.layout.notification_big);
-        notification = new Notification.Builder(this)
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            final String CHANNEL_ID = "com.gking.simplemusicplayer.notification.channel.id";
+//设定的通知渠道名称
+            String channelName = "com.gking.simplemusicplayer.notification.channel.name";
+            //构建通知渠道
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("通知");
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+            builder.setSmallIcon(R.drawable.ic_launcher_foreground) //设置通知图标
+                    .setContentTitle("")//设置通知标题
+                    .setContentText("")//设置通知内容
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setCustomContentView(smallView)
+                    .setCustomBigContentView(bigView);
+            notificationManager.createNotificationChannel(channel);
+            notification=builder.build();
+        }
+        else {notification = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContent(smallView)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .build();
-        notification.contentView=smallView;
-        notification.bigContentView=bigView;
+            notification.contentView=smallView;
+            notification.bigContentView=bigView;
+        }
         musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         loadView0();
         timeRunnable = new TimeRunnable();

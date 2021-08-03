@@ -15,6 +15,9 @@ public class EmptyActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empty);
         TextView textView=f(R.id.activity_empty_tv);
-        textView.setText(getIntent().getIntExtra("text",0));
+        int res = getIntent().getIntExtra("text", 0);
+        textView.setText(res);
+        if(res==0)
+            textView.setText(getIntent().getStringExtra("text_str"));
     }
 }
