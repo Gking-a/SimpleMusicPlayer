@@ -3,6 +3,7 @@ package com.gking.simplemusicplayer.impl;
 import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -36,7 +37,6 @@ public class MyApplicationImpl extends Application
     public static MyApplicationImpl myApplication;
     public MyBroadcastReceiver myBroadcastReceiver;
     public IntentFilter intentFilter;
-
     public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
     }
@@ -57,17 +57,40 @@ public class MyApplicationImpl extends Application
             startService(new Intent(this, SongService.class));
         }
     }
+    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+
+            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+
+            } else {
+                mMusicPlayer.pause();
+                AudioManager audioManager= (AudioManager) getSystemService(AUDIO_SERVICE);
+                audioManager.abandonAudioFocus(this);
+            }
+        }
+    };;
+
+    public void requestFocus(){
+        AudioManager audioManager= (AudioManager) getSystemService(AUDIO_SERVICE);
+        audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    }
     class MyExceptionCatcher implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(@NonNull @NotNull Thread t, @NonNull @NotNull Throwable e) {
             e.printStackTrace();
-            Intent i=new Intent(getApplicationContext(), EmptyActivity.class);
-            i.putExtra("text_str",e.getCause()+e.getMessage()+ Arrays.toString(e.getStackTrace()));
-            startActivity(i);
             exceptionFile=new File(getFilesDir(),"e");
             if(!exceptionFile.exists()) {
                 try {
                     exceptionFile.createNewFile();
+                    FileWriter fw=new FileWriter(exceptionFile);
+                    fw.write(e.getCause()+e.getMessage());
+                    for (int i = 0; i < e.getStackTrace().length; i++) {
+                        fw.write(e.getStackTrace()[i].toString());
+                    }
+                    fw.flush();
+                    fw.close();
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
@@ -79,6 +102,9 @@ public class MyApplicationImpl extends Application
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+            Intent i=new Intent(getApplicationContext(), EmptyActivity.class);
+            i.putExtra("text_str",e.getCause()+e.getMessage()+ Arrays.toString(e.getStackTrace()));
+            startActivity(i);
         }
     }
     private void loadView() {

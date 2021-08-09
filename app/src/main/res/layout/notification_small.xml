@@ -29,7 +29,7 @@
         android:layout_height="56dp"
         android:id="@+id/notification_pause"/>
     <ImageButton
-        android:background="@drawable/w"
+        android:background="@drawable/window"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:id="@+id/notification_window"/>

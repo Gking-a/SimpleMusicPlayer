@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -25,6 +26,7 @@ import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.ControlableThread;
 import com.gking.simplemusicplayer.util.Util;
 
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 import static com.gking.simplemusicplayer.service.BackgroundService.Type;
 import static com.gking.simplemusicplayer.service.BackgroundService.isShowing;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
@@ -39,9 +41,7 @@ public class SongService extends Service {
     SongBean song;
     private Notification notification;
     private RemoteViews bigView;
-    private TimeRunnable timeRunnable;
     private MusicPlayer.OnSongBeanChangeListener onSongBeanChangeListener;
-    private ControlableThread controlableThread;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -78,13 +78,8 @@ public class SongService extends Service {
         }
         musicPlayer= ((MyApplicationImpl) getApplication()).mMusicPlayer;
         loadView0();
-        timeRunnable = new TimeRunnable();
-        controlableThread = new ControlableThread(timeRunnable);
-        controlableThread.setSuspend(true);
-//        controlableThread.start();
         onSongBeanChangeListener=new MusicPlayer.OnSongBeanChangeListener() {
             private PowerManager.WakeLock wakeLock;
-            boolean p=false,l=false;
             @Override
             public void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean) {
                 song=songBean;
@@ -93,21 +88,29 @@ public class SongService extends Service {
             public void onPrepared(MusicPlayer musicPlayer) {
                 loadView1();
                 loadView2();
-                p=true;
-                controlableThread.setSuspend(!(p&&l));
                 wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG);
                 wakeLock.acquire(musicPlayer.getDuration());
             }
             @Override
-            public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager) {
-                l=true;
-                controlableThread.setSuspend(!(p&&l));
+            public void onFinish(MusicPlayer musicPlayer) {
+                wakeLock.release();
+                MyApplicationImpl.handler.post(()->{
+                    TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
+                    textView.setText("");
+                });
+
             }
             @Override
-            public void onFinish(MusicPlayer musicPlayer) {
-                p=false;
-                l=false;
-                controlableThread.setSuspend(!(p&&l));
+            public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean) {
+            }
+            @Override
+            public void onLyricChange(MusicPlayer musicPlayer, int position, String lyric) {
+                if(isShowing) {
+                    MyApplicationImpl.handler.post(()->{
+                        TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
+                        textView.setText(lyric);
+                    });
+                }
             }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
@@ -120,36 +123,13 @@ public class SongService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(musicPlayer==null)
+            musicPlayer=myApplication.mMusicPlayer;
         musicPlayer.notify(song,onSongBeanChangeListener);
         if(intent.getStringExtra("changeMode")!=null){
             changeMode();
         }
         return super.onStartCommand(intent, flags, startId);
-    }
-    class TimeRunnable implements Runnable{
-        Runnable lyricRunnable = () -> {
-            String lyric = LyricManager.Instance.getLyric(musicPlayer.getCurrentPosition());
-            if(lyric==null)return;
-            TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
-            textView.setText(lyric);
-        };
-        @Override
-        public final void run() {
-            try {
-                sleep(150);
-            } catch (InterruptedException e) {
-            }
-            if (song != null) {
-//                bigView.setTextViewText(R.id.notification_time, time2str(musicPlayer.getCurrentPosition()));
-//                bigView.setProgressBar(R.id.notification_progress, musicPlayer.getDuration(), musicPlayer.getCurrentPosition(), false);
-                changeModeView();
-                NotificationManager manager = ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
-                manager.notify(NOTIFICATION_ID, notification);
-                if (isShowing) {
-                    MyApplicationImpl.handler.post(lyricRunnable);
-                }
-            }
-        }
     }
     private void loadView0() {
         Intent i=new Intent(this,BackgroundService.class);
@@ -206,7 +186,6 @@ public class SongService extends Service {
     public void changeModeView(){
         String mode=SettingsActivity.get(SettingsActivity.Params.play_mode);
         int bitmap_res = R.drawable.close;
-        if(mode.equals(PLAY_MODE.NONE))bitmap_res=R.drawable.close;
         if(mode.equals(PLAY_MODE.LOOP))bitmap_res=R.drawable.loop;
         if(mode.equals(PLAY_MODE.RANDOM))bitmap_res=R.drawable.random;
         if(mode.equals(PLAY_MODE.ORDER))bitmap_res=R.drawable.order;
@@ -216,7 +195,6 @@ public class SongService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(((MyApplicationImpl) getApplication()).myBroadcastReceiver);
-        controlableThread.interrupt();
         musicPlayer.removeOnSongBeanChangeListener(onSongBeanChangeListener);
         stopForeground(true);
     }

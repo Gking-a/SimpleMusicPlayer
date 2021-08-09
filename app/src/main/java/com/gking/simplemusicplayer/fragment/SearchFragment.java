@@ -266,7 +266,7 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
                 List<SongBean> music = new ArrayList<>();
                 for (int i = 0; i < songs.size(); i++) {
                     JsonObject song = songs.get(i).getAsJsonObject();
-                    SongBean bean = new SongBean(song);
+                    SongBean bean = new SongBean(null,song);
                     SongManager.getInstance().addSong(bean);
                     music.add(bean);
                 }

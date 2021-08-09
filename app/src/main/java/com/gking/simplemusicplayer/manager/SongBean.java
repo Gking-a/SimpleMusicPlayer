@@ -1,8 +1,5 @@
 package com.gking.simplemusicplayer.manager;
 
-import android.graphics.Bitmap;
-
-import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -43,4 +40,5 @@ public class SongBean implements Serializable {
     public String id, name, author,pid;
     public String coverUrl;
     public SongBean next, last;
+    public LyricBean lyric;
 }

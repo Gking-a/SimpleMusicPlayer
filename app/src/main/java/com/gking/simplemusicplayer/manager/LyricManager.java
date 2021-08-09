@@ -25,7 +25,6 @@ public class LyricManager {
         if (p>=lyricBean.lyric.size())return null;
         return lyricBean.lyric.get(p);
     }
-
     interface OnLyricChangedListener {
         public void onLyricChanged(long millsec,String lyric);
     }
@@ -36,11 +35,5 @@ public class LyricManager {
     public void setLyricBean(LyricBean lyricBean) {
         this.lyricBean = lyricBean;
     }
-
-    public static LyricManager Instance=new LyricManager();
     private LyricManager(){}
-    public static LyricManager getInstance(LyricBean lyricBean) {
-        Instance.lyricBean=lyricBean;
-        return Instance;
-    }
 }

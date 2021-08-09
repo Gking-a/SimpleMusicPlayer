@@ -19,6 +19,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -30,8 +35,9 @@ import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
 
-public class MusicPlayer extends MediaPlayer {
+public class MusicPlayer extends MediaPlayer{
     public static final String Outer="http://music.163.com/song/media/outer/url?id=";
+    ScheduledExecutorService scheduledExecutorService= Executors.newScheduledThreadPool(1);
     public MusicPlayer player=this;
     private boolean lockProgress=false;
     public void setLockProgress(boolean lockProgress) {
@@ -39,8 +45,50 @@ public class MusicPlayer extends MediaPlayer {
     }
     private SongBean musicBean=null;
     private boolean prepared=false,lyricLoaded=false;
+    int lyricPosition=0;
+    String lyricString;
     MusicPlayer(){
         super();
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if(musicBean==null)return;
+                LyricBean lyricBean=musicBean.lyric;
+                if(lyricBean==null)return;
+                int progress=getCurrentPosition();
+                int p=getPosition(progress,lyricBean);
+                if(lyricPosition==p)return;
+                lyricPosition=p;
+                lyricString = this.getLyric(p, lyricBean);
+                try{
+                    for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
+                        if(listener!=null) listener.onLyricChange(player,p,lyricString);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+            private int getPosition(int msec,LyricBean lyricBean){
+                if(lyricBean==null)return -1;
+                if(lyricBean.nolyric)return -1;
+                LinkedList<Integer> time = lyricBean.time;
+                for (int i = 0; i < time.size()-1; i++) {
+                    if(i==time.size()-1)break;
+                    int last=time.get(i);
+                    int next=time.get(i+1);
+                    if(last<=msec&&msec<=next)return i-1;
+                }
+                return time.size()-1;
+            }
+            private String getLyric(int position,LyricBean lyricBean){
+                if(lyricBean==null)return null;
+                if(lyricBean.nolyric)return null;
+                if(position<0)return null;
+                if (position>=lyricBean.lyric.size())return null;
+                return lyricBean.lyric.get(position);
+            }
+        }, 0, 500, TimeUnit.MILLISECONDS);
         setOnErrorListener((mp, what, extra) -> true);
         setOnCompletionListener((mp -> {
             //可以尝试解耦,将music player提取出来
@@ -61,10 +109,11 @@ public class MusicPlayer extends MediaPlayer {
         }
     }
     public void notify(SongBean songBean,OnSongBeanChangeListener onSongBeanChangeListener){
+        if(musicBean==null)return;
         if(getMusicBean()!=songBean)
             onSongBeanChangeListener.onSongBeanChange(this,getMusicBean());
         if(prepared)onSongBeanChangeListener.onPrepared(this);
-        if(lyricLoaded)onSongBeanChangeListener.onLyricLoaded(this,LyricManager.Instance.getLyricBean(),LyricManager.Instance);
+        if(musicBean.lyric!=null)onSongBeanChangeListener.onLyricLoaded(player,musicBean.lyric);
     }
     public SongBean getMusicBean() {
         return musicBean;
@@ -80,27 +129,21 @@ public class MusicPlayer extends MediaPlayer {
         if (!focus&&this.musicBean != null) {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
+        myApplication.requestFocus();
         this.musicBean=musicBean;
         for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
             if(listener!=null) listener.onSongBeanChange(player,musicBean);
         }
         Runnable runnable = () -> {
             try {
-                try {
-                    player.stop();
-                } catch (Exception e) {
-                }
-                try {
-                    reset();
-                } catch (Exception e) {
-                }
+                stop();
+                reset();
                 System.out.println(musicBean.id);
                 WebRequest.check_music(musicBean.id, new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
                         e.printStackTrace();
                     }
-
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String body = response.body().string();
@@ -128,11 +171,10 @@ public class MusicPlayer extends MediaPlayer {
                                     } else {
                                         lyricBean = new LyricBean(jsonObject);
                                     }
-                                    LyricManager instance = LyricManager.getInstance(lyricBean);
-                                    for (OnSongBeanChangeListener listener : onSongBeanChangeListenerList) {
-                                        if(listener!=null)listener.onLyricLoaded(player, lyricBean, instance);
+                                    musicBean.lyric=lyricBean;
+                                    for(OnSongBeanChangeListener onSongBeanChangeListener:onSongBeanChangeListenerList){
+                                        if(onSongBeanChangeListener!=null)onSongBeanChangeListener.onLyricLoaded(player,lyricBean);
                                     }
-                                    lyricLoaded=true;
                                 }
                             });
                         }
@@ -177,12 +219,12 @@ public class MusicPlayer extends MediaPlayer {
         });
     }
     @Override
-    public void stop() throws IllegalStateException {
+    public void stop(){
         try { super.stop(); }catch (Exception e){ }
     }
     @Override
-    public void start() throws IllegalStateException {
-        try { super.start(); }catch (Exception e){ }
+    public void start(){
+        try { super.start();}catch (Exception e){ }
     }
     @Override
     public int getCurrentPosition() {
@@ -233,7 +275,16 @@ public class MusicPlayer extends MediaPlayer {
     public interface OnSongBeanChangeListener{
         void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean);
         void onPrepared(MusicPlayer musicPlayer);
-        void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager);
         void onFinish(MusicPlayer musicPlayer);
+        void onLyricLoaded(MusicPlayer musicPlayer,LyricBean lyricBean);
+        void onLyricChange(MusicPlayer musicPlayer,int position,String lyric);
+    }
+
+    public int getLyricPosition() {
+        return lyricPosition;
+    }
+
+    public String getLyricString() {
+        return lyricString;
     }
 }

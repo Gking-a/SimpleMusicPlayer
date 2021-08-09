@@ -24,7 +24,7 @@ public class Util {
         };
     }
     public static void getCover(String url,OnBitmapLoaded onBitmapLoaded){
-        getCover(url,50,50,onBitmapLoaded);
+        getCover(url,70,70,onBitmapLoaded);
     }
     public static void getCover(String url, int x, int y,OnBitmapLoaded onBitmapLoaded){
         Bitmap bitmap=cache.get(url);

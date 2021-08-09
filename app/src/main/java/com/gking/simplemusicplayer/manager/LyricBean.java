@@ -12,8 +12,7 @@ public class LyricBean {
     public boolean isNolyric() {
         return nolyric;
     }
-
-    boolean nolyric=false;
+    public boolean nolyric=false;
     public LyricBean(){
         nolyric=true;
     }
@@ -35,8 +34,8 @@ public class LyricBean {
         }
         lrc=null;
     }
-    LinkedList<Integer> time=new LinkedList<>();
-    LinkedList<String> lyric=new LinkedList<>();
+    public LinkedList<Integer> time=new LinkedList<>();
+    public LinkedList<String> lyric=new LinkedList<>();
 
     public LinkedList<String> getLyric() {
         return lyric;

@@ -60,35 +60,52 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
         controlableThread.setSuspend(true);
         controlableThread.start();
         onSongBeanChangeListener = new MusicPlayer.OnSongBeanChangeListener() {
-            boolean p=false,l=false;
+            boolean p=false;
             @Override
             public void onSongBeanChange(MusicPlayer musicPlayer, SongBean songBean) {
                 song = songBean;
+                handler.post(()->{
+                    ((TextView) f(R.id.song_toolbar_title)).setText(song.name);
+                    progress.setMax(musicPlayer.getDuration());
+                    ((TextView) f(R.id.song_toolbar_author)).setText(song.author);
+                });
             }
             @Override
             public void onPrepared(MusicPlayer musicPlayer) {
-                handler.post(reset);
                 p=true;
-                controlableThread.setSuspend(!(p&&l));
+                handler.post(()->{
+                    TextView tv = f(R.id.song_time_duration);
+                    tv.setText(time2str(musicPlayer.getDuration()));
+                    progress.setMax(musicPlayer.getDuration());
+                });
+                controlableThread.setSuspend(!p);
             }
             @Override
-            public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean, LyricManager lyricManager) {
+            public void onFinish(MusicPlayer musicPlayer) {
+                p=false;
+                controlableThread.setSuspend(!p);
+            }
+            @Override
+            public void onLyricLoaded(MusicPlayer musicPlayer, LyricBean lyricBean) {
                 loadLyric = () -> {
                     myAdapter = new MyAdapter(lyricBean);
                     lyricView.setAdapter(myAdapter);
                     myAdapter.notifyDataSetChanged();
-                    onSeekBarChangeListener.lyricManager = lyricManager;
                 };
                 handler.post(loadLyric);
-                l=true;
-                controlableThread.setSuspend(!(p&&l));
             }
-
+            Runnable r1 = new Runnable() {
+                @Override
+                public void run() {
+                    myAdapter.showLyric();
+                }
+            };
             @Override
-            public void onFinish(MusicPlayer musicPlayer) {
-                p=false;
-                l=false;
-                controlableThread.setSuspend(!(p&&l));
+            public void onLyricChange(MusicPlayer musicPlayer, int position, String lyric) {
+                if(myAdapter!=null) {
+                    handler.post(r1);
+                }
+
             }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
@@ -98,19 +115,15 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
     protected void onResume() {
         super.onResume();
         volume.setProgress(((AudioManager) getSystemService(AUDIO_SERVICE)).getStreamVolume(AudioManager.STREAM_MUSIC));
+        if (myAdapter != null) {
+            myAdapter.showLyric();
+        }
     }
-    Runnable reset = () -> {
-        ((TextView) f(R.id.song_toolbar_title)).setText(song.name);
-        progress.setMax(musicPlayer.getDuration());
-        TextView tv = f(R.id.song_time_duration);
-        tv.setText(time2str(musicPlayer.getDuration()));
-        ((TextView) f(R.id.song_toolbar_author)).setText(song.author);
-    };
     Runnable updata_progress = new Runnable() {
         @Override
         public void run() {
             int currentPosition = musicPlayer.getCurrentPosition();
-            if (!progress.isPressed()) {
+            if (!progress.isPressed()){
                 progress.setProgress(currentPosition);
             }
         }
@@ -152,53 +165,35 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
                 }
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
     }
-
     @Override
-    public void onSongDelete(String pid, SongBean songBean) {
-
-    }
-
+    public void onSongDelete(String pid, SongBean songBean) {}
     class TimeRunnable implements Runnable {
-        private int position = 0;
         @Override
         public void run() {
             try {
-                Thread.sleep(900);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             if (song != null) {
                 handler.post(updata_progress);
                 handler.post(changeModeView);
-                {
-                    LyricManager manager = onSeekBarChangeListener.lyricManager;
-                    if (manager == null) return;
-                    int position = manager.getPosition(musicPlayer.getCurrentPosition());
-                    if (position < 0) return;
-                    if (this.position == position) return;
-                    this.position = position;
-//                    handler.post(set_lyric);
-                }
             }
         }
     }
     RecyclerView lyricView;
     class MyOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         final MyThread thread = new MyThread();
-        LyricManager lyricManager;
-
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             thread.text = time2str(progress);
@@ -277,28 +272,28 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
         }
         @Override
         public void onViewAttachedToWindow(@NonNull @NotNull MyVH holder) {
-            if(true)return;
-            LyricManager manager = onSeekBarChangeListener.lyricManager;
-            if (manager == null) return;
-            int position = manager.getPosition(musicPlayer.getCurrentPosition());
+            int position = musicPlayer.getLyricPosition();
             if (holder.getLayoutPosition() == position) {
                 last = holder.Lyric;
                 if (last != null) {
                     int color = 0xFFff0000;
-                    try{}catch (Exception e){e.printStackTrace();}
                     last.setTextColor(color);
                 }
+            }else {
+                holder.Lyric.setTextColor(0xff000000);
             }
         }
+        public void showLyric(){
+            showLyric(musicPlayer.getLyricPosition());
+        }
         public void showLyric(int position) {
-            if(true)return;
             if (last != null) {
                 last.setTextColor(0xFF000000);
             }
             MyVH vh = (MyVH) lyricView.findViewHolderForAdapterPosition(position);
             if (vh != null) {
                 last = vh.Lyric;
-                last.setTextColor(0xFF00FF00);
+                last.setTextColor(0xFFff0000);
             }
             lyricView.scrollToPosition(position);
         }
