@@ -24,6 +24,7 @@ public class SongDialog2 extends BaseBottomDialog<BaseActivity> {
         this.songBean=bean;
         show();
     }
+    @NotNull
     @Override
     protected View loadView() {
         View view=View.inflate(getContext(), R.layout.dialog_song1,null);

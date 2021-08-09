@@ -14,7 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SongBean implements Serializable {
-    public SongBean(JsonObject song) {
+    public SongBean(String pid,JsonObject song) {
+        this.pid=pid;
         if (song == null) return;
         id = JsonUtil.getAsString(song, "id");
         name = JsonUtil.getAsString(song, "name");
@@ -32,7 +33,6 @@ public class SongBean implements Serializable {
         this.name = name;
         this.author = author;
     }
-
     public SongBean(String id, String name, String author, SongBean next, SongBean last) {
         this.id = id;
         this.name = name;
@@ -40,8 +40,7 @@ public class SongBean implements Serializable {
         this.next = next;
         this.last = last;
     }
-
-    public String id, name, author;
+    public String id, name, author,pid;
     public String coverUrl;
     public SongBean next, last;
 }

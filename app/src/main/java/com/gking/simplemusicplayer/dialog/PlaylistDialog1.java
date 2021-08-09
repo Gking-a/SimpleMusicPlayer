@@ -34,6 +34,7 @@ public class PlaylistDialog1 extends BaseBottomDialog {
         this.playlistBean=playlistBean;
         super.show();
     }
+    @NotNull
     @Override
     protected View loadView() {
         View view=View.inflate(getActivity(), R.layout.dialog_playlist1,null);

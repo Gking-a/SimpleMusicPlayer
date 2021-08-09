@@ -3,7 +3,6 @@
 
 package com.gking.simplemusicplayer.base;
 
-import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Intent;
 import android.os.Binder;
@@ -20,6 +19,7 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
+import com.gking.simplemusicplayer.interfaces.Operable;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -36,7 +36,7 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements Operable<BaseActivity> {
     public <T extends View> T f(int id) {
         return super.findViewById(id);
     }
@@ -147,7 +147,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
                 }
-
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
 

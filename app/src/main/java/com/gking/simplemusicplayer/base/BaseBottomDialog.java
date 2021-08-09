@@ -9,7 +9,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
-import com.gking.simplemusicplayer.R;
+import com.gking.simplemusicplayer.interfaces.Operable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +17,10 @@ public abstract class BaseBottomDialog<T extends Activity> extends BaseDialog<T>
 
     public BaseBottomDialog(@NonNull @NotNull T context) {
         super(context);
+    }
+
+    public BaseBottomDialog(Operable<? extends T> operable) {
+        super(operable);
     }
 
     @Override

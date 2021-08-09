@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.dialog.SongDialog1;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
+import com.gking.simplemusicplayer.interfaces.SongOperable;
 import com.gking.simplemusicplayer.manager.LyricBean;
 import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
@@ -32,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SongActivity extends BaseActivity {
+public class SongActivity extends BaseActivity implements SongOperable<BaseActivity>{
     MusicPlayer musicPlayer;
     SongBean song = null;
     private MyOnSeekBarChangeListener onSeekBarChangeListener = new MyOnSeekBarChangeListener();
@@ -136,6 +138,8 @@ public class SongActivity extends BaseActivity {
 //            startService(intent);
 //        });
         f(R.id.song_toolbar_back).setOnClickListener(v -> finish());
+        f(R.id.song_more).setOnClickListener(v -> {new SongDialog1(this).show(song.pid,song);
+        });
         progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
         volume = f(R.id.song_sound_seekbar);
         volume.setMax(((AudioManager) getSystemService(AUDIO_SERVICE)).getStreamMaxVolume(AudioManager.STREAM_MUSIC));
@@ -160,6 +164,12 @@ public class SongActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    public void onSongDelete(String pid, SongBean songBean) {
+
+    }
+
     class TimeRunnable implements Runnable {
         private int position = 0;
         @Override

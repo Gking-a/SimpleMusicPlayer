@@ -34,6 +34,7 @@ public class PlaylistDialog2 extends BaseBottomDialog {
         super(context);
         this.playlistFragment=playlistFragment;
     }
+    @NotNull
     @Override
     protected View loadView() {
         View view = View.inflate(getContext(), R.layout.dialog_playlist2, null);

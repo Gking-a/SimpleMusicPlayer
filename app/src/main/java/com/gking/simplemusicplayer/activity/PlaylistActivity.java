@@ -23,6 +23,7 @@ import com.gking.simplemusicplayer.dialog.SongDialog1;
 import com.gking.simplemusicplayer.fragment.SearchFragment;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.interfaces.SongOperable;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
@@ -47,14 +48,12 @@ import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.fragment.SearchFragment.MySongAdapter;
 
-public class PlaylistActivity extends BaseActivity {
+public class PlaylistActivity extends BaseActivity implements SongOperable<BaseActivity>{
     public Handler handler = new Handler();
     private String playlistId;
     public Callback refreshPlaylistCallback = new Callback() {
         @Override
-        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-        }
-
+        public void onFailure(@NotNull Call call, @NotNull IOException e) { }
         @Override
         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
             String body = response.body().string();
@@ -67,9 +66,7 @@ public class PlaylistActivity extends BaseActivity {
             }
             WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
                 @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                }
-
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {}
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String body = response.body().string();
@@ -78,7 +75,7 @@ public class PlaylistActivity extends BaseActivity {
                     for (int i = 0; i < songs.size(); i++) {
                         JsonObject song = songs.get(i).getAsJsonObject();
                         String id = song.get("id").getAsString();
-                        SongBean bean = new SongBean(song);
+                        SongBean bean = new SongBean(playlistId,song);
                         nameMap.put(JsonUtil.getAsString(song, "name"), bean);
                         music.add(bean);
                     }
@@ -152,6 +149,22 @@ public class PlaylistActivity extends BaseActivity {
     }
 
     LinkedHashMap<String, SongBean> nameMap = new LinkedHashMap<>();
+
+    @Override
+    public void onSongDelete(String pid,SongBean songBean) {
+        WebRequest.playlist_detail(pid, MyCookieJar.getLoginCookie(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                handler.post(()->{
+                    PlaylistActivity.MyAdapter adapter = (PlaylistActivity.MyAdapter) songList.getAdapter();
+                    adapter.notifyItemRemoved(songBean);
+                });
+            }
+        });
+    }
 
     public class MyTextWatcher implements TextWatcher {
         @Override
