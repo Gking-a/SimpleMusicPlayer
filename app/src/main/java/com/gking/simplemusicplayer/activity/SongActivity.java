@@ -276,7 +276,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
             if (holder.getLayoutPosition() == position) {
                 last = holder.Lyric;
                 if (last != null) {
-                    int color = 0xFFff0000;
+                    int color = SettingsActivity.getWindowColor();
                     last.setTextColor(color);
                 }
             }else {
@@ -293,7 +293,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
             MyVH vh = (MyVH) lyricView.findViewHolderForAdapterPosition(position);
             if (vh != null) {
                 last = vh.Lyric;
-                last.setTextColor(0xFFff0000);
+                last.setTextColor(SettingsActivity.getWindowColor());
             }
             lyricView.scrollToPosition(position);
         }

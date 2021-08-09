@@ -4,6 +4,7 @@
 package com.gking.simplemusicplayer.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class SettingsActivity extends BaseActivity {
         RecyclerView recyclerView=findViewById(R.id.activity_settings_items);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ArrayList<Item> data= new ArrayList<>();
-        data.add(new ItemEdit("选中的歌词的颜色",window_color,SettingsActivity.get(window_color)));
+        data.add(new ItemEdit("选中的歌词的颜色",window_color, Integer.toHexString(getWindowColor())));
         MyAdapter myAdapter = new MyAdapter(this, data);
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
@@ -106,6 +108,7 @@ public class SettingsActivity extends BaseActivity {
                     public void onTextChanged(CharSequence s, int start, int before, int count){}
                     @Override
                     public void afterTextChanged(Editable s) {
+                        System.out.println(item.sign+s.toString().trim());
                         SettingsActivity.library.add(item.sign,s.toString().trim(),GLibrary.TYPE_STRING);
                     }
                 });
@@ -142,9 +145,17 @@ public class SettingsActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+    public static final int getWindowColor(){
+        try {
+            BigInteger bigInteger=new BigInteger(get(window_color),16);
+            return bigInteger.intValue();
+        }catch (Exception e){
+            e.printStackTrace();
+            return 0xffff0000;
+        }
+    }
     public static final String DEFAULT_LIST ="defaultlist";
     public static final String LOCKEDNOTIFICATIONSHOW="lockednotificationshow";
-    public static final String WINDOW_COLOR="windowcolor";
     public static final String DEFAULT_WINDOW_SHOW="defaultwindow";
     public static final File SettingsFile =new File("/data/user/0/com.gking.simplemusicplayer/files/Settings");
     private static int ver;
@@ -181,7 +192,7 @@ public class SettingsActivity extends BaseActivity {
                 library.connect();
                 library.add(auto_next, true, GLibrary.TYPE_STRING);
                 library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM, GLibrary.TYPE_STRING);
-                library.add(window_color, 0xffFF0000, GLibrary.TYPE_STRING);
+                library.add(window_color, Integer.toHexString(0xFFff0000), GLibrary.TYPE_STRING);
                 library.add("ver", 1, GLibrary.TYPE_STRING);
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);

@@ -3,6 +3,7 @@ package com.gking.simplemusicplayer.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
@@ -42,8 +43,8 @@ public class LoginCellphoneActivity extends BaseActivity {
         }
         Button button=f(R.id.loginLogin);
         button.setOnClickListener(v -> {
-            RadioButton radioButton=f(R.id.agree_deal);
-            if(!radioButton.isChecked()){
+            CheckBox checkBox=f(R.id.agree_deal);
+            if(!checkBox.isChecked()){
                 makeToast("请先同意用户协议和隐私政策");
                 return;
             }

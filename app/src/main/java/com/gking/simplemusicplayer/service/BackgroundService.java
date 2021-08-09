@@ -56,7 +56,7 @@ public class BackgroundService extends Service {
     public static boolean isShowing=false;
     private void window() {
         WindowManager windowManager= (WindowManager) getSystemService(WINDOW_SERVICE);
-        ((TextView) application.windowView.findViewById(R.id.window_lyric)).setTextColor(SettingsActivity.getInt(SettingsActivity.Params.window_color));
+        ((TextView) application.windowView.findViewById(R.id.window_lyric)).setTextColor(SettingsActivity.getWindowColor());
         if(isShowing){
             isShowing=false;
             windowManager.removeViewImmediate(windowView);
