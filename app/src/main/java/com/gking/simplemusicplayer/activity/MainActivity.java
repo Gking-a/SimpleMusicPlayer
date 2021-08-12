@@ -126,8 +126,6 @@ public class MainActivity extends BaseActivity {
         }
     }
     private void loadBaseSettings() {
-//        if (!ifOps())
-//            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
         getPlaylistCallback= new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

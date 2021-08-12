@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import com.gking.simplemusicplayer.MyBroadcastReceiver;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.EmptyActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.service.SongService;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,14 @@ import java.util.Objects;
 import cn.gking.gtools.GLibrary;
 import cn.gking.gtools.managers.GLibraryManager;
 
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_phone;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_pw;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
+
 public class MyApplicationImpl extends Application
 {
     public static Handler handler=new Handler();
@@ -40,7 +49,7 @@ public class MyApplicationImpl extends Application
     public MusicPlayer getMusicPlayer() {
         return mMusicPlayer;
     }
-    public MusicPlayer mMusicPlayer=new MusicPlayer();
+    public MusicPlayer mMusicPlayer;
     public View controlPanel;
     public View windowView;
     File exceptionFile;
@@ -48,6 +57,7 @@ public class MyApplicationImpl extends Application
     public void onCreate() {
         super.onCreate();
         myApplication=this;
+        mMusicPlayer=new MusicPlayer();
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadView();
         loadSettings();
@@ -57,7 +67,7 @@ public class MyApplicationImpl extends Application
             startService(new Intent(this, SongService.class));
         }
     }
-    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+    private final AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
             if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
@@ -66,14 +76,12 @@ public class MyApplicationImpl extends Application
 
             } else {
                 mMusicPlayer.pause();
-                AudioManager audioManager= (AudioManager) getSystemService(AUDIO_SERVICE);
-                audioManager.abandonAudioFocus(this);
             }
         }
-    };;
-
+    };
     public void requestFocus(){
         AudioManager audioManager= (AudioManager) getSystemService(AUDIO_SERVICE);
+        audioManager.abandonAudioFocus(onAudioFocusChangeListener);
         audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
     class MyExceptionCatcher implements Thread.UncaughtExceptionHandler {
@@ -102,9 +110,6 @@ public class MyApplicationImpl extends Application
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-            Intent i=new Intent(getApplicationContext(), EmptyActivity.class);
-            i.putExtra("text_str",e.getCause()+e.getMessage()+ Arrays.toString(e.getStackTrace()));
-            startActivity(i);
         }
     }
     private void loadView() {

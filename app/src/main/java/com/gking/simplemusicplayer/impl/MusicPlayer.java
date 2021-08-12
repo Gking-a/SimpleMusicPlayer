@@ -97,6 +97,7 @@ public class MusicPlayer extends MediaPlayer{
             }
             autoNext();
         }));
+        myApplication.requestFocus();
     }
     private void autoNext() {
         boolean auto=Boolean.parseBoolean(SettingsActivity.get(Params.auto_next));
@@ -129,7 +130,6 @@ public class MusicPlayer extends MediaPlayer{
         if (!focus&&this.musicBean != null) {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
-        myApplication.requestFocus();
         this.musicBean=musicBean;
         for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
             if(listener!=null) listener.onSongBeanChange(player,musicBean);
@@ -234,15 +234,18 @@ public class MusicPlayer extends MediaPlayer{
             return 0;
         }
     }
+    public void play(){
+        if(isPlaying()){
+            super.pause();
+        }else {
+            start();
+        }
+    }
     @Override
     public void pause() throws IllegalStateException {
         try {
-            if(isPlaying()){
-                super.pause();
-            }else {
-                start();
-            }
-        }catch (Exception e){ }
+            super.pause();
+        }catch (Exception e){}
     }
     @Override
     public void seekTo(int msec) throws IllegalStateException {

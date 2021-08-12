@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -16,21 +15,18 @@ import android.widget.TextView;
 import androidx.core.app.NotificationCompat;
 
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.activity.SettingsActivity;
+import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.manager.LyricBean;
-import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
-import com.gking.simplemusicplayer.util.ControlableThread;
 import com.gking.simplemusicplayer.util.Util;
 
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
 import static com.gking.simplemusicplayer.service.BackgroundService.Type;
 import static com.gking.simplemusicplayer.service.BackgroundService.isShowing;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
-import static java.lang.Thread.sleep;
 
 public class SongService extends Service {
     //Design as SongActivity
@@ -88,12 +84,13 @@ public class SongService extends Service {
             public void onPrepared(MusicPlayer musicPlayer) {
                 loadView1();
                 loadView2();
+                if(wakeLock!=null)
+                    wakeLock.release();
                 wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,TAG);
-                wakeLock.acquire(musicPlayer.getDuration());
+                wakeLock.acquire();
             }
             @Override
             public void onFinish(MusicPlayer musicPlayer) {
-                wakeLock.release();
                 MyApplicationImpl.handler.post(()->{
                     TextView textView= ((MyApplicationImpl) getApplication()).windowView.findViewById(R.id.window_lyric);
                     textView.setText("");

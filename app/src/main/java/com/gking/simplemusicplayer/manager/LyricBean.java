@@ -3,12 +3,13 @@ package com.gking.simplemusicplayer.manager;
 import com.gking.simplemusicplayer.util.JsonUtil;
 import com.google.gson.JsonObject;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LyricBean {
+public class LyricBean implements Serializable {
     public boolean isNolyric() {
         return nolyric;
     }
@@ -32,7 +33,6 @@ public class LyricBean {
         if(lyric.size()==0){
             lyric.addAll(Arrays.asList(split));
         }
-        lrc=null;
     }
     public LinkedList<Integer> time=new LinkedList<>();
     public LinkedList<String> lyric=new LinkedList<>();
@@ -41,7 +41,7 @@ public class LyricBean {
         return lyric;
     }
 
-    private Pattern pattern=Pattern.compile("\\[(\\d{2}):(\\d{2})[\\.:](.*?)\\](.*)");
+    private static final Pattern pattern=Pattern.compile("\\[(\\d{2}):(\\d{2})[\\.:](.*?)\\](.*)");
     private int getTime(Matcher matcher){
         int time=0;
         time+=Integer.parseInt(matcher.group(1))*60*1000;

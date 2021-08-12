@@ -5,12 +5,15 @@ package com.gking.simplemusicplayer.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -43,6 +46,13 @@ public class SettingsActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ArrayList<Item> data= new ArrayList<>();
         data.add(new ItemEdit("选中的歌词的颜色",window_color, Integer.toHexString(getWindowColor())));
+        data.add(new ItemButton("开启悬浮窗权限",null,"开启"){
+            @Override
+            public void onExecute() {
+                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
+
+            }
+        });
         MyAdapter myAdapter = new MyAdapter(this, data);
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
@@ -50,6 +60,7 @@ public class SettingsActivity extends BaseActivity {
     public static class Item<V>{
         public static final int TYPE_SWITCH=0;
         public static final int TYPE_EDIT=1;
+        public static final int TYPE_BUTTON=2;
         public int type;
         public String text;
         public String sign;
@@ -77,6 +88,13 @@ public class SettingsActivity extends BaseActivity {
             setValue(v);
         }
     }
+    public static class ItemButton extends Item<String>{
+        public ItemButton(String text, String sign,String v) {
+            super(TYPE_BUTTON,text, sign);
+            setValue(v);
+        }
+        public void onExecute(){}
+    }
     static class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
         List<Item> data;
         Context context;
@@ -92,6 +110,7 @@ public class SettingsActivity extends BaseActivity {
             LayoutInflater inflater = LayoutInflater.from(context);
             if(viewType==Item.TYPE_SWITCH)view= inflater.inflate(R.layout.item_switch,parent,false);
             else if(viewType==Item.TYPE_EDIT)view=inflater.inflate(R.layout.item_edit,parent,false);
+            else if(viewType==Item.TYPE_BUTTON)view=inflater.inflate(R.layout.item_button,parent,false);
             return new MyVH(view);
         }
         @Override
@@ -113,6 +132,11 @@ public class SettingsActivity extends BaseActivity {
                     }
                 });
             }
+            if (item instanceof ItemButton) {
+                ItemButton itemButton = (ItemButton) item;
+                holder.button.setText(itemButton.getValue());
+                holder.button.setOnClickListener(v -> itemButton.onExecute());
+            }
         }
         @Override
         public int getItemCount() {
@@ -128,11 +152,13 @@ public class SettingsActivity extends BaseActivity {
             TextView textView;
             EditText editText;
             SwitchMaterial switchMaterial;
+            Button button;
             public MyVH(@NonNull @NotNull View itemView) {
                 super(itemView);
                 textView=itemView.findViewById(R.id.item_title);
                 editText=itemView.findViewById(R.id.item_edittext);
                 switchMaterial=itemView.findViewById(R.id.item_switch);
+                button=itemView.findViewById(R.id.item_button);
             }
         }
     }
@@ -184,6 +210,8 @@ public class SettingsActivity extends BaseActivity {
         }
     }
     static{
+        File file = new File("/data/user/0/com.gking.simplemusicplayer/files");
+        if(!file.exists())file.mkdirs();
         if (!SettingsFile.exists()) {
             try {
                 SettingsFile.createNewFile();
@@ -194,6 +222,8 @@ public class SettingsActivity extends BaseActivity {
                 library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM, GLibrary.TYPE_STRING);
                 library.add(window_color, Integer.toHexString(0xFFff0000), GLibrary.TYPE_STRING);
                 library.add("ver", 1, GLibrary.TYPE_STRING);
+                library.add(account_phone,"18263610381");
+                library.add(account_pw,"gking1980");
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
             } catch (IOException e) {

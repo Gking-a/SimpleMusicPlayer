@@ -40,5 +40,5 @@ public class SongBean implements Serializable {
     public String id, name, author,pid;
     public String coverUrl;
     public SongBean next, last;
-    public LyricBean lyric;
+    public transient LyricBean lyric;
 }
