@@ -19,7 +19,11 @@ public class SongBean implements Serializable {
         List<String> ars = new LinkedList<>();
         JsonArray ar = JsonUtil.getAsJsonArray(song, "ar");
         for (int i = 0; i < ar.size(); i++) {
-            ars.add(JsonUtil.getAsString(ar.get(i).getAsJsonObject(), "name"));
+            JsonObject asJsonObject = ar.get(i).getAsJsonObject();
+            if(asJsonObject==null|| asJsonObject.isJsonNull())continue;
+            try{
+                ars.add(JsonUtil.getAsString(asJsonObject, "name"));
+            }catch (Exception exception){continue;}
         }
         author = StringUtils.join(ars, "/");
         coverUrl = JsonUtil.getAsString(song, "al", "picUrl");

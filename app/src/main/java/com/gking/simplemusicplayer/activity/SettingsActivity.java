@@ -53,6 +53,7 @@ public class SettingsActivity extends BaseActivity {
 
             }
         });
+        data.add(new ItemEdit("下载音乐文件夹（需要自己给读写权限）",local_download,getString(local_download)));
         MyAdapter myAdapter = new MyAdapter(this, data);
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
@@ -224,6 +225,9 @@ public class SettingsActivity extends BaseActivity {
                 library.add("ver", 1, GLibrary.TYPE_STRING);
                 library.add(account_phone,"18263610381");
                 library.add(account_pw,"gking1980");
+                File music = new File(file, "music");
+                music.mkdirs();
+                library.add(local_download, music.getAbsolutePath());
                 library.save();
                 //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
             } catch (IOException e) {
@@ -239,6 +243,7 @@ public class SettingsActivity extends BaseActivity {
         public static final String auto_next="auto_next";
         public static final String play_mode="play_mode";
         public static final String window_color="window_color";
+        public static final String local_download="local_download";
         public static final class PLAY_MODE{
             public static final String NONE="0";
             public static final String LOOP="1";

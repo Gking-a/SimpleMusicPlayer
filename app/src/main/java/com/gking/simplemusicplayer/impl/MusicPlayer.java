@@ -16,6 +16,7 @@ import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.local_download;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.get;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.handler;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
@@ -139,6 +141,41 @@ public class MusicPlayer extends MediaPlayer{
                 stop();
                 reset();
                 System.out.println(musicBean.id);
+                File file = new File(SettingsActivity.get(local_download), musicBean.id + ".mp3");
+                if(file.exists()){
+                    setDataSource(file.getAbsolutePath());
+                    setOnPreparedListener(mp -> {
+                        for (OnSongBeanChangeListener listener : onSongBeanChangeListenerList) {
+                            if(listener!=null)listener.onPrepared(player);
+                        }
+                        prepared=true;
+                        player.start();
+                        handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
+                    });
+                    prepareAsync();
+                    WebRequest.lyric(musicBean.id, MyCookieJar.getLoginCookie(), new Callback() {
+                        @Override
+                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        }
+                        @Override
+                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            String body = response.body().string();
+                            JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                            JsonElement noLyric = jsonObject.get("nolyric");
+                            LyricBean lyricBean;
+                            if (noLyric != null) {
+                                lyricBean = new LyricBean();
+                            } else {
+                                lyricBean = new LyricBean(jsonObject);
+                            }
+                            musicBean.lyric=lyricBean;
+                            for(OnSongBeanChangeListener onSongBeanChangeListener:onSongBeanChangeListenerList){
+                                if(onSongBeanChangeListener!=null)onSongBeanChangeListener.onLyricLoaded(player,lyricBean);
+                            }
+                        }
+                    });
+                    return;
+                }
                 WebRequest.check_music(musicBean.id, new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -154,8 +191,8 @@ public class MusicPlayer extends MediaPlayer{
                         if (jsonElement.isJsonNull()) {
                             autoNext();
                         } else {
-                                setDataSource(jsonElement.getAsString());
-                                prepareAsync();
+                            setDataSource(jsonElement.getAsString());
+                            prepareAsync();
                             WebRequest.lyric(musicBean.id, MyCookieJar.getLoginCookie(), new Callback() {
                                 @Override
                                 public void onFailure(@NotNull Call call, @NotNull IOException e) {

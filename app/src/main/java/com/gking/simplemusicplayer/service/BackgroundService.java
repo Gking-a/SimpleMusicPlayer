@@ -33,7 +33,7 @@ public class BackgroundService extends Service {
         layoutParams.height= WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.flags= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
         layoutParams.format= PixelFormat.RGBA_8888;
-        layoutParams.gravity= Gravity.BOTTOM;
+        layoutParams.gravity= Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
         layoutParams.type= WindowManager.LayoutParams.TYPE_PHONE;
     }
     @Override

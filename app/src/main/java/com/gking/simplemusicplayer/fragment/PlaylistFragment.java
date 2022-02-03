@@ -1,6 +1,7 @@
 package com.gking.simplemusicplayer.fragment;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +61,7 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
                     WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
                 }
             }else if(itemId==R.id.main_playlist_create){
+                Log.e("show?","show");
                 playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {

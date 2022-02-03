@@ -109,6 +109,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
             }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
+        musicPlayer.start((SongBean)(getIntent().getSerializableExtra("bean")),null);
         musicPlayer.notify(song,onSongBeanChangeListener);
     }
     @Override
@@ -135,7 +136,6 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
     Runnable changeModeView = () -> changeModeView();
     private void load() {
         musicPlayer = ((MyApplicationImpl) getApplication()).mMusicPlayer;
-        System.out.println(musicPlayer == null);
         progress = f(R.id.song_progress);
         lyricView = f(R.id.song_lyric);
         lyricView.setLayoutManager(new LinearLayoutManager(getContext()));

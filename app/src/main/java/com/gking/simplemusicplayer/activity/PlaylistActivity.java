@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
 import com.gking.simplemusicplayer.util.JsonUtil;
+import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -70,11 +72,13 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String body = response.body().string();
+                    System.out.println(body);
                     JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                     JsonArray songs = JsonUtil.getAsJsonArray(jsonObject, "songs");
                     for (int i = 0; i < songs.size(); i++) {
                         JsonObject song = songs.get(i).getAsJsonObject();
                         String id = song.get("id").getAsString();
+                        System.out.println(id);
                         SongBean bean = new SongBean(playlistId,song);
                         nameMap.put(JsonUtil.getAsString(song, "name"), bean);
                         music.add(bean);
@@ -138,10 +142,22 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
                 SongManager.getInstance().set(playlistId, ((MySongAdapter) songList.getAdapter()).content);
                 int i = new Random().nextInt(SongManager.getInstance().randomSongs.size());
                 SongBean songBean = SongManager.getInstance().randomSongs.get(i);
-                ((MyApplicationImpl) getApplication()).getMusicPlayer().start(songBean, null);
                 Intent intent = new Intent(getContext(), SongActivity.class);
                 intent.putExtra("bean", songBean);
                 startActivity(intent);
+            }
+            if(item.getItemId()==R.id.playlist_menu_download){
+                new Thread(()->{
+                    for (SongBean songBean:((MySongAdapter) songList.getAdapter()).content){
+                        String id = songBean.id;
+                        Util.downloadSong(id);
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
             return false;
         });
@@ -202,7 +218,6 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
             et.setText(et.getText());
         }
     }
-
     public class MyAdapter extends MySongAdapter {
         public MyAdapter(BaseActivity activity, List<SongBean> content, String playlistId) {
             super(activity, content, playlistId);

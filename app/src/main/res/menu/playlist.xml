@@ -8,4 +8,7 @@
     <item
         android:title="随机播放"
         android:id="@+id/playlist_random"/>
+    <item
+        android:title="下载全部"
+        android:id="@+id/playlist_menu_download"/>
 </menu>

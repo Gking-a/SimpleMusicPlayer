@@ -6,6 +6,13 @@
     android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <Button
+        android:id="@+id/dialog_song_download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="下载"
+        android:textColor="@color/black"
+        android:background="#00123456"/>
+    <Button
         android:id="@+id/dialog_song_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

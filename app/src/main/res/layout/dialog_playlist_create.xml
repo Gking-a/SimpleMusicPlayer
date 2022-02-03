@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="隐私歌单"
+            android:textColor="#ff000000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/playlist_create_name" />
 
@@ -44,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="视频歌单"
+            android:textColor="#ff000000"
             app:layout_constraintTop_toBottomOf="@+id/playlist_create_privacy"
             tools:layout_editor_absoluteX="116dp" />
         <LinearLayout

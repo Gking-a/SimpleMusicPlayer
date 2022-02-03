@@ -2,17 +2,27 @@ package com.gking.simplemusicplayer.dialog;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
+import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
 import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.util.Util;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class SongDialog2 extends BaseBottomDialog<BaseActivity> {
     public RecyclerView view;
@@ -28,6 +38,11 @@ public class SongDialog2 extends BaseBottomDialog<BaseActivity> {
     @Override
     protected View loadView() {
         View view=View.inflate(getContext(), R.layout.dialog_song1,null);
+        view.findViewById(R.id.dialog_song_download).setOnClickListener(v -> {
+            Toast.makeText(getContext(),"下载中",Toast.LENGTH_SHORT).show();
+            new Thread(()-> Util.downloadSong(songBean.id)).start();
+            dismiss();
+        });
         view.findViewById(R.id.dialog_song_close).setOnClickListener(v -> dismiss());
         view.findViewById(R.id.dialog_song_delete).setVisibility(View.GONE);
         view.findViewById(R.id.dialog_song_add).setOnClickListener(v -> {
