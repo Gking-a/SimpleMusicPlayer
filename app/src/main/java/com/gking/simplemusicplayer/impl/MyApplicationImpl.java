@@ -122,8 +122,8 @@ public class MyApplicationImpl extends Application
         ImageButton next = controlPanel.findViewById(R.id.c_song_next),
                 last = controlPanel.findViewById(R.id.c_song_last),
                 pause = controlPanel.findViewById(R.id.c_song_pause);
-        next.setOnClickListener(v -> getMusicPlayer().next(null));
-        last.setOnClickListener(v -> getMusicPlayer().last(null));
+        next.setOnClickListener(v -> getMusicPlayer().forceNext());
+        last.setOnClickListener(v -> getMusicPlayer().forceLast());
         pause.setOnClickListener(v -> getMusicPlayer().pause());
         controlPanel.setVisibility(View.GONE);
         windowView=LayoutInflater.from(this).inflate(R.layout.window,null);;

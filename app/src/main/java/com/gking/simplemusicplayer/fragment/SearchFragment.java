@@ -193,10 +193,10 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
             this.activity = activity;
             this.content = content;
             this.playlistId=playlistId;
+            SongManager.getInstance().set(playlistId,content);
             SongManager.getInstance().setPointer(SongManager.getInstance().songs);
             SongManager.getInstance().randomSort();
         }
-
         @NonNull
         @NotNull
         @Override

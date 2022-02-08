@@ -142,8 +142,8 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
         mode_view = f(R.id.song_mode);
         changeModeView();
         mode_view.setOnClickListener(v -> changeMode());
-        f(R.id.song_next).setOnClickListener(v -> musicPlayer.next(null));
-        f(R.id.song_last).setOnClickListener(v -> musicPlayer.last(null));
+        f(R.id.song_next).setOnClickListener(v -> musicPlayer.forceNext());
+        f(R.id.song_last).setOnClickListener(v -> musicPlayer.forceLast());
         f(R.id.song_pause).setOnClickListener(v -> musicPlayer.play());
 //        f(R.id.song_window).setOnClickListener(v -> {
 //            Intent intent = new Intent(getContext(), BackgroundService.class);

@@ -46,8 +46,8 @@ public class BackgroundService extends Service {
         int type=-1;
         if(intent!=null&&(type=intent.getIntExtra(Type,-1))>=0){
             if(type==Pause)musicPlayer.play();
-            if(type==Next)musicPlayer.next(null);
-            if(type==Last)musicPlayer.last(null);
+            if(type==Next)musicPlayer.forceNext();
+            if(type==Last)musicPlayer.forceLast();
             if(type==Window)window();
         }
         System.out.println(type);

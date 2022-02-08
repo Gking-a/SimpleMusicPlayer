@@ -1,6 +1,7 @@
 package com.gking.simplemusicplayer.impl;
 
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.View;
 
 import com.gking.simplemusicplayer.activity.SettingsActivity;
@@ -101,14 +102,33 @@ public class MusicPlayer extends MediaPlayer{
         }));
         myApplication.requestFocus();
     }
-    private void autoNext() {
+    public void forceLast(){
+        String pm = get(Params.play_mode);
+        if(pm.equals(PLAY_MODE.NONE)){}
+        else if (pm.equals(PLAY_MODE.LOOP)){start(musicBean,true);}
+        else if (pm.equals(PLAY_MODE.RANDOM)){start(SongManager.getInstance().getRandomSong0(musicBean.id).last,true); }
+        else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getLastOrderSong(musicBean.id),true);}
+    }
+    public void forceNext(){
+        String pm = get(Params.play_mode);
+        Log.e("smode",pm);
+        Log.e("next",musicBean.next.name);
+        if(pm.equals(PLAY_MODE.NONE)){}
+        else if (pm.equals(PLAY_MODE.LOOP)){start(musicBean,true);}
+        else if (pm.equals(PLAY_MODE.RANDOM)){
+            start(SongManager.getInstance().getRandomSong0(musicBean.id).next,true);
+        }
+        else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getNextOrderSong(musicBean.id),true);}
+    }
+    public void autoNext() {
         boolean auto=Boolean.parseBoolean(SettingsActivity.get(Params.auto_next));
         if(auto&&musicBean!=null){
             String pm = get(Params.play_mode);
+            Log.e("smode",pm);
             if(pm.equals(PLAY_MODE.NONE)){}
             else if (pm.equals(PLAY_MODE.LOOP)){start(musicBean,true);}
-            else if (pm.equals(PLAY_MODE.RANDOM)){start(SongManager.getInstance().getRandomSong(musicBean.id).next,true);}
-            else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getOrderSong(musicBean.id).next,true);}
+            else if (pm.equals(PLAY_MODE.RANDOM)){start(SongManager.getInstance().getRandomSong0(musicBean.id).next,true);}
+            else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getNextOrderSong(musicBean.id),true);}
         }
     }
     public void notify(SongBean songBean,OnSongBeanChangeListener onSongBeanChangeListener){
@@ -291,13 +311,16 @@ public class MusicPlayer extends MediaPlayer{
                 super.seekTo(msec);
         }catch (Exception e){ }
     }
+    @Deprecated
     public void next(OnPreparedListener onPreparedListener) {
         if(musicBean!=null)
             start(musicBean.next,true);
     }
+    @Deprecated
     public void next(OnPreparedListener onPreparedListener,boolean focus){
 
     }
+    @Deprecated
     public void last(OnPreparedListener onPreparedListener) {
         if(musicBean!=null)
         start(musicBean.last,true);
