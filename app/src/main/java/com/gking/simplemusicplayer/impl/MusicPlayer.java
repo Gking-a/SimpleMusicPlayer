@@ -298,6 +298,10 @@ public class MusicPlayer extends MediaPlayer{
             start();
         }
     }
+    public void changeP(){
+        if(isPlaying())pause();
+        else play();
+    }
     @Override
     public void pause() throws IllegalStateException {
         try {

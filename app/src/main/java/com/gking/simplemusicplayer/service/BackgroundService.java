@@ -62,6 +62,7 @@ public class BackgroundService extends Service {
             windowManager.removeViewImmediate(windowView);
         }else {
             windowManager.addView(windowView, layoutParams);
+            ((TextView) windowView.findViewById(R.id.window_lyric)).setTextSize(SettingsActivity.getInt(SettingsActivity.Params.xfcgcwzdx));
             isShowing = true;
         }
     }

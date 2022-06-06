@@ -18,6 +18,7 @@ import com.gking.simplemusicplayer.MyBroadcastReceiver;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.EmptyActivity;
 import com.gking.simplemusicplayer.activity.SettingsActivity;
+import com.gking.simplemusicplayer.service.BackgroundService;
 import com.gking.simplemusicplayer.service.SongService;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,15 +30,14 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Objects;
 
-import cn.gking.gtools.GLibrary;
-import cn.gking.gtools.managers.GLibraryManager;
-
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_phone;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_pw;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.zdkqxfgc;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
+import static com.gking.simplemusicplayer.activity.SettingsActivity.get;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
 
 public class MyApplicationImpl extends Application
@@ -124,19 +124,20 @@ public class MyApplicationImpl extends Application
                 pause = controlPanel.findViewById(R.id.c_song_pause);
         next.setOnClickListener(v -> getMusicPlayer().forceNext());
         last.setOnClickListener(v -> getMusicPlayer().forceLast());
-        pause.setOnClickListener(v -> getMusicPlayer().pause());
+        pause.setOnClickListener(v -> getMusicPlayer().changeP());
         controlPanel.setVisibility(View.GONE);
-        windowView=LayoutInflater.from(this).inflate(R.layout.window,null);;
+        windowView=LayoutInflater.from(this).inflate(R.layout.window,null);
+        if(Boolean.parseBoolean(get(zdkqxfgc))){
+            Intent intent = new Intent(this,BackgroundService.class);
+            intent.putExtra(BackgroundService.Type.Type,BackgroundService.Type.Window);
+            startService(intent);
+        }
     }
     public ImageView Cover;
     public TextView Name,Author;
     private void loadSettings() {
 		if(!getFilesDir().exists())
 			getFilesDir().mkdirs();
-		for (File file: Objects.requireNonNull(getFilesDir().listFiles())){
-			if(file.isFile())
-				GLibraryManager.add(new GLibrary(file,true));
-		}
         myBroadcastReceiver = new MyBroadcastReceiver();
         intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);

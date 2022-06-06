@@ -14,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,7 +35,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.gking.gtools.GLibrary;
+import cn.gking.gtools.GDataBase;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
 
@@ -48,17 +50,18 @@ public class SettingsActivity extends BaseActivity {
         data.add(new ItemEdit("选中的歌词的颜色",window_color, Integer.toHexString(getWindowColor())));
         data.add(new ItemButton("开启悬浮窗权限",null,"开启"){
             @Override
-            public void onExecute() {
+            public void execute(Object o) {
                 startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
-
             }
         });
         data.add(new ItemEdit("下载音乐文件夹（需要自己给读写权限）",local_download,getString(local_download)));
+        data.add(new ItemSwitch("自动开启悬浮歌词",zdkqxfgc,Boolean.parseBoolean(get(zdkqxfgc))));
+        data.add(new ItemEdit("悬浮窗歌词文字大小",xfcgcwzdx,get(xfcgcwzdx)));
         MyAdapter myAdapter = new MyAdapter(this, data);
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
     }
-    public static class Item<V>{
+    public static abstract class Item<V>{
         public static final int TYPE_SWITCH=0;
         public static final int TYPE_EDIT=1;
         public static final int TYPE_BUTTON=2;
@@ -77,16 +80,29 @@ public class SettingsActivity extends BaseActivity {
             this.sign = sign;
             setValue(value);
         }
+
+        public Item(int type, String text, String sign, V value) {
+            this.type = type;
+            this.text = text;
+            this.sign = sign;
+            this.value = value;
+        }
+
         private Item(int type, String text, String sign) {
             this.type = type;
             this.text = text;
             this.sign = sign;
         }
+        public abstract void execute(Object o);
     }
     public static class ItemEdit extends Item<String>{
         public ItemEdit(String text, String sign,String v) {
             super(TYPE_EDIT,text, sign);
             setValue(v);
+        }
+        @Override
+        public void execute(Object o){
+            SettingsActivity.library.add(sign,o.toString().trim());
         }
     }
     public static class ItemButton extends Item<String>{
@@ -94,7 +110,16 @@ public class SettingsActivity extends BaseActivity {
             super(TYPE_BUTTON,text, sign);
             setValue(v);
         }
-        public void onExecute(){}
+        public void execute(Object o){}
+    }
+    public static class ItemSwitch extends Item<Boolean>{
+        public ItemSwitch(String text, String sign, Boolean value) {
+            super(TYPE_SWITCH,text,sign, value);
+        }
+        @Override
+        public void execute(Object o) {
+            SettingsActivity.set(sign, o);
+        }
     }
     static class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyVH>{
         List<Item> data;
@@ -128,15 +153,25 @@ public class SettingsActivity extends BaseActivity {
                     public void onTextChanged(CharSequence s, int start, int before, int count){}
                     @Override
                     public void afterTextChanged(Editable s) {
-                        System.out.println(item.sign+s.toString().trim());
-                        SettingsActivity.library.add(item.sign,s.toString().trim(),GLibrary.TYPE_STRING);
+                        itemEdit.execute(s);
                     }
                 });
             }
-            if (item instanceof ItemButton) {
+            if(item instanceof ItemButton) {
                 ItemButton itemButton = (ItemButton) item;
                 holder.button.setText(itemButton.getValue());
-                holder.button.setOnClickListener(v -> itemButton.onExecute());
+                holder.button.setOnClickListener(v -> itemButton.execute(null));
+            }
+            if (item instanceof ItemSwitch) {
+                ItemSwitch itemSwitch = (ItemSwitch) item;
+                Boolean value = itemSwitch.getValue();
+                holder.switchMaterial.setChecked(value);
+                holder.switchMaterial.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        itemSwitch.execute(isChecked);
+                    }
+                });
             }
         }
         @Override
@@ -168,7 +203,7 @@ public class SettingsActivity extends BaseActivity {
         super.onPause();
         try {
             library.save();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -186,9 +221,9 @@ public class SettingsActivity extends BaseActivity {
     public static final String DEFAULT_WINDOW_SHOW="defaultwindow";
     public static final File SettingsFile =new File("/data/user/0/com.gking.simplemusicplayer/files/Settings");
     private static int ver;
-    public static GLibrary library;
+    public static GDataBase library;
     public static String get(String key){
-        return library.get(key);
+        return library.getString(key);
     }
     public static boolean getBoolean(String symbol){
         return Boolean.parseBoolean(get(symbol));
@@ -203,10 +238,10 @@ public class SettingsActivity extends BaseActivity {
         return get(symbol);
     }
     public static void set(String key,Object v){
-        library.add(key,v,GLibrary.TYPE_STRING);
+        library.add(key,v);
         try {
             library.save();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -216,15 +251,16 @@ public class SettingsActivity extends BaseActivity {
         if (!SettingsFile.exists()) {
             try {
                 SettingsFile.createNewFile();
-                library = new GLibrary(SettingsFile.getName(), SettingsFile);
+                library = new GDataBase(SettingsFile);
 //				lib.create(true);
-                library.connect();
-                library.add(auto_next, true, GLibrary.TYPE_STRING);
-                library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM, GLibrary.TYPE_STRING);
-                library.add(window_color, Integer.toHexString(0xFFff0000), GLibrary.TYPE_STRING);
-                library.add("ver", 1, GLibrary.TYPE_STRING);
+//                library.connect();
+                library.add(auto_next, true);
+                library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM);
+                library.add(window_color, Integer.toHexString(0xFFff0000));
+                library.add("ver", 1);
                 library.add(account_phone,"18263610381");
                 library.add(account_pw,"gking1980");
+                library.add(xfcgcwzdx,"16");
                 File music = new File(file, "music");
                 music.mkdirs();
                 library.add(local_download, music.getAbsolutePath());
@@ -233,7 +269,7 @@ public class SettingsActivity extends BaseActivity {
             } catch (IOException e) {
             }
         }
-        library = new GLibrary(SettingsFile, true);
+        library = new GDataBase(SettingsFile);
     }
     public static final class Params{
         public static final String account_name = "account_name";
@@ -244,6 +280,8 @@ public class SettingsActivity extends BaseActivity {
         public static final String play_mode="play_mode";
         public static final String window_color="window_color";
         public static final String local_download="local_download";
+        public static final String xfcgcwzdx="xfcgcwzdx";
+        public static final String zdkqxfgc="zdkqxfgc";
         public static final class PLAY_MODE{
             public static final String NONE="0";
             public static final String LOOP="1";
