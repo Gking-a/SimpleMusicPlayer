@@ -6,9 +6,9 @@ import android.view.View;
 
 import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.manager.LyricBean;
-import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
+import com.gking.simplemusicplayer.util.Cookies;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonElement;
@@ -21,10 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -173,7 +171,7 @@ public class MusicPlayer extends MediaPlayer{
                         handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
                     });
                     prepareAsync();
-                    WebRequest.lyric(musicBean.id, MyCookieJar.getLoginCookie(), new Callback() {
+                    WebRequest.lyric(musicBean.id, Cookies.getLoginCookie(), new Callback() {
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                         }
@@ -213,7 +211,7 @@ public class MusicPlayer extends MediaPlayer{
                         } else {
                             setDataSource(jsonElement.getAsString());
                             prepareAsync();
-                            WebRequest.lyric(musicBean.id, MyCookieJar.getLoginCookie(), new Callback() {
+                            WebRequest.lyric(musicBean.id, Cookies.getLoginCookie(), new Callback() {
                                 @Override
                                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                 }

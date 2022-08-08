@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +12,6 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,9 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.dialog.SongDialog1;
-import com.gking.simplemusicplayer.fragment.SearchFragment;
-import com.gking.simplemusicplayer.impl.MyApplicationImpl;
-import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.util.Cookies;
 import com.gking.simplemusicplayer.interfaces.SongOperable;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
@@ -66,7 +62,7 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
                 String id = JsonUtil.getAsString(trackIds.get(i).getAsJsonObject(), "id");
                 ids.add(id);
             }
-            WebRequest.song_detail(ids, MyCookieJar.getLoginCookie(), new Callback() {
+            WebRequest.song_detail(ids, Cookies.getLoginCookie(), new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {}
                 @Override
@@ -102,7 +98,7 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
         PlaylistBean playlistBean = ((PlaylistBean) getIntent().getSerializableExtra("bean"));
         playlistId = playlistBean.id;
         load(playlistBean);
-        WebRequest.playlist_detail(playlistId, MyCookieJar.getLoginCookie(), refreshPlaylistCallback);
+        WebRequest.playlist_detail(playlistId, Cookies.getLoginCookie(), refreshPlaylistCallback);
     }
 
     List<SongBean> music = new LinkedList<>();
@@ -168,7 +164,7 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
 
     @Override
     public void onSongDelete(String pid,SongBean songBean) {
-        WebRequest.playlist_detail(pid, MyCookieJar.getLoginCookie(), new Callback() {
+        WebRequest.playlist_detail(pid, Cookies.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }

@@ -96,7 +96,7 @@ public class URLs {
     public static final String login="https://music.163.com/weapi/login";
     public static final String login_cellphone="https://music.163.com/weapi/login/cellphone";
     public static final String login_qr_check="https://music.163.com/weapi/login/qrcode/client/login";
-    public static final String login_qr_create="https://music.163.com/login?codekey=${query.key}";
+    public static final String login_qr_create="https://music.163.com/login";
     public static final String login_qr_key="https://music.163.com/weapi/login/qrcode/unikey";
     public static final String login_refresh="https://music.163.com/weapi/login/token/refresh";
     public static final String login_status="https://music.163.com/weapi/w/nuser/account/get";

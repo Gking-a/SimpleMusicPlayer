@@ -16,12 +16,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.gking.simplemusicplayer.NoFailureCallback;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.fragment.RecommendFragment;
 import com.gking.simplemusicplayer.fragment.SearchFragment;
-import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.util.Cookies;
 import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -74,10 +75,36 @@ public class MainActivity extends BaseActivity {
         drawerLayout = f(R.id.main_drawer);
         nav = f(R.id.nav);
         nav.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_login)
+            if(item.getItemId() == R.id.nav_login)
                 startActivityForResult(new Intent(getContext(), LoginCellphoneActivity.class), LoginCellphoneActivity.RequestCode);
             if(item.getItemId()==R.id.nav_settings)
                 startActivity(new Intent(getContext(),SettingsActivity.class));
+            if(item.getItemId()==R.id.nav_qr_login)
+                startActivityForResult(new Intent(getContext(),QRLoginActivity.class),QRLoginActivity.RequestCode);
+            if(item.getItemId()==R.id.lllllllllaunch){
+                WebRequest.user_account(new NoFailureCallback() {
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        String string = response.body().string();
+                        System.out.println(string);
+                        JsonObject asJsonObject = JsonParser.parseString(string).getAsJsonObject();
+                        JsonObject account = asJsonObject.getAsJsonObject("account");
+                        String id = account.get("id").getAsString();
+                        {
+                            recommendFragment.update();
+                            WebRequest.user_playlist(id, Cookies.getLoginCookie(), getPlaylistCallback);
+                        }
+                        response.close();
+                    }
+                });
+//                recommendFragment.update();
+//                WebRequest.user_playlist(loginBean.id, Cookies.getLoginCookie(), getPlaylistCallback);
+            }
+            if(item.getItemId()==R.id.nav_logout) {
+                WebRequest.logout();
+                SettingsActivity.library.remove(cookie, (byte) 0);
+                SettingsActivity.library.remove("csrf", (byte) 0);
+            }
             return true;
         });
         TabLayout tabLayout = f(R.id.main_tab);
@@ -117,11 +144,15 @@ public class MainActivity extends BaseActivity {
         }
     }
     private void loadUserSettings() {
-        if (SettingsActivity.get(account_phone) != null && SettingsActivity.get(account_pw) != null) {
+        if (false&&SettingsActivity.get(account_phone) != null && SettingsActivity.get(account_pw) != null) {
             Intent i = new Intent(this, LoginCellphoneActivity.class);
             i.putExtra("ph", SettingsActivity.get(account_phone));
             i.putExtra("pw", SettingsActivity.get(account_pw));
             startActivityForResult(i, LoginCellphoneActivity.RequestCode);
+        }
+        if(SettingsActivity.get("cookie")==null){
+            Intent intent = new Intent(this, QRLoginActivity.class);
+            startActivityForResult(intent,QRLoginActivity.RequestCode);
         }
     }
     private void loadBaseSettings() {
@@ -178,12 +209,16 @@ public class MainActivity extends BaseActivity {
                 SettingsActivity.set(account_name, loginBean.name);
                 {
                     recommendFragment.update();
-                    WebRequest.user_playlist(loginBean.id, MyCookieJar.getLoginCookie(), getPlaylistCallback);
+                    WebRequest.user_playlist(loginBean.id, Cookies.getLoginCookie(), getPlaylistCallback);
                 }
             }
         }
-
-
+        if(requestCode == QRLoginActivity.RequestCode){
+            if (data != null && data.getBooleanExtra("success", false)) {
+                SettingsActivity.set("csrf", Cookies.getCsrf());
+                SettingsActivity.set("cookie",Cookies.getLoginCookie());
+            }
+        }
     }
 
 }

@@ -28,7 +28,7 @@ import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog2;
-import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.util.Cookies;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -55,17 +55,17 @@ public class PlaylistFragment extends BaseViewPagerFragment<BaseActivity> {
             int itemId = item.getItemId();
             if (itemId == R.id.main_save_playlist_position) {
                 if (playlist_tab.getSelectedTabPosition() == 0 && myAdapter != null && myAdapter.playlists.size() > 0) {
-                    WebRequest.playlist_order_update1(myAdapter.playlists, MyCookieJar.getLoginCookie(), null);
+                    WebRequest.playlist_order_update1(myAdapter.playlists, Cookies.getLoginCookie(), null);
                 }
                 if (playlist_tab.getSelectedTabPosition() == 1 && myAdapter2 != null && myAdapter2.playlists.size() > 0) {
-                    WebRequest.playlist_order_update1(myAdapter2.playlists, MyCookieJar.getLoginCookie(), null);
+                    WebRequest.playlist_order_update1(myAdapter2.playlists, Cookies.getLoginCookie(), null);
                 }
             }else if(itemId==R.id.main_playlist_create){
                 Log.e("show?","show");
                 playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {
-                    WebRequest.user_playlist(SettingsActivity.get(account_id),MyCookieJar.getLoginCookie(),getGetPlaylistCallback());
+                    WebRequest.user_playlist(SettingsActivity.get(account_id), Cookies.getLoginCookie(),getGetPlaylistCallback());
                 });
             }
             return false;

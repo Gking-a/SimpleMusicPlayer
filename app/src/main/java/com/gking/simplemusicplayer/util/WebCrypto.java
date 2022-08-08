@@ -140,7 +140,7 @@ public class WebCrypto {
      * @throws Exception
      */
     public static HashMap<String,String> encrypt(String paras) {
-        System.err.println(paras);
+        System.out.println(paras);
         String secKey = createSecreKey(16);
         String encText = aesEncrypt(aesEncrypt(paras,nonce),secKey);
         String encSecKey = rsaEncrypt(secKey,pubKey,modulus);

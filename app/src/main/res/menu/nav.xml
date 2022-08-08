@@ -2,10 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
         android:id="@+id/nav_login"
-        android:title="切换账户" />
+        android:title="手机登录（自2022年7月起暂不可用）" />
     <item
         android:id="@+id/nav_settings"
         android:title="设置"
         android:icon="@drawable/tune"/>
-
+    <item
+        android:id="@+id/nav_qr_login"
+        android:title="二维码登录"/>
+    <item
+        android:id="@+id/nav_logout"
+        android:title="登出"/>
+    <item
+                                    android:id="@+id/lllllllllaunch"
+                                    android:title="启动！启动！启动！！！"/>
 </menu>

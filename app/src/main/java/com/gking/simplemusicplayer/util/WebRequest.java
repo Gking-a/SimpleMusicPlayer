@@ -1,15 +1,11 @@
 package com.gking.simplemusicplayer.util;
 
-import com.gking.simplemusicplayer.impl.MyCookieJar;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -22,19 +18,35 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Headers;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okio.BufferedSink;
 
 public final class WebRequest {
+    public static void user_account(Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        post(URLs.user_account,jsonObject,Cookies.getLoginCookie(),callback);
+    }
+    public static void logout(){
+        JsonObject jsonObject=new JsonObject();
+        post(URLs.logout,jsonObject,Cookies.getLoginCookie(),null);
+    }
+    public static void login_qr_check(String key,Callback callback){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("key",key);
+        jsonObject.addProperty("type",1);
+        post(URLs.login_qr_check,jsonObject,"os=pc",callback);
+    }
+    public static void login_qr_key(Callback callback) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("type","1");
+        post(URLs.login_qr_key,jsonObject , "os=pc", callback);
+    }
     public static void check_music(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("ids","["+id+"]");
         jsonObject.addProperty("br",320000);
-        post(URLs.check_music,jsonObject,MyCookieJar.getLoginCookie(),callback);
+        post(URLs.check_music,jsonObject, Cookies.getLoginCookie(),callback);
     }
     public static void playlist_tracks_add(String pid,String[] trackIds,Callback callback){
         playlist_tracks("add",pid,trackIds,callback);
@@ -48,22 +60,22 @@ public final class WebRequest {
         jsonObject.addProperty("pid",pid);
         jsonObject.addProperty("trackIds","[\""+StringUtils.join(trackIds,"\",\"")+"\"]");
         jsonObject.addProperty("imme",true);
-        post(URLs.playlist_tracks,jsonObject,MyCookieJar.getLoginCookie(),callback);
+        post(URLs.playlist_tracks,jsonObject, Cookies.getLoginCookie(),callback);
     }
     public static void playlist_unsubscribe(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("id",id);
-        post(URLs.playlist_unsubscribe,jsonObject,MyCookieJar.getLoginCookie(),callback);
+        post(URLs.playlist_unsubscribe,jsonObject, Cookies.getLoginCookie(),callback);
     }
     public static void playlist_subscribe(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("id",id);
-        post(URLs.playlist_subscribe,jsonObject,MyCookieJar.getLoginCookie(),callback);
+        post(URLs.playlist_subscribe,jsonObject, Cookies.getLoginCookie(),callback);
     }
     public static void playlist_delete(String id,Callback callback){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("ids","["+id+"]");
-        post(URLs.playlist_delete,jsonObject,MyCookieJar.getLoginCookie(),callback);
+        post(URLs.playlist_delete,jsonObject, Cookies.getLoginCookie(),callback);
     }
     public static void playlist_create(String name,int privacy,String type,String cookie,Callback callBack){
         JsonObject jsonObject=new JsonObject();
@@ -117,7 +129,7 @@ public final class WebRequest {
             array.add(object);
         }
         jsonObject.add("c",array);
-        jsonObject.addProperty("csrf_token", MyCookieJar.getCsrf());
+        jsonObject.addProperty("csrf_token", Cookies.getCsrf());
         String s=jsonObject.toString();
         s=s.replaceAll("\"id\"","\\\\\"id\\\\\"");
         s=s.replace("[","\"[");
@@ -141,7 +153,7 @@ public final class WebRequest {
         password = new BigInteger(1, b).toString(16);
         jsonObject.addProperty("phone", phone);
         jsonObject.addProperty("password", password);
-        jsonObject.addProperty("rememberLogin", true);
+//        jsonObject.addProperty("rememberLogin", true);
         jsonObject.addProperty("countrycode", 86);
         post(URLs.login_cellphone, jsonObject, "os=pc", callback);
     }
@@ -158,14 +170,15 @@ public final class WebRequest {
     }
     //auto add param csrf_token
     public static void post(String url, JsonObject params, String cookie, Callback callback){
-        params.addProperty("csrf_token", MyCookieJar.getCsrf());
+        params.addProperty("csrf_token", Cookies.getCsrf());
         post(url, params.toString(), cookie, callback);
     }
+
+    public static Cookies cookieJar = new Cookies();
     //only post
     public static void post(String url,String params,String cookie,Callback callback){
-        HashMap<String, String> data = WebCrypto.encrypt(params);
         OkHttpClient client=new OkHttpClient.Builder()
-                .cookieJar(new MyCookieJar())
+                .cookieJar(cookieJar)
                 .build();
         Headers headers=new Headers.Builder()
                 .add("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0")
@@ -174,14 +187,18 @@ public final class WebRequest {
                 .add("Cookie",cookie)
                 .build();
         FormBody.Builder builder =new FormBody.Builder();
-        for (String key:data.keySet()) {
-            builder.add(key,data.get(key));
-        }
-        Request request=new Request.Builder()
+        Request.Builder requestBuilder=new Request.Builder()
                 .url(url)
-                .headers(headers)
-                .post(builder.build())
-                .build();
+                .headers(headers);
+        if(params!=null){
+            HashMap<String, String> data = WebCrypto.encrypt(params);
+            for (String key:data.keySet()) {
+                builder.add(key,data.get(key));
+            }
+            requestBuilder=requestBuilder.post(builder.build());
+        }
+
+        Request request=requestBuilder.build();
         Call call = client.newCall(request);
         if (callback != null) call.enqueue(callback);
     }

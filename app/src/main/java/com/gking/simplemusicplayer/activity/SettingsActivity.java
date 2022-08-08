@@ -282,6 +282,7 @@ public class SettingsActivity extends BaseActivity {
         public static final String local_download="local_download";
         public static final String xfcgcwzdx="xfcgcwzdx";
         public static final String zdkqxfgc="zdkqxfgc";
+        public static final String cookie="cookie";
         public static final class PLAY_MODE{
             public static final String NONE="0";
             public static final String LOOP="1";

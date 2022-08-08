@@ -7,41 +7,47 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 读取您的 SD 卡中的内容 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".impl.MyApplicationImpl"
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/AppTheme"
         android:screenOrientation="portrait"
+        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.QRLoginActivity"></activity>
         <activity
             android:name=".activity.EmptyActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ChoosePlaylistActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ChoosePlaylistActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".service.BackgroundService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.SongActivity"
-            android:launchMode="singleTop"/>
+        <activity
+            android:name=".activity.SongActivity"
+            android:launchMode="singleTop" />
 
         <service
             android:name=".service.SongService"
             android:launchMode="singleInstance" />
 
-        <activity android:name=".activity.PlaylistActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.PlaylistActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.LoginCellphoneActivity" />
-        <activity android:name=".activity.MainActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name">
@@ -64,8 +70,8 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.SCREEN_ON"/>
-                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
             </intent-filter>
         </receiver>
 

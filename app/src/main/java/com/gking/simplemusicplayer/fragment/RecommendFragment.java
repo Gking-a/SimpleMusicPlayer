@@ -13,7 +13,7 @@ import com.gking.simplemusicplayer.activity.MainActivity;
 import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog3;
 import com.gking.simplemusicplayer.dialog.SongDialog2;
-import com.gking.simplemusicplayer.impl.MyCookieJar;
+import com.gking.simplemusicplayer.util.Cookies;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.JsonUtil;
@@ -40,7 +40,7 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
     }
     @Async
     public void update() {
-        WebRequest.recommend_songs(MyCookieJar.getLoginCookie(), new Callback() {
+        WebRequest.recommend_songs(Cookies.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {}
             @Override
@@ -64,7 +64,7 @@ public class RecommendFragment extends BaseViewPagerFragment<MainActivity> {
                 });
             }
         });
-        WebRequest.recommend_resource(MyCookieJar.getLoginCookie(), new Callback() {
+        WebRequest.recommend_resource(Cookies.getLoginCookie(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) { }
             @Override
