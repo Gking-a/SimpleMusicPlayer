@@ -153,6 +153,9 @@ public class MainActivity extends BaseActivity {
         if(SettingsActivity.get("cookie")==null){
             Intent intent = new Intent(this, QRLoginActivity.class);
             startActivityForResult(intent,QRLoginActivity.RequestCode);
+        }else{
+            Cookies.cookie=SettingsActivity.get(cookie);
+            Cookies.csrf=SettingsActivity.get("csrf");
         }
     }
     private void loadBaseSettings() {

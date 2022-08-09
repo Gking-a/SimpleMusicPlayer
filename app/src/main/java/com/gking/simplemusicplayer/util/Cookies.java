@@ -13,7 +13,7 @@ import okhttp3.HttpUrl;
 
 public class Cookies implements CookieJar {
     public static HashMap<HttpUrl,List<Cookie>> cookies=new HashMap<>();
-    static String cookie="";
+    public static String cookie="";
     public static String csrf=null;
     public static String qrkey=null;
     static List<Cookie> lastlist=null;
