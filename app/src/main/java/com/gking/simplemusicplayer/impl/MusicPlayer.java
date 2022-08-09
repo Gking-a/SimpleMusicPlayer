@@ -74,13 +74,13 @@ public class MusicPlayer extends MediaPlayer{
                 if(lyricBean==null)return -1;
                 if(lyricBean.nolyric)return -1;
                 LinkedList<Integer> time = lyricBean.time;
-                for (int i = 0; i < time.size()-1; i++) {
-                    if(i==time.size()-1)break;
+                for (int i = 0; i < time.size(); i++) {
+                    if(i==time.size()-1)return i;
                     int last=time.get(i);
                     int next=time.get(i+1);
                     if(last<=msec&&msec<=next)return i-1;
                 }
-                return time.size()-1;
+                return time.size();
             }
             private String getLyric(int position,LyricBean lyricBean){
                 if(lyricBean==null)return null;

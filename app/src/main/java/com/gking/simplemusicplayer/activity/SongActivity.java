@@ -1,6 +1,5 @@
 package com.gking.simplemusicplayer.activity;
 
-import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,9 +22,7 @@ import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.interfaces.SongOperable;
 import com.gking.simplemusicplayer.manager.LyricBean;
-import com.gking.simplemusicplayer.manager.LyricManager;
 import com.gking.simplemusicplayer.manager.SongBean;
-import com.gking.simplemusicplayer.service.BackgroundService;
 import com.gking.simplemusicplayer.util.ControlableThread;
 
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +117,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
             myAdapter.showLyric();
         }
     }
-    Runnable updata_progress = new Runnable() {
+    Runnable update_progress = new Runnable() {
         @Override
         public void run() {
             int currentPosition = musicPlayer.getCurrentPosition();
@@ -133,7 +130,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
 //        if(myAdapter!=null)
 //            myAdapter.showLyric(LyricManager.Instance.getPosition(musicPlayer.getCurrentPosition()));
 //    };
-    Runnable changeModeView = () -> changeModeView();
+    Runnable changeModeView = this::changeModeView;
     private void load() {
         musicPlayer = ((MyApplicationImpl) getApplication()).mMusicPlayer;
         progress = f(R.id.song_progress);
@@ -186,7 +183,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
                 e.printStackTrace();
             }
             if (song != null) {
-                handler.post(updata_progress);
+                handler.post(update_progress);
                 handler.post(changeModeView);
             }
         }
@@ -284,6 +281,10 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
             }
         }
         public void showLyric(){
+            if(lyricBean.time.getLast()!=musicPlayer.getDuration()){
+                if(lyricBean.time.getLast()==0)lyricBean.time.removeLast();
+                lyricBean.time.add(musicPlayer.getDuration());
+            }
             showLyric(musicPlayer.getLyricPosition());
         }
         public void showLyric(int position) {
