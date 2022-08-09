@@ -25,14 +25,27 @@ public class LyricBean implements Serializable {
         for (String s:split) {
             Matcher matcher=pattern.matcher(s);
             if(matcher.find()){
-                String lyric= matcher.group(4);
+                String slyric= matcher.group(4);
                 this.time.add(getTime(matcher));
-                this.lyric.add(lyric);
+                this.lyric.add(slyric);
             }
         }
         if(lyric.size()==0){
             lyric.addAll(Arrays.asList(split));
         }
+        try{
+            String tlrc= JsonUtil.getAsString(data,"tlyric","lyric");
+            if(tlrc.trim().equals(""))return;
+            String[] tsplit = tlrc.split("\n");
+            for (String s:tsplit) {
+                Matcher matcher=pattern.matcher(s);
+                if(matcher.find()){
+                    String slyric= matcher.group(4);
+                    int i = time.indexOf(getTime(matcher));
+                    this.lyric.set(i-1,lyric.get(i-1)+'\n'+slyric);
+                }
+            }
+        }catch (Exception e){}
     }
     public LinkedList<Integer> time=new LinkedList<>();
     public LinkedList<String> lyric=new LinkedList<>();

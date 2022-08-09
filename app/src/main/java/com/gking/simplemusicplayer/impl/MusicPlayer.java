@@ -171,27 +171,7 @@ public class MusicPlayer extends MediaPlayer{
                         handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
                     });
                     prepareAsync();
-                    WebRequest.lyric(musicBean.id, Cookies.getLoginCookie(), new Callback() {
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        }
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            String body = response.body().string();
-                            JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-                            JsonElement noLyric = jsonObject.get("nolyric");
-                            LyricBean lyricBean;
-                            if (noLyric != null) {
-                                lyricBean = new LyricBean();
-                            } else {
-                                lyricBean = new LyricBean(jsonObject);
-                            }
-                            musicBean.lyric=lyricBean;
-                            for(OnSongBeanChangeListener onSongBeanChangeListener:onSongBeanChangeListenerList){
-                                if(onSongBeanChangeListener!=null)onSongBeanChangeListener.onLyricLoaded(player,lyricBean);
-                            }
-                        }
-                    });
+                    requestLyric(musicBean);
                     return;
                 }
                 WebRequest.check_music(musicBean.id, new Callback() {
@@ -211,27 +191,7 @@ public class MusicPlayer extends MediaPlayer{
                         } else {
                             setDataSource(jsonElement.getAsString());
                             prepareAsync();
-                            WebRequest.lyric(musicBean.id, Cookies.getLoginCookie(), new Callback() {
-                                @Override
-                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                                }
-                                @Override
-                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                                    String body = response.body().string();
-                                    JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-                                    JsonElement noLyric = jsonObject.get("nolyric");
-                                    LyricBean lyricBean;
-                                    if (noLyric != null) {
-                                        lyricBean = new LyricBean();
-                                    } else {
-                                        lyricBean = new LyricBean(jsonObject);
-                                    }
-                                    musicBean.lyric=lyricBean;
-                                    for(OnSongBeanChangeListener onSongBeanChangeListener:onSongBeanChangeListenerList){
-                                        if(onSongBeanChangeListener!=null)onSongBeanChangeListener.onLyricLoaded(player,lyricBean);
-                                    }
-                                }
-                            });
+                            requestLyric(musicBean);
                         }
                     }
                 });
@@ -255,6 +215,33 @@ public class MusicPlayer extends MediaPlayer{
         };
         new Thread(runnable).start();
     }
+
+    private void requestLyric(SongBean musicBean) {
+        WebRequest.lyric(musicBean.id, Cookies.getLoginCookie(), new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String body = response.body().string();
+                JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                JsonElement noLyric = jsonObject.get("nolyric");
+                LyricBean lyricBean;
+                if (noLyric != null) {
+                    lyricBean = new LyricBean();
+                } else {
+                    lyricBean = new LyricBean(jsonObject);
+                }
+                musicBean.lyric = lyricBean;
+                for (OnSongBeanChangeListener onSongBeanChangeListener : onSongBeanChangeListenerList) {
+                    if (onSongBeanChangeListener != null)
+                        onSongBeanChangeListener.onLyricLoaded(player, lyricBean);
+                }
+            }
+        });
+    }
+
     @Override
     public int getDuration() {
         try{

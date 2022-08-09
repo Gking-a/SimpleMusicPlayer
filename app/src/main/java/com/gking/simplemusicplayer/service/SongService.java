@@ -123,7 +123,7 @@ public class SongService extends Service {
         if(musicPlayer==null)
             musicPlayer=myApplication.mMusicPlayer;
         musicPlayer.notify(song,onSongBeanChangeListener);
-        if(intent.getStringExtra("changeMode")!=null){
+        if(intent!=null&&intent.getStringExtra("changeMode")!=null){
             changeMode();
         }
         return super.onStartCommand(intent, flags, startId);
