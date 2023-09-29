@@ -26,7 +26,11 @@ public class Cookies implements CookieJar {
     }
     @Override
     public void saveFromResponse(@NotNull HttpUrl httpUrl, @NotNull List<Cookie> list) {
-        System.err.println("save from"+httpUrl);
+        System.err.println("save from"+httpUrl+" = ");
+        for (Cookie c :
+                list) {
+            System.out.println(c.toString());
+        }
         cookies.put(httpUrl, list);
         lastlist=list;
     }

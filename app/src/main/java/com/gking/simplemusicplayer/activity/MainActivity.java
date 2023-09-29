@@ -219,6 +219,8 @@ public class MainActivity extends BaseActivity {
         if(requestCode == QRLoginActivity.RequestCode){
             if (data != null && data.getBooleanExtra("success", false)) {
                 SettingsActivity.set("csrf", Cookies.getCsrf());
+                System.err.println("COOKIE:");
+                System.err.println(Cookies.getLoginCookie());
                 SettingsActivity.set("cookie",Cookies.getLoginCookie());
             }
         }

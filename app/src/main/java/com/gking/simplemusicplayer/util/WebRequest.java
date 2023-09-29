@@ -52,7 +52,7 @@ public final class WebRequest {
         playlist_tracks("add",pid,trackIds,callback);
     }
     public static void playlist_tracks_delete(String pid,String[] trackIds,Callback callback){
-        playlist_tracks("delete",pid,trackIds,callback);
+        playlist_tracks("del",pid,trackIds,callback);
     }
     public static void playlist_tracks(String op,String pid,String[] trackIds,Callback callback){
         JsonObject jsonObject=new JsonObject();

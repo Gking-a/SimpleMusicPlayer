@@ -280,7 +280,9 @@ public class SettingsActivity extends BaseActivity {
         public static final String play_mode="play_mode";
         public static final String window_color="window_color";
         public static final String local_download="local_download";
+        //悬浮歌词文字大小
         public static final String xfcgcwzdx="xfcgcwzdx";
+        //自动开启悬浮歌词
         public static final String zdkqxfgc="zdkqxfgc";
         public static final String cookie="cookie";
         public static final class PLAY_MODE{
