@@ -3,8 +3,10 @@
 
 package com.gking.simplemusicplayer.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -38,6 +40,7 @@ import java.util.List;
 import cn.gking.gtools.GDataBase;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.output;
 
 public class SettingsActivity extends BaseActivity {
     @Override
@@ -57,6 +60,12 @@ public class SettingsActivity extends BaseActivity {
         data.add(new ItemEdit("下载音乐文件夹（需要自己给读写权限）",local_download,getString(local_download)));
         data.add(new ItemSwitch("自动开启悬浮歌词",zdkqxfgc,Boolean.parseBoolean(get(zdkqxfgc))));
         data.add(new ItemEdit("悬浮窗歌词文字大小",xfcgcwzdx,get(xfcgcwzdx)));
+        data.add(new ItemButton("申请权限",null,"申请"){
+            @Override
+            public void execute(Object o) {
+                RequestPermissions(SettingsActivity.this, Manifest.permission_group.STORAGE);
+            }
+        });
         MyAdapter myAdapter = new MyAdapter(this, data);
         recyclerView.setAdapter(myAdapter);
         myAdapter.notifyDataSetChanged();
@@ -291,5 +300,25 @@ public class SettingsActivity extends BaseActivity {
             public static final String RANDOM="2";
             public static final String ORDER="3";
         }
+    }
+    /**
+     * 动态申请权限
+     * @param context    上下文
+     * @param permission 要申请的一个权限，列如写的权限：Manifest.permission.WRITE_EXTERNAL_STORAGE
+     * @return  是否有当前权限
+     */
+
+    private boolean RequestPermissions(@NonNull Context context, @NonNull String permission) {
+        if (this.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            output("requestMyPermissions",": 【 " + permission + " 】没有授权，申请权限");
+            this.requestPermissions(new String[]{permission}, 100);
+            return false;
+        } else {
+            output("requestMyPermissions",": 【 " + permission + " 】有权限");
+            return true;
+        }
+//————————————————
+//    版权声明：本文为CSDN博主「仟易柴君」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+//    原文链接：https://blog.csdn.net/ERP_LXKUN_JAK/article/details/108265128
     }
 }

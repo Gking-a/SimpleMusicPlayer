@@ -24,9 +24,10 @@ public class Util {
         File p=new File(SettingsActivity.get(SettingsActivity.Params.local_download));
         File file = new File(p, id+".mp3");
         try {
+            if(!file.getParentFile().exists())file.getParentFile().mkdirs();
             file.createNewFile();
             FileOutputStream fileOutputStream=new FileOutputStream(file);
-            BufferedInputStream inputStream=new BufferedInputStream(new URL(getRedirectUrl("https://music.163.com/song/media/outer/url?id="+id+".mp3")).openStream());
+            BufferedInputStream inputStream=new BufferedInputStream(new URL(getRedirectUrl("https://music.163.com/song/media/outer/url?id="+id+".mp3")).openStream(),1024*1024);
             byte[] b=new byte[1024];
             int r;
             while ((r=inputStream.read(b))>0){

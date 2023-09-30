@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_phone;
@@ -88,6 +89,7 @@ public class MyApplicationImpl extends Application
         @Override
         public void uncaughtException(@NonNull @NotNull Thread t, @NonNull @NotNull Throwable e) {
             e.printStackTrace();
+            output(e);
             exceptionFile=new File(getFilesDir(),"e");
             if(!exceptionFile.exists()) {
                 try {
@@ -147,11 +149,16 @@ public class MyApplicationImpl extends Application
 //        @Override
 //        public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
 //            e.printStackTrace();
-//            FW.w(new Date()+"\n");
-//            FW.w(t+"\n");
-//            FW.w(e);
-////            Process.killProcess(Process.myPid());
+//            output(new Date()+"\n");
+//            output(t+"\n");
+//            output(e);
+//            Process.killProcess(Process.myPid());
 //        }
 //	}
+    public static void output(Object ...os){
+        for (Object o : os) {
+            System.out.println(o);
+        }
+    }
 }
 
