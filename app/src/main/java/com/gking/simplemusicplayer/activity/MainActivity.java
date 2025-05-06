@@ -85,11 +85,11 @@ public class MainActivity extends BaseActivity {
             if(item.getItemId()==R.id.nav_qr_login)
                 startActivityForResult(new Intent(getContext(),QRLoginActivity.class),QRLoginActivity.RequestCode);
             if(item.getItemId()==R.id.lllllllllaunch){
+                SettingsActivity.loadCookie();
                 WebRequest.user_account(new NoFailureCallback() {
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String string = response.body().string();
-                        System.out.println(string);
                         JsonObject asJsonObject = JsonParser.parseString(string).getAsJsonObject();
                         JsonObject account = asJsonObject.getAsJsonObject("account");
                         String id = account.get("id").getAsString();
@@ -163,7 +163,6 @@ public class MainActivity extends BaseActivity {
 //            Intent intent = new Intent(this, QRLoginActivity.class);
 //            startActivityForResult(intent,QRLoginActivity.RequestCode);
         }else{
-            SettingsActivity.loadCookie();
         }
     }
     private void loadBaseSettings() {

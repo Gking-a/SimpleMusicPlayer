@@ -145,7 +145,7 @@ public class PlaylistActivity extends BaseActivity implements SongOperable<BaseA
                 new Thread(()->{
                     for (SongBean songBean:((MySongAdapter) songList.getAdapter()).content){
                         String id = songBean.id;
-                        Util.downloadSong(id);
+                        Util.downloadSong(songBean);
                         try {
                             Thread.sleep(200);
                         } catch (InterruptedException e) {

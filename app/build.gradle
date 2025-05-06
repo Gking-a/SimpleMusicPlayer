@@ -10,8 +10,8 @@ android {
         applicationId "com.gking.simplemusicplayer"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
-        versionName "1"
+        versionCode 1.2
+        versionName "1.2"
     }
     buildTypes {
         release {

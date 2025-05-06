@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.dialog.SongDialog1;
+import com.gking.simplemusicplayer.manager.SongBean;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -29,9 +30,10 @@ public class Util {
             throw new RuntimeException("No Stream API Support,check the Android Version==23?");
         }
     }
-    public static void downloadSong(String id){
+    public static void downloadSong(SongBean song){
+        String id=song.id;
         File p=new File(SettingsActivity.get(SettingsActivity.Params.local_download));
-        File file = new File(p, id+".mp3");
+        File file = new File(p, song.name+"-"+song.author+".mp3");
         try {
             if(!file.getParentFile().exists())file.getParentFile().mkdirs();
             file.createNewFile();

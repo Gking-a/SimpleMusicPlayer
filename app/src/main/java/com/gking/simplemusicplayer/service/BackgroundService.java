@@ -3,6 +3,7 @@ package com.gking.simplemusicplayer.service;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.View;
@@ -34,7 +35,12 @@ public class BackgroundService extends Service {
         layoutParams.flags= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
         layoutParams.format= PixelFormat.RGBA_8888;
         layoutParams.gravity= Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
-        layoutParams.type= WindowManager.LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            layoutParams.type =WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+        else {
+            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+        }
     }
     @Override
     public IBinder onBind(Intent intent) {

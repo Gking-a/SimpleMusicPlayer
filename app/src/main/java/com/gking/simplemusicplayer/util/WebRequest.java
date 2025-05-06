@@ -28,6 +28,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public final class WebRequest {
+    public static void user_record(Callback callback,String uid,int type){
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("uid",uid);
+        jsonObject.addProperty("type",type);
+        post(URLs.user_record,jsonObject,callback);
+    }
     public static void user_account(Callback callback){
         JsonObject jsonObject=new JsonObject();
         post(URLs.user_account,jsonObject, callback);

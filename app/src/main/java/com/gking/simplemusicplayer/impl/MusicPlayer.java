@@ -191,7 +191,6 @@ public class MusicPlayer extends MediaPlayer{
                             String urlwithhouzhui = jsonElement.getAsString();
                             Matcher matcher = Pattern.compile("(.*?)\\.mp3?(.*?)").matcher(urlwithhouzhui);
                             matcher.find();
-                            System.out.println(matcher.group(1)+".mp3");
                             setDataSource((matcher.group(1)+".mp3"));
                             prepareAsync();
                             requestLyric(musicBean);

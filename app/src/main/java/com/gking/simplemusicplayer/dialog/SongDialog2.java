@@ -40,7 +40,7 @@ public class SongDialog2 extends BaseBottomDialog<BaseActivity> {
         View view=View.inflate(getContext(), R.layout.dialog_song1,null);
         view.findViewById(R.id.dialog_song_download).setOnClickListener(v -> {
             Toast.makeText(getContext(),"下载中",Toast.LENGTH_SHORT).show();
-            new Thread(()-> Util.downloadSong(songBean.id)).start();
+            new Thread(()-> Util.downloadSong(songBean)).start();
             dismiss();
         });
         view.findViewById(R.id.dialog_song_close).setOnClickListener(v -> dismiss());
