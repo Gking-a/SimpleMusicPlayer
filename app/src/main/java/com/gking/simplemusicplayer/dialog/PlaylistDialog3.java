@@ -8,7 +8,7 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.util.WebRequest;
 
@@ -46,7 +46,7 @@ public class PlaylistDialog3 extends BaseBottomDialog<BaseActivity> {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String string = response.body().string();
-                    WebRequest.user_playlist(SettingsActivity.get(account_id), Cookies.getLoginCookie(),getPlaylistCallback);
+                    WebRequest.user_playlist(SettingsActivity.get(account_id), getPlaylistCallback);
                 }
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {

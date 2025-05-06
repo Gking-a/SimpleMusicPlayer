@@ -6,6 +6,7 @@ package com.gking.simplemusicplayer.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.fragment.RecommendFragment;
 import com.gking.simplemusicplayer.fragment.SearchFragment;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.manager.LoginBean;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.util.WebRequest;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import cn.gking.gtools.util.GTimer;
 import okhttp3.Call;
@@ -45,6 +47,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.application;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = "MainActivity";
@@ -90,9 +93,15 @@ public class MainActivity extends BaseActivity {
                         JsonObject asJsonObject = JsonParser.parseString(string).getAsJsonObject();
                         JsonObject account = asJsonObject.getAsJsonObject("account");
                         String id = account.get("id").getAsString();
+                        String nickName=asJsonObject.getAsJsonObject("profile").get("nickname").getAsString();
+                        if(!Objects.equals(SettingsActivity.get(account_id), id)) {
+                            SettingsActivity.set(account_id, id);
+                        }
+                        application.userID =id;
+                        application.nickname=nickName;
                         {
                             recommendFragment.update();
-                            WebRequest.user_playlist(id, Cookies.getLoginCookie(), getPlaylistCallback);
+                            WebRequest.user_playlist(id,  getPlaylistCallback);
                         }
                         response.close();
                     }
@@ -150,23 +159,19 @@ public class MainActivity extends BaseActivity {
             i.putExtra("pw", SettingsActivity.get(account_pw));
             startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }
-        if(SettingsActivity.get("cookie")==null){
-            Intent intent = new Intent(this, QRLoginActivity.class);
-            startActivityForResult(intent,QRLoginActivity.RequestCode);
+        if(SettingsActivity.get(__csrf)==null){
+//            Intent intent = new Intent(this, QRLoginActivity.class);
+//            startActivityForResult(intent,QRLoginActivity.RequestCode);
         }else{
-            Cookies.cookie=SettingsActivity.get(cookie);
-            Cookies.csrf=SettingsActivity.get("csrf");
+            SettingsActivity.loadCookie();
         }
     }
     private void loadBaseSettings() {
-        getPlaylistCallback= new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println(e);
-            }
+        getPlaylistCallback= new NoFailureCallback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String body = response.body().string();
+                Log.i("getPlaylist",body);
                 JsonArray jsonArray = JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("playlist");
                 List<PlaylistBean> playlistBeans = new ArrayList<>();
                 List<PlaylistBean> playlistBeans2 = new ArrayList<>();
@@ -212,18 +217,14 @@ public class MainActivity extends BaseActivity {
                 SettingsActivity.set(account_name, loginBean.name);
                 {
                     recommendFragment.update();
-                    WebRequest.user_playlist(loginBean.id, Cookies.getLoginCookie(), getPlaylistCallback);
+                    WebRequest.user_playlist(loginBean.id,  getPlaylistCallback);
                 }
             }
         }
         if(requestCode == QRLoginActivity.RequestCode){
             if (data != null && data.getBooleanExtra("success", false)) {
-                SettingsActivity.set("csrf", Cookies.getCsrf());
-                System.err.println("COOKIE:");
-                System.err.println(Cookies.getLoginCookie());
-                SettingsActivity.set("cookie",Cookies.getLoginCookie());
+                SettingsActivity.loadCookie();
             }
         }
     }
-
 }

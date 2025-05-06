@@ -2,6 +2,7 @@ package com.gking.simplemusicplayer.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.util.LruCache;
 import android.widget.Toast;
 
@@ -15,11 +16,19 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Util {
+    public static <T> boolean in(T e,T ...total){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Arrays.stream(total).allMatch(e::equals);
+        }else {
+            throw new RuntimeException("No Stream API Support,check the Android Version==23?");
+        }
+    }
     public static void downloadSong(String id){
         File p=new File(SettingsActivity.get(SettingsActivity.Params.local_download));
         File file = new File(p, id+".mp3");

@@ -16,8 +16,6 @@ import androidx.annotation.NonNull;
 
 import com.gking.simplemusicplayer.MyBroadcastReceiver;
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.activity.EmptyActivity;
-import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.service.BackgroundService;
 import com.gking.simplemusicplayer.service.SongService;
 
@@ -27,24 +25,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Objects;
 
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_phone;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.account_pw;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.auto_next;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.play_mode;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.window_color;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.zdkqxfgc;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.SettingsFile;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.get;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.library;
 
 public class MyApplicationImpl extends Application
 {
     public static Handler handler=new Handler();
-    public static MyApplicationImpl myApplication;
+    public static MyApplicationImpl application;
     public MyBroadcastReceiver myBroadcastReceiver;
     public IntentFilter intentFilter;
     public MusicPlayer getMusicPlayer() {
@@ -54,10 +42,11 @@ public class MyApplicationImpl extends Application
     public View controlPanel;
     public View windowView;
     File exceptionFile;
+    public String userID,nickname;
     @Override
     public void onCreate() {
         super.onCreate();
-        myApplication=this;
+        application =this;
         mMusicPlayer=new MusicPlayer();
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionCatcher());
         loadView();

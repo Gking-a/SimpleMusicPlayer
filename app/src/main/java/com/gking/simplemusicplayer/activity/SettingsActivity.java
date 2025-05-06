@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.jetbrains.annotations.NotNull;
@@ -260,25 +260,39 @@ public class SettingsActivity extends BaseActivity {
         if (!SettingsFile.exists()) {
             try {
                 SettingsFile.createNewFile();
-                library = new GDataBase(SettingsFile);
-//				lib.create(true);
-//                library.connect();
-                library.add(auto_next, true);
-                library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM);
-                library.add(window_color, Integer.toHexString(0xFFff0000));
-                library.add("ver", 1);
-                library.add(account_phone,"18263610381");
-                library.add(account_pw,"gking1980");
-                library.add(xfcgcwzdx,"16");
-                File music = new File(file, "music");
-                music.mkdirs();
-                library.add(local_download, music.getAbsolutePath());
-                library.save();
-                //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
+
             } catch (IOException e) {
             }
         }
         library = new GDataBase(SettingsFile);
+        if(library.getString(auto_next)==null) {
+//				lib.create(true);
+//                library.connect();
+            library.add(auto_next, true);
+        }
+        if(library.getString(play_mode)==null) {
+            library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM);
+        }
+        if(library.getString(window_color)==null) {
+            library.add(window_color, Integer.toHexString(0xFF00ff00));
+        }
+        if(library.getString("ver")==null) {
+            library.add("ver", "1.2");
+        }
+//                library.add(account_phone,"18263610381");
+//                library.add(account_pw,"gking1980");
+        if(library.getString(xfcgcwzdx)==null) {
+            library.add(xfcgcwzdx, "16");
+        }
+        File music = new File(file, "music");
+        if(!music.exists()) {
+            music.mkdirs();
+        }
+        if(library.getString(local_download)==null) {
+            library.add(local_download, music.getAbsolutePath());
+        }
+        library.save();
+            //GFileUtil.CopyFile("/sdcard/SETTINGS",_SETTINGS);
     }
     public static final class Params{
         public static final String account_name = "account_name";
@@ -289,6 +303,8 @@ public class SettingsActivity extends BaseActivity {
         public static final String play_mode="play_mode";
         public static final String window_color="window_color";
         public static final String local_download="local_download";
+        public static final String login_fetch_cookies ="login_fetch_cookies";
+        public static final String __csrf ="__csrf",MUSIC_A_T="MUSIC_A_T",MUSIC_R_T="MUSIC_R_T",NMTID="NMTID",MUSIC_U="MUSIC_U";
         //悬浮歌词文字大小
         public static final String xfcgcwzdx="xfcgcwzdx";
         //自动开启悬浮歌词
@@ -317,8 +333,20 @@ public class SettingsActivity extends BaseActivity {
             output("requestMyPermissions",": 【 " + permission + " 】有权限");
             return true;
         }
+
 //————————————————
 //    版权声明：本文为CSDN博主「仟易柴君」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 //    原文链接：https://blog.csdn.net/ERP_LXKUN_JAK/article/details/108265128
+    }
+    public static boolean loadCookie(){
+        if(library.getString(__csrf)!=null&&!library.getString(__csrf).trim().equals("")){
+            MyCookies.__csrf=library.getString(__csrf);
+            MyCookies.MUSIC_U=library.getString(MUSIC_U);
+            MyCookies.NMTID=library.getString(NMTID);
+            MyCookies.MUSIC_A_T=library.getString(MUSIC_A_T);
+            MyCookies.MUSIC_R_T=library.getString(MUSIC_R_T);
+            MyCookies.init=true;
+        }
+        return false;
     }
 }

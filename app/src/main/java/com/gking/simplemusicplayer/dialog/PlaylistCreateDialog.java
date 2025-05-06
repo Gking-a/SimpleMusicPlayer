@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.SimpleInterface;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.util.WebRequest;
 
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class PlaylistCreateDialog extends Dialog {
             CheckBox c2=findViewById(R.id.playlist_create_type);
             String type="NORMAL";
             if(c2.isChecked())type="VIDEO";
-            WebRequest.playlist_create(name, pr, type, Cookies.getLoginCookie(), new Callback() {
+            WebRequest.playlist_create(name, pr, type,  new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
 

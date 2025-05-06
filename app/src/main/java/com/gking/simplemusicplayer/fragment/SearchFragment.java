@@ -26,7 +26,7 @@ import com.gking.simplemusicplayer.base.BaseViewPagerFragment;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog3;
 import com.gking.simplemusicplayer.dialog.SongDialog2;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
@@ -324,10 +324,10 @@ public class SearchFragment extends BaseViewPagerFragment<MainActivity> {
             if (keyword.equals(keywords[position])) return;
             keywords[position] = keyword;
             if (position == 0) {
-                WebRequest.cloudsearch(keyword, 1, Cookies.getLoginCookie(), songCallBack);
+                WebRequest.cloudsearch(keyword, 1,  songCallBack);
             }
             if (position == 1) {
-                WebRequest.cloudsearch(keyword, 1000, Cookies.getLoginCookie(), playlistCallBack);
+                WebRequest.cloudsearch(keyword, 1000,  playlistCallBack);
             }
         }
 

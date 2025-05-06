@@ -20,7 +20,7 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.dialog.PlaylistCreateDialog;
 import com.gking.simplemusicplayer.dialog.PlaylistDialog1;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.manager.PlaylistBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.Util;
@@ -54,19 +54,19 @@ public class ChoosePlaylistActivity extends BaseActivity {
         }
         loadView();
         setResult(RequestCode,new Intent());
-        WebRequest.user_playlist(SettingsActivity.get(account_id), Cookies.getLoginCookie(),getGetPlaylistCallback());
+        WebRequest.user_playlist(SettingsActivity.get(account_id),getGetPlaylistCallback());
     }
     Toolbar.OnMenuItemClickListener onMenuItemClickListener=new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             int itemId = item.getItemId();
             if (itemId == R.id.main_save_playlist_position) {
-                WebRequest.playlist_order_update1(myAdapter.playlists, Cookies.getLoginCookie(), null);
+                WebRequest.playlist_order_update1(myAdapter.playlists, null);
             }else if(itemId==R.id.main_playlist_create){
                 PlaylistCreateDialog playlistCreateDialog=new PlaylistCreateDialog(getContext());
                 playlistCreateDialog.show();
                 playlistCreateDialog.setSimpleInterface(arg -> {
-                    WebRequest.user_playlist(SettingsActivity.get(account_id), Cookies.getLoginCookie(),getGetPlaylistCallback());
+                    WebRequest.user_playlist(SettingsActivity.get(account_id), getGetPlaylistCallback());
                 });
             }
             return false;

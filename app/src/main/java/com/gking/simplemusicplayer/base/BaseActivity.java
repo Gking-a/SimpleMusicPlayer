@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.application;
 
 public abstract class BaseActivity extends AppCompatActivity implements Operable<BaseActivity> {
     public <T extends View> T f(int id) {
@@ -99,10 +100,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Operable
             parentViewGroup.addView(control, index);
         }
         View.OnClickListener onClickListener=v1 -> startActivity(new Intent(this, SongActivity.class));
-        myApplication.controlPanel.setOnClickListener(onClickListener);
-        myApplication.Cover.setOnClickListener(onClickListener);
-        myApplication.Name.setOnClickListener(onClickListener);
-        myApplication.Author.setOnClickListener(onClickListener);
+        application.controlPanel.setOnClickListener(onClickListener);
+        application.Cover.setOnClickListener(onClickListener);
+        application.Name.setOnClickListener(onClickListener);
+        application.Author.setOnClickListener(onClickListener);
     }
     public void makeToast(Object msg){
         handler.post(() -> Toast.makeText(getApplication(),msg.toString(),Toast.LENGTH_SHORT).show());
@@ -149,7 +150,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Operable
                 }
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    System.out.println(response.body().string());
+                    Log.i("songAdd",response.body().string());
                 }
             });
         }

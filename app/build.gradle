@@ -46,8 +46,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.makeramen:roundedimageview:2.3.0'
 //    implementation 'com.github.rey5137:material:1.3.1'
-    implementation 'com.hz.android.keyboardlayout:library:1.0'
+//    implementation 'com.hz.android.keyboardlayout:library:1.0'
     implementation 'com.google.zxing:core:3.5.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
+    implementation files('libs\\gtools-1.4.8.jar')
 }

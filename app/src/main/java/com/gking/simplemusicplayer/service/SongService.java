@@ -24,7 +24,7 @@ import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.util.Util;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
-import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.application;
 import static com.gking.simplemusicplayer.service.BackgroundService.Type;
 import static com.gking.simplemusicplayer.service.BackgroundService.isShowing;
 
@@ -121,7 +121,7 @@ public class SongService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(musicPlayer==null)
-            musicPlayer=myApplication.mMusicPlayer;
+            musicPlayer= application.mMusicPlayer;
         musicPlayer.notify(song,onSongBeanChangeListener);
         if(intent!=null&&intent.getStringExtra("changeMode")!=null){
             changeMode();

@@ -8,7 +8,7 @@ import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.manager.LyricBean;
 import com.gking.simplemusicplayer.manager.SongBean;
 import com.gking.simplemusicplayer.manager.SongManager;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonElement;
@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -32,7 +34,7 @@ import okhttp3.Response;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.local_download;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.get;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.handler;
-import static com.gking.simplemusicplayer.impl.MyApplicationImpl.myApplication;
+import static com.gking.simplemusicplayer.impl.MyApplicationImpl.application;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params;
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;
 
@@ -98,7 +100,7 @@ public class MusicPlayer extends MediaPlayer{
             }
             autoNext();
         }));
-        myApplication.requestFocus();
+        application.requestFocus();
     }
     public void forceLast(){
         String pm = get(Params.play_mode);
@@ -122,11 +124,7 @@ public class MusicPlayer extends MediaPlayer{
         boolean auto=Boolean.parseBoolean(SettingsActivity.get(Params.auto_next));
         if(auto&&musicBean!=null){
             String pm = get(Params.play_mode);
-            Log.e("smode",pm);
-            if(pm.equals(PLAY_MODE.NONE)){}
-            else if (pm.equals(PLAY_MODE.LOOP)){start(musicBean,true);}
-            else if (pm.equals(PLAY_MODE.RANDOM)){start(SongManager.getInstance().getRandomSong0(musicBean.id).next,true);}
-            else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getNextOrderSong(musicBean.id),true);}
+            start(SongManager.songManager.nextValidSong(pm,musicBean),true);
         }
     }
     public void notify(SongBean songBean,OnSongBeanChangeListener onSongBeanChangeListener){
@@ -168,7 +166,7 @@ public class MusicPlayer extends MediaPlayer{
                         }
                         prepared=true;
                         player.start();
-                        handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
+                        handler.post(() -> application.controlPanel.setVisibility(View.VISIBLE));
                     });
                     prepareAsync();
                     requestLyric(musicBean);
@@ -184,12 +182,17 @@ public class MusicPlayer extends MediaPlayer{
                         String body = response.body().string();
                         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                         JsonElement jsonElement = jsonObject.get("data").getAsJsonArray().get(0).getAsJsonObject().get("url");
-                        System.out.println(musicBean.id);
-                        System.out.println(musicBean.next.id);
                         if (jsonElement.isJsonNull()) {
+                            System.out.println("is NULL");
+                            SongManager.getInstance().markReachable(musicBean.id, false);
                             autoNext();
                         } else {
-                            setDataSource(jsonElement.getAsString());
+                            SongManager.getInstance().markReachable(musicBean.id, true);
+                            String urlwithhouzhui = jsonElement.getAsString();
+                            Matcher matcher = Pattern.compile("(.*?)\\.mp3?(.*?)").matcher(urlwithhouzhui);
+                            matcher.find();
+                            System.out.println(matcher.group(1)+".mp3");
+                            setDataSource((matcher.group(1)+".mp3"));
                             prepareAsync();
                             requestLyric(musicBean);
                         }
@@ -201,9 +204,9 @@ public class MusicPlayer extends MediaPlayer{
                     }
                     prepared=true;
                     player.start();
-                    handler.post(() -> myApplication.controlPanel.setVisibility(View.VISIBLE));
+                    handler.post(() -> application.controlPanel.setVisibility(View.VISIBLE));
                 });
-                MyApplicationImpl myApplication = MyApplicationImpl.myApplication;
+                MyApplicationImpl myApplication = MyApplicationImpl.application;
                 handler.post(() -> {
                     myApplication.Name.setText(musicBean.name);
                     myApplication.Author.setText(musicBean.author);
@@ -217,7 +220,7 @@ public class MusicPlayer extends MediaPlayer{
     }
 
     private void requestLyric(SongBean musicBean) {
-        WebRequest.lyric(musicBean.id, Cookies.getLoginCookie(), new Callback() {
+        WebRequest.lyric(musicBean.id,  new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
             }
@@ -256,7 +259,7 @@ public class MusicPlayer extends MediaPlayer{
         lyricLoaded=false;
         super.reset();
         MyApplicationImpl.handler.post(()->{
-            MyApplicationImpl myApplication= MyApplicationImpl.myApplication;
+            MyApplicationImpl myApplication= MyApplicationImpl.application;
             myApplication.controlPanel.setVisibility(View.GONE);
         });
     }

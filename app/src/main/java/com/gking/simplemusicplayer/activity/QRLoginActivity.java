@@ -5,16 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.gking.simplemusicplayer.NoFailureCallback;
 import com.gking.simplemusicplayer.R;
-import com.gking.simplemusicplayer.util.Cookies;
+import com.gking.simplemusicplayer.util.MyCookies;
 import com.gking.simplemusicplayer.util.URLs;
 import com.gking.simplemusicplayer.util.WebRequest;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.zxing.BarcodeFormat;
@@ -26,16 +23,18 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import cn.gking.gtools.GDataBase;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
 
 public class QRLoginActivity extends AppCompatActivity {
     public boolean success=false;
@@ -53,7 +52,7 @@ public class QRLoginActivity extends AppCompatActivity {
                 String string = response.body().string();
                 System.out.println(string);
                 String unikey = JsonParser.parseString(string).getAsJsonObject().get("unikey").getAsString();
-                Cookies.qrkey=unikey;
+                MyCookies.qrkey=unikey;
                 {
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("codekey",unikey);
@@ -95,12 +94,39 @@ public class QRLoginActivity extends AppCompatActivity {
             }else if(code.equals("803")){
                 success=true;
                 try{
-                    String csrf_token = asJsonObject.get("csrf_token").getAsString();
-                    Cookies.csrf=csrf_token;
+                    List<String> headers = response.headers("set-cookie");
+                    List<GDataBase> cookieDBs=new ArrayList<>(headers.size());
+                    outerloop:for(String str:headers){
+                        GDataBase cditem=new GDataBase();
+                        String[] cookieitem = str.split(";");
+                        for (String s : cookieitem) {
+                            if(s.startsWith(" ")){
+                                s=s.substring(1);
+                            }
+                            String[] kv = s.split("=");
+                            if(kv.length<=1){
+                                continue outerloop;
+                            }
+                            String storeK=null;
+                            switch (kv[0]){
+                                case __csrf:storeK=__csrf;break;
+                                case MUSIC_A_T:storeK=MUSIC_A_T;break;
+                                case MUSIC_U:storeK=MUSIC_U;break ;
+                                case MUSIC_R_T:storeK=MUSIC_R_T;break ;
+                                case NMTID:storeK=NMTID;break ;
+                            }
+                            if(storeK!=null){
+                                SettingsActivity.set(storeK,kv[1]);
+                            }
+                            cditem.add(kv[0],kv[1]);
+                        }
+                        cookieDBs.add(cditem);
+                    }
+                    SettingsActivity.library.replaceDBs(SettingsActivity.Params.login_fetch_cookies,cookieDBs);
+                    SettingsActivity.library.save();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                Cookies.storeCookie(Cookies.getLastCookie());
                 response.close();
                 Intent intent=new Intent();
                 intent.putExtra("success",true);
