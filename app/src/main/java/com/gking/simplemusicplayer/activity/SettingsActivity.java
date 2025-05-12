@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -26,23 +27,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.beans.RecordSongCombinationBean;
 import com.gking.simplemusicplayer.util.MyCookies;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.gking.gtools.GDataBase;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.*;
 import static com.gking.simplemusicplayer.impl.MyApplicationImpl.output;
 
+import cn.gking.gtools.database.GDataBase;
+import cn.gking.gtools.database.ioadapter.GDataBaseStorageAdapterFile;
+import cn.gking.gtools.database.serializable.GSeriabler;
+import cn.gking.gtools.database.serializable.GSerialableValueGDB;
+
 public class SettingsActivity extends BaseActivity {
+    public static final String VERSION="1.3";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +71,7 @@ public class SettingsActivity extends BaseActivity {
         });
         data.add(new ItemEdit("下载音乐文件夹（需要自己给读写权限）",local_download,getString(local_download)));
         data.add(new ItemSwitch("自动开启悬浮歌词",zdkqxfgc,Boolean.parseBoolean(get(zdkqxfgc))));
+        data.add(new ItemSwitch("自动登录（如果可能的话）",auto_login,Boolean.parseBoolean(get(auto_login))));
         data.add(new ItemEdit("悬浮窗歌词文字大小",xfcgcwzdx,get(xfcgcwzdx)));
         data.add(new ItemButton("申请权限",null,"申请"){
             @Override
@@ -225,11 +238,11 @@ public class SettingsActivity extends BaseActivity {
             return 0xffff0000;
         }
     }
+    public static RecordSongCombinationBean recordBean;
     public static final String DEFAULT_LIST ="defaultlist";
     public static final String LOCKEDNOTIFICATIONSHOW="lockednotificationshow";
     public static final String DEFAULT_WINDOW_SHOW="defaultwindow";
     public static final File SettingsFile =new File("/data/user/0/com.gking.simplemusicplayer/files/Settings");
-    private static int ver;
     public static GDataBase library;
     public static String get(String key){
         return library.getString(key);
@@ -254,9 +267,45 @@ public class SettingsActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+    public static void saveRecordSong(){
+        try {
+            FileOutputStream fileOut = new FileOutputStream(recordFile);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(recordBean);
+            out.close();
+            fileOut.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static File recordFile;
+
     static{
         File file = new File("/data/user/0/com.gking.simplemusicplayer/files");
         if(!file.exists())file.mkdirs();
+        recordFile = new File("/data/user/0/com.gking.simplemusicplayer/files/record");
+        File file2 = recordFile;
+        if(!file2.exists()){
+            try {
+                file2.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if(file2.length()==0){
+            recordBean=new RecordSongCombinationBean();
+        }else{
+            try {
+                FileInputStream fileIn = new FileInputStream(file2);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                recordBean = (RecordSongCombinationBean) in.readObject();
+                in.close();
+                fileIn.close();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         if (!SettingsFile.exists()) {
             try {
                 SettingsFile.createNewFile();
@@ -271,18 +320,24 @@ public class SettingsActivity extends BaseActivity {
             library.add(auto_next, true);
         }
         if(library.getString(play_mode)==null) {
-            library.add(play_mode, SettingsActivity.Params.PLAY_MODE.RANDOM);
+            library.add(play_mode, PLAY_MODE.RANDOM);
         }
         if(library.getString(window_color)==null) {
             library.add(window_color, Integer.toHexString(0xFF00ff00));
         }
         if(library.getString("ver")==null) {
-            library.add("ver", "1.2");
+            library.add("ver", VERSION);
         }
 //                library.add(account_phone,"18263610381");
 //                library.add(account_pw,"gking1980");
         if(library.getString(xfcgcwzdx)==null) {
             library.add(xfcgcwzdx, "16");
+        }
+        if(library.getString(auto_login)==null){
+            library.add(auto_login,false);
+        }
+        if(library.getString(record_playlist)==null){
+            library.add(record_playlist,true);
         }
         File music = new File(file, "music");
         if(!music.exists()) {
@@ -303,7 +358,10 @@ public class SettingsActivity extends BaseActivity {
         public static final String play_mode="play_mode";
         public static final String window_color="window_color";
         public static final String local_download="local_download";
+        public static final String auto_login="auto_login";
+        public static final String record_playlist="record_playlist";
         public static final String login_fetch_cookies ="login_fetch_cookies";
+        public static final String recorded_playlist="recorded_playlist",recorded_random_playlist="recorded_random_playlist",recorded_now_song="recorded_now_play";
         public static final String __csrf ="__csrf",MUSIC_A_T="MUSIC_A_T",MUSIC_R_T="MUSIC_R_T",NMTID="NMTID",MUSIC_U="MUSIC_U";
         //悬浮歌词文字大小
         public static final String xfcgcwzdx="xfcgcwzdx";

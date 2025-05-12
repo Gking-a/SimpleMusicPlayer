@@ -8,8 +8,7 @@ import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
-import com.gking.simplemusicplayer.util.MyCookies;
-import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.beans.PlaylistBean;
 import com.gking.simplemusicplayer.util.WebRequest;
 
 import org.jetbrains.annotations.NotNull;

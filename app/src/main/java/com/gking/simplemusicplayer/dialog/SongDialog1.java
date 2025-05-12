@@ -12,7 +12,7 @@ import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
 import com.gking.simplemusicplayer.interfaces.SongOperable;
-import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.beans.SongBean;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 

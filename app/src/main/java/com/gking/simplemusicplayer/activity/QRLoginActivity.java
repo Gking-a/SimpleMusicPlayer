@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.gking.gtools.GDataBase;
+import cn.gking.gtools.database.GDataBase;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;

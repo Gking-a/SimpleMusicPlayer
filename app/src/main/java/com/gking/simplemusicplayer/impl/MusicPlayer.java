@@ -5,10 +5,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.gking.simplemusicplayer.activity.SettingsActivity;
-import com.gking.simplemusicplayer.manager.LyricBean;
-import com.gking.simplemusicplayer.manager.SongBean;
-import com.gking.simplemusicplayer.manager.SongManager;
-import com.gking.simplemusicplayer.util.MyCookies;
+import com.gking.simplemusicplayer.beans.LyricBean;
+import com.gking.simplemusicplayer.beans.SongBean;
+import com.gking.simplemusicplayer.beans.SongManager;
 import com.gking.simplemusicplayer.util.Util;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonElement;
@@ -43,6 +42,7 @@ public class MusicPlayer extends MediaPlayer{
     ScheduledExecutorService scheduledExecutorService= Executors.newScheduledThreadPool(1);
     public MusicPlayer player=this;
     private boolean lockProgress=false;
+    public static boolean preventplayonprepareforonce =true;
     public void setLockProgress(boolean lockProgress) {
         this.lockProgress = lockProgress;
     }
@@ -121,9 +121,11 @@ public class MusicPlayer extends MediaPlayer{
         else if (pm.equals(PLAY_MODE.ORDER)){start(SongManager.getInstance().getNextOrderSong(musicBean.id),true);}
     }
     public void autoNext() {
+        System.out.println("into AUTONEXT ");
         boolean auto=Boolean.parseBoolean(SettingsActivity.get(Params.auto_next));
         if(auto&&musicBean!=null){
             String pm = get(Params.play_mode);
+            System.out.println("pm="+pm);
             start(SongManager.songManager.nextValidSong(pm,musicBean),true);
         }
     }
@@ -137,6 +139,7 @@ public class MusicPlayer extends MediaPlayer{
     public SongBean getMusicBean() {
         return musicBean;
     }
+    @Deprecated
     public void start(SongBean songBean,OnPreparedListener listener){
         start(songBean);
     }
@@ -144,11 +147,14 @@ public class MusicPlayer extends MediaPlayer{
         start(musicBean,false);
     }
     public void start(SongBean musicBean,boolean focus){
+        System.out.println(musicBean);
         if (musicBean == null)return;
         if (!focus&&this.musicBean != null) {
             if(musicBean.id.equals(this.musicBean.id))return;
         }
         this.musicBean=musicBean;
+        SettingsActivity.recordBean.now_play=musicBean;
+        SettingsActivity.saveRecordSong();
         for (OnSongBeanChangeListener listener:onSongBeanChangeListenerList) {
             if(listener!=null) listener.onSongBeanChange(player,musicBean);
         }
@@ -165,7 +171,8 @@ public class MusicPlayer extends MediaPlayer{
                             if(listener!=null)listener.onPrepared(player);
                         }
                         prepared=true;
-                        player.start();
+                        if(preventplayonprepareforonce)player.start();
+                        preventplayonprepareforonce=true;
                         handler.post(() -> application.controlPanel.setVisibility(View.VISIBLE));
                     });
                     prepareAsync();
@@ -181,6 +188,7 @@ public class MusicPlayer extends MediaPlayer{
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String body = response.body().string();
                         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                        System.out.println(jsonObject.toString());
                         JsonElement jsonElement = jsonObject.get("data").getAsJsonArray().get(0).getAsJsonObject().get("url");
                         if (jsonElement.isJsonNull()) {
                             System.out.println("is NULL");
@@ -202,7 +210,8 @@ public class MusicPlayer extends MediaPlayer{
                         if(listener!=null)listener.onPrepared(player);
                     }
                     prepared=true;
-                    player.start();
+                    if(preventplayonprepareforonce)player.start();
+                    preventplayonprepareforonce=true;
                     handler.post(() -> application.controlPanel.setVisibility(View.VISIBLE));
                 });
                 MyApplicationImpl myApplication = MyApplicationImpl.application;

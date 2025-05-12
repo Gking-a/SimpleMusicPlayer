@@ -4,11 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.LruCache;
-import android.widget.Toast;
 
 import com.gking.simplemusicplayer.activity.SettingsActivity;
-import com.gking.simplemusicplayer.dialog.SongDialog1;
-import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.beans.SongBean;
 
 import java.io.BufferedInputStream;
 import java.io.File;

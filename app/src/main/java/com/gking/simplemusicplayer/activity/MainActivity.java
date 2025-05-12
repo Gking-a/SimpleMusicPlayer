@@ -20,12 +20,13 @@ import androidx.viewpager.widget.ViewPager;
 import com.gking.simplemusicplayer.NoFailureCallback;
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
+import com.gking.simplemusicplayer.beans.SongManager;
 import com.gking.simplemusicplayer.fragment.PlaylistFragment;
 import com.gking.simplemusicplayer.fragment.RecommendFragment;
 import com.gking.simplemusicplayer.fragment.SearchFragment;
-import com.gking.simplemusicplayer.util.MyCookies;
-import com.gking.simplemusicplayer.manager.LoginBean;
-import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.beans.LoginBean;
+import com.gking.simplemusicplayer.beans.PlaylistBean;
+import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -85,27 +86,7 @@ public class MainActivity extends BaseActivity {
             if(item.getItemId()==R.id.nav_qr_login)
                 startActivityForResult(new Intent(getContext(),QRLoginActivity.class),QRLoginActivity.RequestCode);
             if(item.getItemId()==R.id.lllllllllaunch){
-                SettingsActivity.loadCookie();
-                WebRequest.user_account(new NoFailureCallback() {
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        String string = response.body().string();
-                        JsonObject asJsonObject = JsonParser.parseString(string).getAsJsonObject();
-                        JsonObject account = asJsonObject.getAsJsonObject("account");
-                        String id = account.get("id").getAsString();
-                        String nickName=asJsonObject.getAsJsonObject("profile").get("nickname").getAsString();
-                        if(!Objects.equals(SettingsActivity.get(account_id), id)) {
-                            SettingsActivity.set(account_id, id);
-                        }
-                        application.userID =id;
-                        application.nickname=nickName;
-                        {
-                            recommendFragment.update();
-                            WebRequest.user_playlist(id,  getPlaylistCallback);
-                        }
-                        response.close();
-                    }
-                });
+                lllllllaunch();
 //                recommendFragment.update();
 //                WebRequest.user_playlist(loginBean.id, Cookies.getLoginCookie(), getPlaylistCallback);
             }
@@ -123,6 +104,31 @@ public class MainActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(new MyViewPagerAdapter());
     }
+
+    private void lllllllaunch() {
+        SettingsActivity.loadCookie();
+        WebRequest.user_account(new NoFailureCallback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String string = response.body().string();
+                JsonObject asJsonObject = JsonParser.parseString(string).getAsJsonObject();
+                JsonObject account = asJsonObject.getAsJsonObject("account");
+                String id = account.get("id").getAsString();
+                String nickName=asJsonObject.getAsJsonObject("profile").get("nickname").getAsString();
+                if(!Objects.equals(SettingsActivity.get(account_id), id)) {
+                    SettingsActivity.set(account_id, id);
+                }
+                application.userID =id;
+                application.nickname=nickName;
+                {
+                    recommendFragment.update();
+                    WebRequest.user_playlist(id,  getPlaylistCallback);
+                }
+                response.close();
+            }
+        });
+    }
+
     //高耦合度的ViewPager适配器
     class MyViewPagerAdapter extends PagerAdapter {
         @NonNull
@@ -159,10 +165,19 @@ public class MainActivity extends BaseActivity {
             i.putExtra("pw", SettingsActivity.get(account_pw));
             startActivityForResult(i, LoginCellphoneActivity.RequestCode);
         }
-        if(SettingsActivity.get(__csrf)==null){
+        if(SettingsActivity.getBoolean(auto_login)&&SettingsActivity.get(__csrf)!=null){
+            lllllllaunch();
 //            Intent intent = new Intent(this, QRLoginActivity.class);
 //            startActivityForResult(intent,QRLoginActivity.RequestCode);
         }else{
+        }
+        if(SettingsActivity.getBoolean(record_playlist)){
+            MusicPlayer.preventplayonprepareforonce=false;
+            SongManager.getInstance().songs=SettingsActivity.recordBean.songs;
+            SongManager.getInstance().randomSongs=SettingsActivity.recordBean.randomSongs;
+            SongManager.getInstance().setPointer(SettingsActivity.recordBean.songs);
+            SongManager.getInstance().setPointer(SettingsActivity.recordBean.randomSongs);
+            getMyApplication().mMusicPlayer.start(SettingsActivity.recordBean.now_play, false);
         }
     }
     private void loadBaseSettings() {

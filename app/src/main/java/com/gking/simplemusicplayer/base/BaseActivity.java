@@ -21,8 +21,8 @@ import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.interfaces.Operable;
-import com.gking.simplemusicplayer.manager.PlaylistBean;
-import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.beans.PlaylistBean;
+import com.gking.simplemusicplayer.beans.SongBean;
 import com.gking.simplemusicplayer.util.WebRequest;
 
 import org.jetbrains.annotations.NotNull;

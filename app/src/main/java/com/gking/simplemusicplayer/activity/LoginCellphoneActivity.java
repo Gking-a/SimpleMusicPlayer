@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.base.BaseActivity;
-import com.gking.simplemusicplayer.manager.LoginBean;
+import com.gking.simplemusicplayer.beans.LoginBean;
 import com.gking.simplemusicplayer.util.WebRequest;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

@@ -1,11 +1,7 @@
 package com.gking.simplemusicplayer.util;
 
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.MUSIC_A_T;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.NMTID;
-import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.__csrf;
-
 import com.gking.simplemusicplayer.activity.SettingsActivity;
-import com.gking.simplemusicplayer.manager.PlaylistBean;
+import com.gking.simplemusicplayer.beans.PlaylistBean;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -18,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;

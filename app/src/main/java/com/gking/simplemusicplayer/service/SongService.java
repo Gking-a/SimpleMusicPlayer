@@ -19,8 +19,8 @@ import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.activity.SongActivity;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
-import com.gking.simplemusicplayer.manager.LyricBean;
-import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.beans.LyricBean;
+import com.gking.simplemusicplayer.beans.SongBean;
 import com.gking.simplemusicplayer.util.Util;
 
 import static com.gking.simplemusicplayer.activity.SettingsActivity.Params.PLAY_MODE;

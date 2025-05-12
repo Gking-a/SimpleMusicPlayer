@@ -9,20 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gking.simplemusicplayer.R;
 import com.gking.simplemusicplayer.activity.ChoosePlaylistActivity;
-import com.gking.simplemusicplayer.activity.SettingsActivity;
 import com.gking.simplemusicplayer.base.BaseActivity;
 import com.gking.simplemusicplayer.base.BaseBottomDialog;
-import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.beans.SongBean;
 import com.gking.simplemusicplayer.util.Util;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 public class SongDialog2 extends BaseBottomDialog<BaseActivity> {
     public RecyclerView view;

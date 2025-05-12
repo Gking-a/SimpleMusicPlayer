@@ -21,8 +21,8 @@ import com.gking.simplemusicplayer.dialog.SongDialog1;
 import com.gking.simplemusicplayer.impl.MusicPlayer;
 import com.gking.simplemusicplayer.impl.MyApplicationImpl;
 import com.gking.simplemusicplayer.interfaces.SongOperable;
-import com.gking.simplemusicplayer.manager.LyricBean;
-import com.gking.simplemusicplayer.manager.SongBean;
+import com.gking.simplemusicplayer.beans.LyricBean;
+import com.gking.simplemusicplayer.beans.SongBean;
 import com.gking.simplemusicplayer.util.ControlableThread;
 
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +106,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
             }
         };
         musicPlayer.addOnSongBeanChangeListener(onSongBeanChangeListener);
+        MusicPlayer.preventplayonprepareforonce=true;
         musicPlayer.start((SongBean)(getIntent().getSerializableExtra("bean")),null);
         musicPlayer.notify(song,onSongBeanChangeListener);
     }
@@ -148,7 +149,7 @@ public class SongActivity extends BaseActivity implements SongOperable<BaseActiv
 //            startService(intent);
 //        });
         f(R.id.song_toolbar_back).setOnClickListener(v -> finish());
-        f(R.id.song_more).setOnClickListener(v -> {new SongDialog1(this).show(song.pid,song);
+        f(R.id.song_more).setOnClickListener(v -> {new SongDialog1(this).show(song.playlistId,song);
         });
         progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
         volume = f(R.id.song_sound_seekbar);

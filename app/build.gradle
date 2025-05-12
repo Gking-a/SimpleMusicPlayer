@@ -10,7 +10,7 @@ android {
         applicationId "com.gking.simplemusicplayer"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1.2
+        versionCode 2
         versionName "1.2"
     }
     buildTypes {
@@ -50,5 +50,5 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation files('libs\\gtools-1.4.8.jar')
+    implementation files('libs\\gtools-1.5.8.jar')
 }
